@@ -104,8 +104,15 @@
 
 <!-- P1 SELECT -->
 <div id="s3" class="screen">
-    <!-- Top bar -->
-    <div style="display:flex; justify-content:center; align-items:center; padding:10px; border-bottom:2px solid #333;">
+    <!-- Top bar matching battle page -->
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333;">
+        <!-- Left: Team 1 name and 0 score -->
+        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
+            <span id="n3a" style="font-weight:bold;">RED</span>
+            <span style="font-size:20px; font-weight:bold;">0</span>
+        </div>
+        
+        <!-- Center: Empty round pips -->
         <div style="display:flex; gap:5px;">
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
@@ -114,6 +121,12 @@
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+        </div>
+        
+        <!-- Right: Team 2 name and 0 score -->
+        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
+            <span id="n3b" style="font-weight:bold;">BLUE</span>
+            <span style="font-size:20px; font-weight:bold;">0</span>
         </div>
     </div>
     
@@ -169,8 +182,15 @@
 
 <!-- P2 SELECT -->
 <div id="s5" class="screen">
-    <!-- Top bar matching P1 -->
-    <div style="display:flex; justify-content:center; align-items:center; padding:10px; border-bottom:2px solid #333;">
+    <!-- Top bar matching battle page -->
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333;">
+        <!-- Left: Team 1 name and 0 score -->
+        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
+            <span id="n5a" style="font-weight:bold;">RED</span>
+            <span style="font-size:20px; font-weight:bold;">0</span>
+        </div>
+        
+        <!-- Center: Empty round pips -->
         <div style="display:flex; gap:5px;">
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
@@ -179,6 +199,12 @@
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+        </div>
+        
+        <!-- Right: Team 2 name and 0 score -->
+        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
+            <span id="n5b" style="font-weight:bold;">BLUE</span>
+            <span style="font-size:20px; font-weight:bold;">0</span>
         </div>
     </div>
     
@@ -242,7 +268,7 @@
         <!-- Left: Team 1 name and set score in team color -->
         <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
             <span id="n7a" style="font-weight:bold;">RED</span>
-            <span id="seta" style="color:#ff2a6d; font-size:20px; font-weight:bold;">0</span>
+            <span id="seta" style="font-size:20px; font-weight:bold;">0</span>
         </div>
         
         <!-- Center: Round pips -->
@@ -251,7 +277,7 @@
         <!-- Right: Team 2 name and set score in team color -->
         <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
             <span id="n7b" style="font-weight:bold;">BLUE</span>
-            <span id="setb" style="color:#05d9e8; font-size:20px; font-weight:bold;">0</span>
+            <span id="setb" style="font-size:20px; font-weight:bold;">0</span>
         </div>
     </div>
     
@@ -423,9 +449,14 @@ function goPick(p) {
     if (curRound >= 7) curRound = 0;
     updatePickScreen();
     
-    // Set match score boxes and dot colors for selection screen
+    // Set match score boxes, names and dot colors for selection screen
     const playerColor = p === 1 ? p1c : p2c;
     if (p === 1) {
+        // Update team names on P1 select screen
+        document.getElementById('n3a').textContent = p1n;
+        document.getElementById('n3a').style.color = p1c;
+        document.getElementById('n3b').textContent = p2n;
+        document.getElementById('n3b').style.color = p2c;
         document.getElementById('p1-select-box').style.background = p1c;
         document.getElementById('p2-select-box').style.background = p2c;
         document.getElementById('sel-p1').textContent = p1s;
@@ -438,6 +469,11 @@ function goPick(p) {
         }, 0);
         show('s3');
     } else {
+        // Update team names on P2 select screen
+        document.getElementById('n5a').textContent = p1n;
+        document.getElementById('n5a').style.color = p1c;
+        document.getElementById('n5b').textContent = p2n;
+        document.getElementById('n5b').style.color = p2c;
         document.getElementById('p1-select-box2').style.background = p1c;
         document.getElementById('p2-select-box2').style.background = p2c;
         document.getElementById('sel2-p1').textContent = p1s;
@@ -533,17 +569,23 @@ async function battle() {
     document.getElementById('n7b').textContent = p2n;
     document.getElementById('n7b').style.color = p2c;
     document.getElementById('seta').textContent = '0';
+    document.getElementById('seta').style.color = p1c;
     document.getElementById('setb').textContent = '0';
+    document.getElementById('setb').style.color = p2c;
     
     // Set border colors
     document.getElementById('p1-border').style.background = p1c;
     document.getElementById('p2-border').style.background = p2c;
     
-    // Set player colors
+    // Set player colors for score boxes
     document.getElementById('p1-score-box').style.background = p1c;
     document.getElementById('p2-score-box').style.background = p2c;
     document.getElementById('match-p1').textContent = p1s;
     document.getElementById('match-p2').textContent = p2s;
+    
+    // Set fighter sizes - use clamp for responsive sizing
+    document.getElementById('f1').style.fontSize = 'clamp(60px, 20vw, 150px)';
+    document.getElementById('f2').style.fontSize = 'clamp(60px, 20vw, 150px)';
     
     // Initialize empty pips at start (black = not played)
     const pips = document.getElementById('pips');
