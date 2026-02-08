@@ -44,6 +44,14 @@
         .color.sel { border-color: #fff; }
         .big { font-size: 64px; text-align: center; margin: 20px 0; }
         .center { text-align: center; margin: 10px 0; }
+        
+        /* Fist bobbing animation */
+        @keyframes fist-bob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .fist-left { animation: fist-bob 0.75s ease-in-out 3; }
+        .fist-right { animation: fist-bob 0.75s ease-in-out 3 0.1s; }
     </style>
 </head>
 <body>
@@ -293,16 +301,15 @@ async function battle() {
     
     for (let round = 0; round < 7; round++) {
         document.getElementById('res').textContent = '';
-        document.getElementById('f1').textContent = '❔';
-        document.getElementById('f2').textContent = '❔';
         
         const phases = ['ROCK','PAPER','SCISSORS','SHOOT!'];
         const phaseEmojis = {ROCK:'🪨', PAPER:'📄', SCISSORS:'✂️', 'SHOOT!':'🎯'};
-        const cycleMoves = ['🪨', '📄', '✂️'];
         
-        // Start with ? on bottom row
-        document.getElementById('f1').textContent = '❔';
-        document.getElementById('f2').textContent = '❔';
+        // Start with fists
+        const f1 = document.getElementById('f1');
+        const f2 = document.getElementById('f2');
+        f1.textContent = '🤜';
+        f2.textContent = '🤛';
         
         for (let i = 0; i < 4; i++) {
             const phase = phases[i];
@@ -311,28 +318,17 @@ async function battle() {
             document.getElementById('phase-right').textContent = phaseEmojis[phase];
             
             if (i < 3) {
-                // ROCK, PAPER, SCISSORS - cycle through emojis once
-                const cycleTime = 750 / 3; // 3 changes over 0.75s
-                for (let cycle = 0; cycle < 3; cycle++) {
-                    document.getElementById('f1').textContent = cycleMoves[cycle];
-                    document.getElementById('f2').textContent = cycleMoves[cycle];
-                    await sleep(cycleTime);
-                }
+                // ROCK, PAPER, SCISSORS - fists bob up and down
+                f1.classList.add('fist-left');
+                f2.classList.add('fist-right');
+                await sleep(750); // wait for 3 bobs
+                f1.classList.remove('fist-left');
+                f2.classList.remove('fist-right');
             } else {
-                // SHOOT! - animate ? → ?? → ??? → reveal
-                await sleep(250); // ? for 0.25s
-                
-                document.getElementById('f1').textContent = '❔❔';
-                document.getElementById('f2').textContent = '❔❔';
-                await sleep(250); // ?? for 0.25s
-                
-                document.getElementById('f1').textContent = '❔❔❔';
-                document.getElementById('f2').textContent = '❔❔❔';
-                await sleep(250); // ??? for 0.25s
-                
-                document.getElementById('f1').textContent = MOVES[p1moves[round]];
-                document.getElementById('f2').textContent = MOVES[p2moves[round]];
-                await sleep(2000); // reveal actual moves for 2s
+                // SHOOT! - reveal actual moves
+                f1.textContent = MOVES[p1moves[round]];
+                f2.textContent = MOVES[p2moves[round]];
+                await sleep(2000); // reveal for 2s
                 
                 // Clear phase row but keep fighters
                 document.getElementById('cnt').textContent = '';
