@@ -81,16 +81,6 @@
             flex:1;
             justify-content:center;
             max-width:200px;
-            position:relative;
-            align-items:center;
-        }
-        .round-score-label {
-            position:absolute;
-            top:-8px;
-            font-size:9px;
-            color:#888;
-            text-transform:uppercase;
-            letter-spacing:0.5px;
         }
         .top-bar-dot {
             background:#000; 
@@ -214,7 +204,6 @@
             <span id="s2p1" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
         <div class="top-bar-center">
-            <span class="round-score-label">Round Score</span>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
@@ -254,7 +243,6 @@
             <span id="s3a" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
         <div class="top-bar-center">
-            <span class="round-score-label">Round Score</span>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
@@ -299,7 +287,6 @@
             <span id="s4p1" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
         <div class="top-bar-center">
-            <span class="round-score-label">Round Score</span>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
@@ -339,7 +326,6 @@
             <span id="s5a" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
         <div class="top-bar-center">
-            <span class="round-score-label">Round Score</span>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
@@ -384,7 +370,6 @@
             <span id="s6a" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
         <div class="top-bar-center">
-            <span class="round-score-label">Round Score</span>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
@@ -424,7 +409,6 @@
             <span id="seta" class="top-bar-score">0</span>
         </div>
         <div class="top-bar-center" id="pips">
-            <span class="round-score-label">Round Score</span>
             <!-- Pips will be inserted here -->
         </div>
         <div class="top-bar-team">
@@ -624,21 +608,17 @@ function adjustColor(color, amount) {
     return `rgb(${r},${g},${b})`;
 }
 
-// Explosion confetti at specific position (for battle bonk)
-function explosionConfetti(x, y, color, count = 60) {
-    const canvas = document.getElementById('confetti-canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    const particles = [];
-    // Use only winner's color with slight variations
+// Shared explosion particle system
+let explosionParticles = [];
+let explosionAnimating = false;
+
+function addExplosionParticles(x, y, color, count = 60) {
     const colors = [color, adjustColor(color, 20), adjustColor(color, -20), '#ffffff'];
     
     for (let i = 0; i < count; i++) {
         const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
         const speed = Math.random() * 8 + 4;
-        particles.push({
+        explosionParticles.push({
             x: x,
             y: y,
             vx: Math.cos(angle) * speed,
@@ -651,40 +631,55 @@ function explosionConfetti(x, y, color, count = 60) {
         });
     }
     
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        let onScreen = false;
-        particles.forEach(p => {
-            if (!p.active) return;
-            
-            p.x += p.vx;
-            p.y += p.vy;
-            p.vy += 0.3; // gravity
-            p.vx *= 0.95; // friction
-            p.rotation += p.rotationSpeed;
-            
-            // Check if still on screen (with some margin)
-            if (p.y < canvas.height + 50 && p.x > -50 && p.x < canvas.width + 50) {
-                onScreen = true;
-                ctx.save();
-                ctx.translate(p.x, p.y);
-                ctx.rotate(p.rotation);
-                ctx.fillStyle = p.color;
-                ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
-                ctx.restore();
-            } else {
-                p.active = false;
-            }
-        });
-        
-        if (onScreen) {
-            requestAnimationFrame(animate);
-        }
-        // Let it fade out naturally by not clearing - next bonk will clear
+    if (!explosionAnimating) {
+        explosionAnimating = true;
+        animateExplosions();
     }
+}
+
+function animateExplosions() {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     
-    animate();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    let onScreen = false;
+    explosionParticles.forEach(p => {
+        if (!p.active) return;
+        
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.3; // gravity
+        p.vx *= 0.98; // slight friction
+        p.rotation += p.rotationSpeed;
+        
+        // Check if still on screen
+        if (p.y < canvas.height + 50 && p.x > -50 && p.x < canvas.width + 50) {
+            onScreen = true;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+            ctx.restore();
+        } else {
+            p.active = false;
+        }
+    });
+    
+    if (onScreen) {
+        requestAnimationFrame(animateExplosions);
+    } else {
+        explosionParticles = [];
+        explosionAnimating = false;
+    }
+}
+
+// Legacy wrapper for compatibility
+function explosionConfetti(x, y, color, count = 60) {
+    addExplosionParticles(x, y, color, count);
 }
 
 // Init
