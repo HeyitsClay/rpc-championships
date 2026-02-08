@@ -302,6 +302,10 @@ async function battle() {
         const phaseEmojis = {ROCK:'🪨', PAPER:'📄', SCISSORS:'✂️', 'SHOOT!':'🎯'};
         const cycleMoves = ['🪨', '📄', '✂️'];
         
+        // Start with ? on bottom row
+        document.getElementById('f1').textContent = '❔';
+        document.getElementById('f2').textContent = '❔';
+        
         for (let i = 0; i < 4; i++) {
             const phase = phases[i];
             document.getElementById('cnt').textContent = phase;
@@ -309,17 +313,10 @@ async function battle() {
             document.getElementById('phase-right').textContent = phaseEmojis[phase];
             
             if (i < 3) {
-                // ROCK, PAPER, SCISSORS - cycle through moves 2 times
-                const cycleTime = 750 / 6; // 6 changes over 0.75s
-                for (let cycle = 0; cycle < 6; cycle++) {
-                    document.getElementById('f1').textContent = cycleMoves[cycle % 3];
-                    document.getElementById('f2').textContent = cycleMoves[cycle % 3];
-                    await sleep(cycleTime);
-                }
+                // ROCK, PAPER, SCISSORS - bottom row stays as ?
+                await sleep(750);
             } else {
-                // SHOOT! - ? then ?? then ??? then reveal
-                document.getElementById('f1').textContent = '❔';
-                document.getElementById('f2').textContent = '❔';
+                // SHOOT! - animate ? → ?? → ??? → reveal
                 await sleep(250); // ? for 0.25s
                 
                 document.getElementById('f1').textContent = '❔❔';
