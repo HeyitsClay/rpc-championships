@@ -1047,9 +1047,6 @@ async function battle() {
                 await sleep(1000); // 1 second per phase
             } else {
                 // SHOOT! - reveal actual moves
-                // If there was a previous winner, show both fighters for the reveal
-                f1.classList.remove('fighter-hidden', 'fighter-center-left');
-                f2.classList.remove('fighter-hidden', 'fighter-center-right');
                 f1.textContent = MOVES[p1moves[round]];
                 f2.textContent = MOVES[p2moves[round]];
                 playSound('shoot');
@@ -1117,6 +1114,11 @@ async function battle() {
             }, 500);
             
             await sleep(1500); // Wait for bonk animation
+            
+            // Ensure loser stays hidden and winner stays centered
+            loserEl.classList.add('fighter-hidden');
+            winnerEl.classList.remove('bonk-winner-left', 'bonk-winner-right');
+            winnerEl.classList.add(winner === 'p1' ? 'fighter-center-left' : 'fighter-center-right');
         } else {
             // Tie animation - both shake
             f1.classList.add('tie-shake');
@@ -1126,8 +1128,8 @@ async function battle() {
             f2.classList.remove('tie-shake');
         }
         
-        // Track winner for next round positioning (loser stays gone)
-        lastWinner = winner;
+        // After result shown - loser stays vanished, winner stays centered during pause
+        // No reset here - next round start will show both fists fresh
         
         // Update pips with colors
         const pips = document.getElementById('pips');
