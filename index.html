@@ -3,43 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#010101">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="RPC Championships">
     <title>RPC Championships</title>
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUlBDIENoYW1waW9uc2hpcHMiLCJzaG9ydF9uYW1lIjoiUlBDIiwic3RhcnRfdXJsIjoiLi8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMDEwMTAxIiwidGhlbWVfY29sb3IiOiIjMDEwMTAxIiwib3JpZW50YXRpb24iOiJwb3J0cmFpdCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAlJTNFLTwhLS0gQ29weXJpZ2h0IDIwMDAtMjAyMSBob3N0ZWQgYnkgTWljcm9zb2Z0IGFuZCBpdHMgY29udHJpYnV0b3JzLiAtLT4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEwIDJhOCA4IDAgMTAwIDE2IDggOCAwIDAwMC0xNnptMCA3YTMgMyAwIDExMCA2IDMgMyAwIDAxMC02eiIgZmlsbD0iIzNhM2E0MCIvPgo8L3N2Zz4=" type="image/svg+xml"}]}">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap');
-
-        :root {
-            --p1-color: #ff2a6d;
-            --p2-color: #05d9e8;
-            --bg-dark: #010101;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-        }
-
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-            user-select: none;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
         html, body {
             height: 100%;
             width: 100%;
-            background: var(--bg-dark);
-            color: var(--text-primary);
-            font-family: 'Rajdhani', 'Orbitron', sans-serif;
-            background-image: 
-                radial-gradient(circle at 0% 50%, var(--p1-color) 0%, transparent 50%),
-                radial-gradient(circle at 100% 50%, var(--p2-color) 0%, transparent 50%);
+            background: #000;
+            color: #fff;
+            font-family: sans-serif;
             overflow: hidden;
-            position: fixed;
         }
 
         .screen {
@@ -48,1163 +22,261 @@
             height: 100%;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding: 1vh 3vw;
+            padding: 20px;
             position: absolute;
             top: 0;
             left: 0;
-            overflow-y: auto;
-            overflow-x: hidden;
         }
         
-        .screen.active { 
-            display: flex; 
-        }
+        .screen.active { display: flex; }
+
+        h1 { font-size: 24px; margin: 20px 0; text-align: center; }
+        h2 { font-size: 20px; margin: 15px 0; text-align: center; }
         
-        /* Screen shake for battle impact */
-        @keyframes screen-shake {
-            0%, 100% { transform: translate(0, 0); }
-            10% { transform: translate(-8px, 4px); }
-            20% { transform: translate(8px, -4px); }
-            30% { transform: translate(-6px, 6px); }
-            40% { transform: translate(6px, -6px); }
-            50% { transform: translate(-4px, 2px); }
-            60% { transform: translate(4px, -2px); }
-            70% { transform: translate(-2px, 4px); }
-            80% { transform: translate(2px, -4px); }
-            90% { transform: translate(-1px, 1px); }
-        }
-        
-        .shake-screen {
-            animation: screen-shake 0.4s ease-out;
-        }
-        
-        /* Flash effect for winner */
-        @keyframes winner-flash {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 0.4; }
-        }
-        
-        .flash-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .btn {
             width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, white, transparent 70%);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 999;
-        }
-        
-        .flash-overlay.active {
-            animation: winner-flash 0.3s ease-out;
-        }
-        
-        /* Score pop animation */
-        @keyframes score-pop {
-            0% { transform: scale(1); }
-            40% { transform: scale(1.5); }
-            70% { transform: scale(1.3); }
-            100% { transform: scale(1); }
-        }
-        
-        .score-pop {
-            animation: score-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        /* Particle trails for fighters */
-        .fighter-trail {
-            position: absolute;
-            font-size: 15vmin;
-            opacity: 0.3;
-            pointer-events: none;
-            animation: trail-fade 0.5s ease-out forwards;
-        }
-        
-        @keyframes trail-fade {
-            0% { opacity: 0.5; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0.8) translateY(-20px); }
-        }
-
-        .title-main {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(1.5rem, 8vmin, 3rem);
-            font-weight: 900;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            text-align: center;
-            margin-bottom: 0.5vh;
-            margin-top: 2vh;
-        }
-
-        .subtitle {
-            font-size: clamp(0.7rem, 3vmin, 1rem);
-            font-weight: 700;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.3em;
-            margin-bottom: 2vh;
-            text-align: center;
-        }
-
-        .h2 { 
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(1.2rem, 6vmin, 2rem); 
-            font-weight: 700; 
-            text-transform: uppercase;
-            color: var(--text-primary);
-            text-align: center;
-        }
-        
-        .body { 
-            font-size: clamp(0.9rem, 3.5vmin, 1.1rem); 
-            color: var(--text-secondary);
-            text-align: center;
-        }
-
-        .caption { 
-            font-size: clamp(0.6rem, 2.5vmin, 0.8rem); 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            letter-spacing: 0.2em; 
-            color: var(--text-secondary);
-            text-align: center;
-        }
-
-        /* Simplified glow for mobile performance */
-        .p1-glow { color: var(--p1-color); }
-        .p2-glow { color: var(--p2-color); }
-
-        .glass-panel {
-            background: rgba(20, 20, 30, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            margin: 10px 0;
+            cursor: pointer;
         }
 
         .scoreboard {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 1.5vh 3vw;
-            margin-bottom: 1vh;
-        }
-
-        .team-block {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.3vh;
-            flex: 1;
-        }
-
-        .team-name {
-            font-size: clamp(0.7rem, 3vmin, 1rem);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-secondary);
-            text-align: center;
-        }
-
-        .team-score {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2rem, 8vmin, 3.5rem);
-            font-weight: 900;
-            line-height: 1;
-        }
-
-        .vs-divider {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.3vh;
-            padding: 0 2vw;
-        }
-
-        .vs-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(0.9rem, 4vmin, 1.5rem);
-            font-weight: 900;
-            color: rgba(255,255,255,0.3);
-            letter-spacing: 0.1em;
-        }
-
-        .control-section {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            gap: 2vh;
-            margin: 1vh 0;
-        }
-
-        .score-selector {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5vmin;
-            padding: 2vh;
-        }
-
-        .score-btn {
-            width: 10vmin;
-            height: 10vmin;
-            max-width: 50px;
-            max-height: 50px;
-            border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.05);
-            color: var(--text-primary);
-            font-size: 3vmin;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .score-btn:active { 
-            transform: scale(0.9); 
-            background: rgba(255,255,255,0.2);
-        }
-
-        .score-display { text-align: center; min-width: 20vmin; }
-
-        .score-number {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 8vmin;
-            font-weight: 900;
-            color: var(--text-primary);
-            line-height: 1;
-        }
-
-        .color-section { display: flex; flex-direction: column; gap: 1.5vh; }
-
-        .color-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.5vh;
-            background: rgba(0,0,0,0.3);
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .color-label {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-size: clamp(0.8rem, 3.5vmin, 1.1rem);
-        }
-
-        .color-options { display: flex; gap: 1.5vmin; flex-wrap: wrap; justify-content: flex-end; }
-
-        .color-option {
-            width: 6vmin;
-            height: 6vmin;
-            min-width: 30px;
-            min-height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-
-        .color-option:active { transform: scale(0.9); }
-
-        .color-option.selected {
-            border-color: #fff;
-            border-width: 3px;
-            transform: scale(1.1);
-        }
-
-        .color-option.disabled {
-            opacity: 0.2;
-            cursor: not-allowed;
-            filter: grayscale(1);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 2vh 0;
-            font-size: clamp(1rem, 4.5vmin, 1.2rem);
-            font-weight: 700;
-            border: none;
-            border-radius: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            cursor: pointer;
-            margin-top: auto;
-            margin-bottom: 2vh;
-            font-family: 'Orbitron', sans-serif;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn:active { transform: scale(0.95); }
-
-        .btn-primary {
-            background: rgba(255,255,255,0.1);
-            color: var(--text-primary);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .btn-team-1 {
-            background: var(--p1-color);
-            color: #000;
-            font-weight: 900;
-        }
-
-        .btn-team-2 {
-            background: var(--p2-color);
-            color: #000;
-            font-weight: 900;
-        }
-
-        .btn-secondary {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.15);
-            color: rgba(255,255,255,0.7);
-        }
-
-        .battle-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            width: 100%;
-            padding-top: 1vh;
-            position: relative;
-        }
-
-        .countdown-wrapper {
-            text-align: center;
-            margin-bottom: 1vh;
-            height: 6vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .countdown-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(1.2rem, 5vmin, 2rem);
-            font-weight: 900;
-            color: var(--text-primary);
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-        }
-
-        .fighters-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            padding: 0 2vw;
-            height: 25vh;
-            margin-top: 1vh;
-            position: relative;
-        }
-
-        .fighter-wrapper {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1vh;
-            flex: 1;
-            transition: transform 0.5s ease, opacity 0.5s ease;
-            will-change: transform, opacity;
-        }
-
-        .fighter-wrapper.center-winner {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 100;
-        }
-
-        .fighter-wrapper.hidden { opacity: 0; pointer-events: none; flex: 0; }
-
-        .fighter {
-            font-size: 15vmin;
-            line-height: 1;
-            transition: transform 0.3s, opacity 0.3s;
-            position: relative;
-            z-index: 10;
-            will-change: transform;
-        }
-        
-        .fighter.cycling { 
-            animation: cycle-bounce 0.5s infinite;
-            will-change: transform;
-        }
-
-        @keyframes cycle-bounce {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-2vh) scale(1.1); }
-        }
-
-        .fighter.reveal { animation: reveal-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-
-        @keyframes reveal-pop {
-            0% { transform: scale(0.3); opacity: 0; }
-            60% { transform: scale(1.3); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .fighter.victory-pose {
-            animation: victory-grow 0.6s forwards;
-            z-index: 50;
-        }
-
-        @keyframes victory-grow {
-            0% { transform: scale(1); }
-            50% { transform: scale(2); }
-            100% { transform: scale(1.8); }
-        }
-
-        .fighter.bonk-right { animation: bonk-right-move 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-        .fighter.bonk-left { animation: bonk-left-move 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-        .fighter.vanish { animation: vanish-defeat 0.4s ease-out forwards; }
-
-        @keyframes bonk-right-move {
-            0% { transform: translateX(0) scale(1); }
-            50% { transform: translateX(15vw) scale(1.2); }
-            100% { transform: translateX(0) scale(1); }
-        }
-
-        @keyframes bonk-left-move {
-            0% { transform: translateX(0) scale(1); }
-            50% { transform: translateX(-15vw) scale(1.2); }
-            100% { transform: translateX(0) scale(1); }
-        }
-
-        @keyframes vanish-defeat {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(0.8); opacity: 0.3; }
-            100% { transform: scale(0); opacity: 0; }
-        }
-
-        .confetti-zone, .victory-confetti-zone {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 50;
-        }
-
-        .confetti-piece, .explosion-piece {
-            position: absolute;
-            width: 2.5vmin;
-            height: 2.5vmin;
-            top: 50%;
-            left: 50%;
-            opacity: 0;
-            border-radius: 50%;
-        }
-
-        .confetti-piece.active { animation: confetti-burst 1.2s ease-out forwards; }
-
-        @keyframes confetti-burst {
-            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; }
-        }
-
-        .explosion-zone {
-            position: fixed;
-            width: 100vw;
-            height: 100vh;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 1000;
-        }
-
-        .explosion-piece { width: 4vmin; height: 4vmin; }
-        .explosion-piece.active { animation: explosion-burst 1.5s ease-out forwards; }
-
-        @keyframes explosion-burst {
-            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; }
-        }
-
-        .round-bar-container {
-            width: 100%;
-            padding: 1vh;
-            margin-top: auto;
-        }
-
-        .round-bar {
-            display: flex;
-            gap: 1.5vmin;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .round-pip {
-            width: 4vmin;
-            height: 4vmin;
-            max-width: 20px;
-            max-height: 20px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .round-pip.won-p1 { background: var(--p1-color); border-color: var(--p1-color); transform: scale(1.1); }
-        .round-pip.won-p2 { background: var(--p2-color); border-color: var(--p2-color); transform: scale(1.1); }
-        .round-pip.tie { background: #fff; border-color: #fff; }
-
-        .result-banner {
-            position: absolute;
-            top: 55%;
-            left: 50%;
-            transform: translateX(-50%) scale(0);
-            background: rgba(0,0,0,0.95);
-            border: 2px solid;
-            padding: 1.5vh 6vw;
-            border-radius: 30px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(1rem, 5vmin, 1.5rem);
-            font-weight: 900;
-            z-index: 100;
-            transition: transform 0.4s;
-            color: var(--text-primary);
-            text-align: center;
-        }
-
-        .result-banner.show { transform: translateX(-50%) scale(1); }
-
-        .selection-progress {
-            display: flex;
-            gap: 1.5vmin;
-            margin: 1.5vh 0;
-            width: 100%;
-            justify-content: center;
-            padding: 0 2vw;
-        }
-
-        .progress-dot {
-            width: 8vmin;
-            height: 8vmin;
-            max-width: 45px;
-            max-height: 45px;
-            border-radius: 50%;
-            background: rgba(0,0,0,0.5);
-            border: 2px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4vmin;
-            color: var(--text-primary);
-        }
-
-        .progress-dot.filled {
-            background: rgba(0,0,0,0.9);
-            border-color: currentColor;
-            color: currentColor;
-        }
-
-        .progress-dot.current {
-            background: transparent;
-            border-color: currentColor;
-            color: currentColor;
+            padding: 20px;
+            border: 1px solid #333;
+            margin: 10px 0;
         }
 
         .moves-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 3vmin;
+            gap: 10px;
             width: 100%;
-            max-width: 400px;
-            padding: 1vh 0;
-            margin: 0 auto;
+            margin: 20px 0;
         }
 
         .move-btn {
             aspect-ratio: 1;
-            background: rgba(0,0,0,0.6);
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 15px;
-            font-size: 10vmin;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .move-btn:active { transform: scale(0.9); }
-
-        .move-btn.selected {
-            border-color: currentColor;
-            background: rgba(0,0,0,0.9);
-            border-width: 3px;
-        }
-
-        .selection-header { text-align: center; margin-bottom: 1vh; margin-top: 1vh; }
-        .selection-round { font-family: 'Orbitron', sans-serif; font-size: clamp(1.2rem, 5vmin, 2rem); font-weight: 700; }
-
-        .center-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            width: 100%;
-        }
-
-        .glass-panel .body, .glass-panel .caption, .glass-panel .h2 {
-            text-align: center;
-            width: 100%;
-        }
-
-        #setup .control-section { margin-top: 2vh; }
-        #p1-ready, #p2-ready, #match-ready { justify-content: flex-start; }
-        #p1-ready .h2, #p2-ready .h2 { margin-bottom: 2vh; }
-        #set-result .scoreboard, #game-over .scoreboard { margin: 2vh 0; }
-        #set-result .h2, #game-over .h2 { text-align: center; width: 100%; }
-        #game-over .glass-panel { display: flex; flex-direction: column; align-items: center; }
-        
-        /* Victory Overlay */
-        .victory-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        
-        .victory-overlay.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        .victory-crown {
-            font-size: 20vmin;
-            animation: crown-bounce 1s ease-in-out infinite;
-            margin-bottom: 2vh;
-        }
-        
-        @keyframes crown-bounce {
-            0%, 100% { transform: translateY(0) rotate(-5deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-        }
-        
-        .victory-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2rem, 10vmin, 4rem);
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 1vh;
-        }
-        
-        .victory-subtext {
-            font-size: clamp(1rem, 4vmin, 1.5rem);
-            color: var(--text-secondary);
-            margin-bottom: 3vh;
-        }
-        
-        .victory-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5vh;
-            width: 80%;
-            max-width: 300px;
-        }
-        
-        .victory-btn {
-            padding: 2vh 4vw;
-            border-radius: 12px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(0.9rem, 4vmin, 1.1rem);
-            font-weight: 700;
-            text-transform: uppercase;
-            cursor: pointer;
-            border: 2px solid;
-        }
-        
-        .victory-btn:active {
-            transform: scale(0.95);
-        }
-        
-        .victory-btn-primary {
-            background: gold;
-            color: #000;
-            border-color: gold;
-        }
-        
-        .victory-btn-secondary {
-            background: transparent;
-            color: var(--text-primary);
-            border-color: rgba(255,255,255,0.3);
-        }
-        
-        .victory-btn-share {
-            background: rgba(255,255,255,0.1);
-            color: #1DA1F2;
-            border-color: #1DA1F2;
-        }
-        
-        /* Full screen confetti */
-        .mega-confetti {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            z-index: 9999;
-            overflow: hidden;
-        }
-        
-        .mega-confetti-piece {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            top: -10px;
-            animation: mega-confetti-fall linear forwards;
-        }
-        
-        @keyframes mega-confetti-fall {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-        }
-        
-        /* VS Clash Animation */
-        .vs-clash {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 30vmin;
-            font-weight: 900;
+            font-size: 40px;
+            background: #222;
+            border: 1px solid #444;
             color: #fff;
-            z-index: 9998;
-            pointer-events: none;
-            opacity: 0;
+            cursor: pointer;
         }
-        
-        .vs-clash.animate {
-            animation: vs-clash-in 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+
+        .move-btn.selected { border-color: #fff; background: #444; }
+
+        .progress-row {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
         }
-        
-        @keyframes vs-clash-in {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-            30% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
-            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+
+        .progress-dot {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #555;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
         }
+
+        .progress-dot.filled { background: #333; }
+        .progress-dot.current { border-color: #fff; background: #222; }
+
+        .countdown-text {
+            font-size: 32px;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .fighters {
+            display: flex;
+            justify-content: space-between;
+            font-size: 60px;
+            margin: 20px 0;
+            padding: 0 40px;
+        }
+
+        .result-text {
+            font-size: 24px;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .round-pips {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .pip {
+            width: 15px;
+            height: 15px;
+            border: 1px solid #555;
+            border-radius: 50%;
+        }
+
+        .pip.p1 { background: #fff; }
+        .pip.p2 { background: #666; }
+        .pip.tie { background: #333; }
+
+        .color-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .color-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #555;
+            cursor: pointer;
+        }
+
+        .color-btn.selected { border-color: #fff; }
+        .color-btn.disabled { opacity: 0.3; }
     </style>
 </head>
 <body>
-    <!-- Flash overlay for battle impacts -->
-    <div class="flash-overlay" id="flash-overlay"></div>
-    
-    <!-- VS Clash animation -->
-    <div class="vs-clash" id="vs-clash">VS</div>
-    
-    <!-- Mega confetti container -->
-    <div class="mega-confetti" id="mega-confetti"></div>
-    
-    <!-- Victory Overlay -->
-    <div class="victory-overlay" id="victory-overlay">
-        <div class="victory-crown" id="victory-crown">👑</div>
-        <div class="victory-text" id="victory-text">CHAMPION</div>
-        <div class="victory-subtext" id="victory-subtext">RED WINS THE MATCH</div>
-        <div class="victory-buttons">
-            <button class="victory-btn victory-btn-primary" onclick="game.playAgainFromOverlay()">Play Again</button>
-            <button class="victory-btn victory-btn-share" onclick="game.shareResult()">Share Result</button>
-            <button class="victory-btn victory-btn-secondary" onclick="game.backToMenuFromOverlay()">Main Menu</button>
-        </div>
-    </div>
-    
+    <!-- SETUP -->
     <div id="setup" class="screen active">
-        <div class="center-content" style="margin-top: 2vh;">
-            <div class="caption">/// SYSTEM READY ///</div>
-            <div class="title-main">RPC</div>
-            <div class="subtitle">Championships</div>
+        <h1>RPC Championships</h1>
+        <p style="text-align:center; margin:10px 0;">Victory: First to <span id="sets-target">2</span> sets</p>
+        <div style="display:flex; gap:10px; justify-content:center; margin:10px 0;">
+            <button class="btn" style="width:auto; padding:10px 20px;" onclick="game.adjustSets(-1)">-</button>
+            <button class="btn" style="width:auto; padding:10px 20px;" onclick="game.adjustSets(1)">+</button>
         </div>
-
-        <div class="control-section">
-            <div class="glass-panel">
-                <div class="caption" style="padding-top: 1.5vh;">Victory Condition</div>
-                <div class="score-selector">
-                    <button class="score-btn" onclick="game.adjustSets(-1)">−</button>
-                    <div class="score-display">
-                        <div class="score-number" id="sets-target">2</div>
-                    </div>
-                    <button class="score-btn" onclick="game.adjustSets(1)">+</button>
-                </div>
-            </div>
-
-            <div class="glass-panel color-section">
-                <div class="color-row">
-                    <div class="color-label p1-glow" id="p1-display-name">RED</div>
-                    <div class="color-options" id="p1-colors">
-                        <div class="color-option selected" style="background: #ff2a6d;" data-color="#ff2a6d" data-name="RED" onclick="game.selectColor(1, '#ff2a6d', 'RED')"></div>
-                        <div class="color-option" style="background: #05d9e8;" data-color="#05d9e8" data-name="BLUE" onclick="game.selectColor(1, '#05d9e8', 'BLUE')"></div>
-                        <div class="color-option" style="background: #aaff00;" data-color="#aaff00" data-name="GREEN" onclick="game.selectColor(1, '#aaff00', 'GREEN')"></div>
-                        <div class="color-option" style="background: #ffaa00;" data-color="#ffaa00" data-name="ORANGE" onclick="game.selectColor(1, '#ffaa00', 'ORANGE')"></div>
-                        <div class="color-option" style="background: #aa00ff;" data-color="#aa00ff" data-name="PURPLE" onclick="game.selectColor(1, '#aa00ff', 'PURPLE')"></div>
-                        <div class="color-option" style="background: #ff69b4;" data-color="#ff69b4" data-name="PINK" onclick="game.selectColor(1, '#ff69b4', 'PINK')"></div>
-                    </div>
-                </div>
-                
-                <div class="color-row">
-                    <div class="color-label p2-glow" id="p2-display-name">BLUE</div>
-                    <div class="color-options" id="p2-colors">
-                        <div class="color-option disabled" style="background: #ff2a6d;" data-color="#ff2a6d" data-name="RED" onclick="game.selectColor(2, '#ff2a6d', 'RED')"></div>
-                        <div class="color-option selected" style="background: #05d9e8;" data-color="#05d9e8" data-name="BLUE" onclick="game.selectColor(2, '#05d9e8', 'BLUE')"></div>
-                        <div class="color-option" style="background: #aaff00;" data-color="#aaff00" data-name="GREEN" onclick="game.selectColor(2, '#aaff00', 'GREEN')"></div>
-                        <div class="color-option" style="background: #ffaa00;" data-color="#ffaa00" data-name="ORANGE" onclick="game.selectColor(2, '#ffaa00', 'ORANGE')"></div>
-                        <div class="color-option" style="background: #aa00ff;" data-color="#aa00ff" data-name="PURPLE" onclick="game.selectColor(2, '#aa00ff', 'PURPLE')"></div>
-                        <div class="color-option" style="background: #ff69b4;" data-color="#ff69b4" data-name="PINK" onclick="game.selectColor(2, '#ff69b4', 'PINK')"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="body" style="opacity: 0.6; font-size: 0.8rem;">
-                BEST OF 7 • 1PT WIN • 0.5PT DRAW
-            </div>
-        </div>
-
-        <button class="btn btn-primary" onclick="game.startGame()">Initialize System</button>
+        
+        <h2>Player 1</h2>
+        <div class="color-grid" id="p1-colors"></div>
+        
+        <h2>Player 2</h2>
+        <div class="color-grid" id="p2-colors"></div>
+        
+        <button class="btn" onclick="game.startGame()" style="margin-top:auto;">Start Game</button>
     </div>
 
+    <!-- P1 READY -->
     <div id="p1-ready" class="screen">
-        <div class="scoreboard glass-panel" style="margin-top: 1vh;">
-            <div class="team-block">
-                <div class="team-name p1-glow" id="p1-ready-name">RED</div>
-                <div class="team-score p1-glow" id="p1-ready-score">0</div>
-            </div>
-            <div class="vs-divider">
-                <div class="vs-text">VS</div>
-                <div class="caption">FIRST TO <span id="ready-target-display">2</span></div>
-            </div>
-            <div class="team-block">
-                <div class="team-name p2-glow" id="p2-ready-name">BLUE</div>
-                <div class="team-score p2-glow" id="p2-ready-score">0</div>
-            </div>
+        <div class="scoreboard">
+            <div><div id="p1-ready-name">P1</div><div id="p1-ready-score">0</div></div>
+            <div>VS</div>
+            <div><div id="p2-ready-name">P2</div><div id="p2-ready-score">0</div></div>
         </div>
-
-        <div class="center-content" style="flex: 1; justify-content: center; gap: 3vh;">
-            <div class="h2 p1-glow" id="p1-ready-title">RED UNIT</div>
-            <div class="glass-panel" style="padding: 4vh 8vw; text-align: center;">
-                <div style="font-size: 12vmin; margin-bottom: 1vh;">🎮</div>
-                <div class="body" style="font-weight: 700;">SEQUENCE INPUT REQUIRED</div>
-                <div class="caption" style="margin-top: 0.5vh;">Select 7 Moves</div>
-            </div>
-        </div>
-
-        <button class="btn btn-team-1" onclick="game.toSelection(1)">Pick Moves</button>
+        <h2 id="p1-ready-title">Player 1: Select 7 Moves</h2>
+        <button class="btn" onclick="game.toSelection(1)">Pick Moves</button>
     </div>
 
+    <!-- P1 SELECT -->
     <div id="p1-select" class="screen">
-        <div class="selection-header">
-            <div class="caption" style="color: var(--p1-color); margin-bottom: 0.5vh;">/// SEQUENCE PROGRAMMING ///</div>
-            <div class="selection-round p1-glow">ROUND <span id="p1-round-num">1</span>/7</div>
+        <h2>Round <span id="p1-round-num">1</span>/7</h2>
+        <div class="progress-row" id="p1-progress"></div>
+        <div class="moves-grid">
+            <button class="move-btn" onclick="game.selectMove('rock')">🪨</button>
+            <button class="move-btn" onclick="game.selectMove('paper')">📄</button>
+            <button class="move-btn" onclick="game.selectMove('scissors')">✂️</button>
         </div>
-        
-        <div class="selection-progress" id="p1-progress"></div>
-
-        <div class="moves-grid" style="margin: auto 0;">
-            <button class="move-btn" onclick="game.selectMove('rock')" style="color: #ff6b6b;">🪨</button>
-            <button class="move-btn" onclick="game.selectMove('paper')" style="color: #4ecdc4;">📄</button>
-            <button class="move-btn" onclick="game.selectMove('scissors')" style="color: #ffe66d;">✂️</button>
-        </div>
-
-        <button class="btn btn-secondary" onclick="game.prevRound()" style="margin-bottom: 2vh;">◀ Return</button>
+        <button class="btn" onclick="game.prevRound()">Back</button>
     </div>
 
+    <!-- P2 READY -->
     <div id="p2-ready" class="screen">
-        <div class="scoreboard glass-panel" style="margin-top: 1vh;">
-            <div class="team-block">
-                <div class="team-name p1-glow" id="p2-ready-name-p1">RED</div>
-                <div class="team-score p1-glow" id="p2-ready-p1-score">0</div>
-            </div>
-            <div class="vs-divider">
-                <div class="vs-text">VS</div>
-                <div class="caption">FIRST TO <span id="ready2-target-display">2</span></div>
-            </div>
-            <div class="team-block">
-                <div class="team-name p2-glow" id="p2-ready-name-p2">BLUE</div>
-                <div class="team-score p2-glow" id="p2-ready-p2-score">0</div>
-            </div>
+        <div class="scoreboard">
+            <div><div id="p2-ready-name-p1">P1</div><div id="p2-ready-p1-score">0</div></div>
+            <div>VS</div>
+            <div><div id="p2-ready-name-p2">P2</div><div id="p2-ready-p2-score">0</div></div>
         </div>
-
-        <div class="center-content" style="flex: 1; justify-content: center; gap: 3vh;">
-            <div class="glass-panel" style="padding: 4vh 8vw;">
-                <div class="caption" style="margin-bottom: 1vh; color: var(--p2-color);">/// DEVICE HANDOFF ///</div>
-                <div style="font-size: 10vmin; margin-bottom: 1vh;">📱</div>
-                <div class="body" id="p2-ready-text" style="color: var(--p2-color); font-weight: 700; font-size: 1.3rem;">BLUE UNIT</div>
-                <div class="caption" style="margin-top: 0.5vh;">AWAITING INPUT</div>
-            </div>
-        </div>
-
-        <button class="btn btn-team-2" onclick="game.toSelection(2)">Lock In Moves</button>
+        <h2>Hand device to Player 2</h2>
+        <button class="btn" onclick="game.toSelection(2)">Pick Moves</button>
     </div>
 
+    <!-- P2 SELECT -->
     <div id="p2-select" class="screen">
-        <div class="selection-header">
-            <div class="caption" style="color: var(--p2-color); margin-bottom: 0.5vh;">/// SEQUENCE PROGRAMMING ///</div>
-            <div class="selection-round p2-glow">ROUND <span id="p2-round-num">1</span>/7</div>
+        <h2>Round <span id="p2-round-num">1</span>/7</h2>
+        <div class="progress-row" id="p2-progress"></div>
+        <div class="moves-grid">
+            <button class="move-btn" onclick="game.selectMove('rock')">🪨</button>
+            <button class="move-btn" onclick="game.selectMove('paper')">📄</button>
+            <button class="move-btn" onclick="game.selectMove('scissors')">✂️</button>
         </div>
-        
-        <div class="selection-progress" id="p2-progress"></div>
-
-        <div class="moves-grid" style="margin: auto 0;">
-            <button class="move-btn" onclick="game.selectMove('rock')" style="color: #ff6b6b;">🪨</button>
-            <button class="move-btn" onclick="game.selectMove('paper')" style="color: #4ecdc4;">📄</button>
-            <button class="move-btn" onclick="game.selectMove('scissors')" style="color: #ffe66d;">✂️</button>
-        </div>
-
-        <button class="btn btn-secondary" onclick="game.prevRound()" style="margin-bottom: 2vh;">◀ Return</button>
+        <button class="btn" onclick="game.prevRound()">Back</button>
     </div>
 
+    <!-- MATCH READY -->
     <div id="match-ready" class="screen">
-        <div class="center-content" style="flex: 1; justify-content: center; gap: 3vh; padding: 2vh;">
-            <div class="glass-panel" style="padding: 4vh 6vw; width: 100%; max-width: 400px;">
-                <div class="caption" style="margin-bottom: 1.5vh;">/// COMBAT READY ///</div>
-                
-                <div class="scoreboard" style="margin-bottom: 2vh;">
-                    <div class="team-block">
-                        <div class="team-score p1-glow" id="match-p1-score">0</div>
-                        <div class="team-name p1-glow" id="match-p1-name">RED</div>
-                    </div>
-                    <div class="vs-divider">
-                        <div style="font-size: 6vmin; font-weight: 900; color: rgba(255,255,255,0.2);">VS</div>
-                    </div>
-                    <div class="team-block">
-                        <div class="team-score p2-glow" id="match-p2-score">0</div>
-                        <div class="team-name p2-glow" id="match-p2-name">BLUE</div>
-                    </div>
-                </div>
-
-                <div class="body" style="color: rgba(255,255,255,0.6); margin-bottom: 2vh; font-size: 0.9rem;" id="victory-text">
-                    FIRST TO 2 VICTORIES
-                </div>
-                
-                <button class="btn btn-primary" onclick="game.startBattle()" style="margin: 0;">Initiate Battle</button>
-            </div>
+        <h2>Ready to Battle!</h2>
+        <div class="scoreboard">
+            <div><div id="match-p1-name">P1</div><div id="match-p1-score">0</div></div>
+            <div>VS</div>
+            <div><div id="match-p2-name">P2</div><div id="match-p2-score">0</div></div>
         </div>
+        <button class="btn" onclick="game.startBattle()">Start Battle</button>
     </div>
 
+    <!-- BATTLE -->
     <div id="battle" class="screen">
-        <div class="scoreboard glass-panel" style="margin-top: 1vh;">
-            <div class="team-block">
-                <div class="team-name p1-glow" id="battle-p1-name">RED</div>
-                <div class="team-score p1-glow" id="battle-p1-score">0</div>
-                <div class="caption">SET PTS: <span id="set-p1-points" class="p1-glow">0</span></div>
+        <div class="scoreboard">
+            <div>
+                <div id="battle-p1-name">P1</div>
+                <div id="battle-p1-score">0</div>
+                <div>Set: <span id="set-p1-points">0</span></div>
             </div>
-            <div class="vs-divider">
-                <div class="vs-text" style="font-size: 5vmin;">VS</div>
-            </div>
-            <div class="team-block">
-                <div class="team-name p2-glow" id="battle-p2-name">BLUE</div>
-                <div class="team-score p2-glow" id="battle-p2-score">0</div>
-                <div class="caption">SET PTS: <span id="set-p2-points" class="p2-glow">0</span></div>
+            <div>VS</div>
+            <div>
+                <div id="battle-p2-name">P2</div>
+                <div id="battle-p2-score">0</div>
+                <div>Set: <span id="set-p2-points">0</span></div>
             </div>
         </div>
-
-        <div class="battle-container">
-            <div class="countdown-wrapper">
-                <div class="countdown-text" id="center-countdown"></div>
-            </div>
-            
-            <div class="fighters-container" id="fighters-container">
-                <div class="fighter-wrapper" id="wrapper-p1">
-                    <div class="fighter p1-glow" id="fighter-p1">❔</div>
-                    <div class="confetti-zone" id="confetti-p1"></div>
-                    <div class="victory-confetti-zone" id="victory-confetti-p1"></div>
-                </div>
-
-                <div class="fighter-wrapper" id="wrapper-p2">
-                    <div class="fighter p2-glow" id="fighter-p2">❔</div>
-                    <div class="confetti-zone" id="confetti-p2"></div>
-                    <div class="victory-confetti-zone" id="victory-confetti-p2"></div>
-                </div>
-            </div>
-
-            <div class="result-banner" id="result-banner">Winner!</div>
+        <div class="countdown-text" id="countdown"></div>
+        <div class="fighters">
+            <span id="fighter-p1">❔</span>
+            <span id="fighter-p2">❔</span>
         </div>
-
-        <div class="round-bar-container glass-panel">
-            <div class="round-bar" id="round-bar"></div>
-        </div>
-        
-        <div class="explosion-zone" id="explosion-zone"></div>
+        <div class="result-text" id="result-banner"></div>
+        <div class="round-pips" id="round-pips"></div>
     </div>
 
+    <!-- SET RESULT -->
     <div id="set-result" class="screen">
-        <div class="center-content" style="flex: 1; justify-content: center; gap: 2vh; padding: 2vh;">
-            <div class="glass-panel" style="padding: 4vh 6vw; width: 100%; max-width: 400px; text-align: center;">
-                <div class="caption" style="margin-bottom: 1.5vh;">/// SET COMPLETE ///</div>
-                
-                <div class="scoreboard" style="margin: 2vh 0;">
-                    <div class="team-block">
-                        <div class="team-score p1-glow" id="result-p1-points" style="font-size: 3rem;">0</div>
-                        <div class="team-name p1-glow" id="result-p1-name">RED</div>
-                    </div>
-                    <div class="vs-divider">
-                        <div style="font-size: 1.2rem; color: rgba(255,255,255,0.2);">VS</div>
-                    </div>
-                    <div class="team-block">
-                        <div class="team-score p2-glow" id="result-p2-points" style="font-size: 3rem;">0</div>
-                        <div class="team-name p2-glow" id="result-p2-name">BLUE</div>
-                    </div>
-                </div>
-
-                <div class="h2" style="margin: 2vh 0; font-size: 1.5rem;" id="set-winner-text">RED WINS SET</div>
-                
-                <button class="btn btn-primary" onclick="game.continueGame()" style="margin: 0; margin-top: 1vh;">Continue</button>
-            </div>
+        <h2>Set Complete</h2>
+        <div class="scoreboard">
+            <div><div>Set Points</div><div id="result-p1-points">0</div></div>
+            <div>-</div>
+            <div><div>Set Points</div><div id="result-p2-points">0</div></div>
         </div>
+        <h2 id="set-winner-text">Winner</h2>
+        <button class="btn" onclick="game.continueGame()">Continue</button>
     </div>
 
+    <!-- GAME OVER -->
     <div id="game-over" class="screen">
-        <div class="center-content" style="flex: 1; justify-content: center; gap: 2vh; padding: 2vh;">
-            <div class="glass-panel" style="padding: 4vh 6vw; width: 100%; max-width: 400px; border-color: gold; text-align: center;">
-                <div style="font-size: 15vmin; margin-bottom: 1vh;">🏆</div>
-                <div class="caption" style="color: gold; margin-bottom: 1vh;">/// CHAMPION CROWNED ///</div>
-                <div class="h2" style="margin-bottom: 2vh; font-size: 1.5rem;" id="game-winner-text">RED IS CHAMPION</div>
-                
-                <div class="scoreboard" style="margin-bottom: 2vh;">
-                    <div class="team-block">
-                        <div class="team-score p1-glow" id="final-p1-score">2</div>
-                        <div class="team-name p1-glow" id="final-p1-name">RED</div>
-                    </div>
-                    <div class="vs-divider">
-                        <div class="caption" style="color: rgba(255,255,255,0.4);">FINAL</div>
-                    </div>
-                    <div class="team-block">
-                        <div class="team-score p2-glow" id="final-p2-score">1</div>
-                        <div class="team-name p2-glow" id="final-p2-name">BLUE</div>
-                    </div>
-                </div>
-
-                <div style="display: flex; flex-direction: column; gap: 1.5vh;">
-                    <button class="btn btn-primary" onclick="game.playAgain()" style="margin: 0; border-color: gold; color: gold;">New Match</button>
-                    <button class="btn btn-secondary" onclick="game.backToMenu()" style="margin: 0;">Main Menu</button>
-                </div>
-            </div>
+        <h1>CHAMPION!</h1>
+        <h2 id="game-winner-text">Winner</h2>
+        <div class="scoreboard">
+            <div><div id="final-p1-name">P1</div><div id="final-p1-score">0</div></div>
+            <div>-</div>
+            <div><div id="final-p2-name">P2</div><div id="final-p2-score">0</div></div>
         </div>
+        <button class="btn" onclick="game.playAgain()">Play Again</button>
+        <button class="btn" onclick="game.backToMenu()">Main Menu</button>
     </div>
 
 <script>
-// Sound System - Synthesizes all sounds using Web Audio API (no external files needed!)
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-const sounds = {
-    enabled: true,
-    
-    playTone(freq, duration, type = 'sine', volume = 0.3) {
-        if (!this.enabled || audioCtx.state === 'suspended') return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(volume, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-    },
-    
-    playClick() {
-        // Short, crisp click for UI
-        this.playTone(800, 0.08, 'square', 0.15);
-    },
-    
-    playSelect() {
-        // Satisfying "ding" for selections
-        this.playTone(1200, 0.1, 'sine', 0.2);
-        setTimeout(() => this.playTone(1600, 0.15, 'sine', 0.15), 50);
-    },
-    
-    playCountdown(phase) {
-        // ROCK = low, PAPER = medium, SCISSORS = high, SHOOT! = chord
-        const tones = {
-            'ROCK': 440,
-            'PAPER': 554, 
-            'SCISSORS': 659,
-            'SHOOT!': 880
-        };
-        const freq = tones[phase] || 440;
-        this.playTone(freq, 0.25, 'sawtooth', 0.2);
-    },
-    
-    playWinRound() {
-        // Victory fanfare (ascending notes)
-        [523, 659, 784, 1047].forEach((freq, i) => {
-            setTimeout(() => this.playTone(freq, 0.3, 'square', 0.25), i * 80);
-        });
-    },
-    
-    playLoseRound() {
-        // Sad descending
-        [440, 349, 294, 220].forEach((freq, i) => {
-            setTimeout(() => this.playTone(freq, 0.25, 'sawtooth', 0.2), i * 100);
-        });
-    },
-    
-    playTie() {
-        // Neutral beep
-        this.playTone(600, 0.15, 'sine', 0.2);
-    },
-    
-    playSetWin() {
-        // Bigger victory sound
-        [523, 659, 784, 1047, 1319].forEach((freq, i) => {
-            setTimeout(() => this.playTone(freq, 0.35, 'square', 0.3), i * 100);
-        });
-    },
-    
-    playGameWin() {
-        // Epic victory chord with arpeggio
-        const now = audioCtx.currentTime;
-        // Bass note
-        this.playTone(262, 1.5, 'sawtooth', 0.25);
-        // Arpeggio
-        setTimeout(() => this.playTone(523, 1.2, 'square', 0.3), 0);
-        setTimeout(() => this.playTone(659, 1.2, 'square', 0.25), 100);
-        setTimeout(() => this.playTone(784, 1.2, 'square', 0.25), 200);
-        setTimeout(() => this.playTone(1047, 1.5, 'square', 0.3), 300);
-        // Final sparkle
-        setTimeout(() => this.playTone(1319, 2.0, 'sine', 0.2), 500);
-        setTimeout(() => this.playTone(1568, 2.0, 'sine', 0.2), 600);
-    },
-    
-    resume() {
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-    }
-};
-
 const game = {
     ROUNDS_PER_SET: 7,
     setsToWin: 2,
@@ -1218,146 +290,77 @@ const game = {
     selectingRound: 0,
     currentPlayer: 1,
     roundResults: [],
-    
-    p1Name: 'RED',
-    p2Name: 'BLUE',
+    p1Name: 'P1',
+    p2Name: 'P2',
     p1Color: '#ff2a6d',
     p2Color: '#05d9e8',
-    
     moves: { rock: '🪨', paper: '📄', scissors: '✂️' },
     cycleOrder: ['❔', '🪨', '❔', '✂️', '❔', '📄'],
-    isBattling: false,
+    colors: [
+        {c:'#ff2a6d',n:'RED'},{c:'#05d9e8',n:'BLUE'},{c:'#aaff00',n:'GREEN'},
+        {c:'#ffaa00',n:'ORANGE'},{c:'#aa00ff',n:'PURPLE'},{c:'#ff69b4',n:'PINK'}
+    ],
 
     init() {
-        this.updateColorDisplays();
-        this.setupBackButton();
-        this.setupButtonRipples();
-    },
-    
-    setupButtonRipples() {
-        // Disabled for performance testing
+        this.renderColorGrids();
     },
 
-    // Prevent back button from closing app on Android - goes back to menu instead
-    setupBackButton() {
-        window.addEventListener('popstate', (e) => {
-            const currentScreen = document.querySelector('.screen.active');
-            if (currentScreen && currentScreen.id === 'battle' && this.isBattling) {
-                // If in middle of battle, ignore back button or handle specially
-                e.preventDefault();
-                if (confirm('Exit current battle?')) {
-                    this.backToMenu();
-                } else {
-                    // Push state back so we stay
-                    history.pushState(null, null, location.href);
-                }
-            } else if (currentScreen && currentScreen.id !== 'setup' && currentScreen.id !== 'battle') {
-                // Navigate back to setup from other screens
-                this.backToMenu();
-            }
-        });
+    renderColorGrids() {
+        const p1Grid = document.getElementById('p1-colors');
+        const p2Grid = document.getElementById('p2-colors');
+        p1Grid.innerHTML = '';
+        p2Grid.innerHTML = '';
         
-        // Initialize history state
-        history.pushState(null, null, location.href);
-    },
-
-    vibrate(pattern) {
-        if ('vibrate' in navigator) {
-            navigator.vibrate(pattern);
-        }
-    },
-
-    updateColorDisplays() {
-        document.querySelectorAll('#p1-colors .color-option').forEach(el => {
-            el.classList.toggle('selected', el.dataset.color === this.p1Color);
-        });
-        
-        document.querySelectorAll('#p2-colors .color-option').forEach(el => {
-            el.classList.toggle('selected', el.dataset.color === this.p2Color);
-            el.classList.toggle('disabled', el.dataset.color === this.p1Color);
-        });
-        
-        document.querySelectorAll('#p1-colors .color-option').forEach(el => {
-            el.classList.toggle('disabled', el.dataset.color === this.p2Color);
+        this.colors.forEach(col => {
+            const b1 = document.createElement('button');
+            b1.className = 'color-btn' + (col.c === this.p1Color ? ' selected' : '');
+            b1.style.background = col.c;
+            b1.onclick = () => this.selectColor(1, col.c, col.n);
+            p1Grid.appendChild(b1);
+            
+            const b2 = document.createElement('button');
+            b2.className = 'color-btn' + (col.c === this.p2Color ? ' selected' : '') + (col.c === this.p1Color ? ' disabled' : '');
+            b2.style.background = col.c;
+            b2.onclick = () => this.selectColor(2, col.c, col.n);
+            p2Grid.appendChild(b2);
         });
     },
 
     selectColor(player, color, name) {
-        sounds.playSelect();
-        const otherColor = player === 1 ? this.p2Color : this.p1Color;
-        if (color === otherColor) return;
+        if (player === 1 && color === this.p2Color) return;
+        if (player === 2 && color === this.p1Color) return;
         
         if (player === 1) {
             this.p1Color = color;
             this.p1Name = name;
-            document.documentElement.style.setProperty('--p1-color', color);
-            document.getElementById('p1-display-name').textContent = this.p1Name;
-            
-            document.querySelectorAll('#p1-colors .color-option').forEach(el => {
-                el.classList.toggle('selected', el.dataset.color === color);
-            });
-            
-            document.querySelectorAll('#p2-colors .color-option').forEach(el => {
-                el.classList.toggle('disabled', el.dataset.color === color);
-                if (el.dataset.color !== color && el.dataset.color !== this.p2Color) {
-                    el.classList.remove('disabled');
-                }
-            });
         } else {
             this.p2Color = color;
             this.p2Name = name;
-            document.documentElement.style.setProperty('--p2-color', color);
-            document.getElementById('p2-display-name').textContent = this.p2Name;
-            
-            document.querySelectorAll('#p2-colors .color-option').forEach(el => {
-                el.classList.toggle('selected', el.dataset.color === color);
-            });
-            
-            document.querySelectorAll('#p1-colors .color-option').forEach(el => {
-                el.classList.toggle('disabled', el.dataset.color === color);
-                if (el.dataset.color !== color && el.dataset.color !== this.p1Color) {
-                    el.classList.remove('disabled');
-                }
-            });
         }
+        this.renderColorGrids();
     },
 
     adjustSets(delta) {
-        sounds.playClick();
         this.setsToWin = Math.max(1, Math.min(5, this.setsToWin + delta));
         document.getElementById('sets-target').textContent = this.setsToWin;
     },
 
-    currentScreen: 'setup',
-    
     show(id) {
-        const currentEl = document.getElementById(this.currentScreen);
-        const nextEl = document.getElementById(id);
-        
-        // Simple fast transition
-        if (currentEl) {
-            currentEl.classList.remove('active');
-        }
-        nextEl.classList.add('active');
-        
-        this.currentScreen = id;
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
     },
-    
-
 
     startGame() {
-        sounds.resume();
-        sounds.playSelect();
         this.p1SetsWon = 0;
         this.p2SetsWon = 0;
         this.resetSet();
-        this.updateAllDisplayNames();
+        this.updateAllNames();
         this.show('p1-ready');
     },
 
     resetSet() {
-        this.p1Choices = new Array(this.ROUNDS_PER_SET).fill(null);
-        this.p2Choices = new Array(this.ROUNDS_PER_SET).fill(null);
+        this.p1Choices = new Array(7).fill(null);
+        this.p2Choices = new Array(7).fill(null);
         this.p1SetPoints = 0;
         this.p2SetPoints = 0;
         this.currentRound = 0;
@@ -1365,38 +368,33 @@ const game = {
         this.roundResults = [];
     },
 
-    updateAllDisplayNames() {
-        const updates = [
-            ['p1-ready-name', this.p1Name], ['p2-ready-name', this.p2Name],
-            ['p1-ready-title', this.p1Name + ' UNIT'], ['p1-select-name', this.p1Name],
-            ['p2-ready-name-p1', this.p1Name], ['p2-ready-name-p2', this.p2Name],
-            ['p2-ready-text', this.p2Name + ' UNIT'], ['p2-select-name', this.p2Name],
-            ['match-p1-name', this.p1Name], ['match-p2-name', this.p2Name],
-            ['battle-p1-name', this.p1Name], ['battle-p2-name', this.p2Name],
-            ['result-p1-name', this.p1Name], ['result-p2-name', this.p2Name],
-            ['final-p1-name', this.p1Name], ['final-p2-name', this.p2Name]
-        ];
-        
-        updates.forEach(([id, text]) => {
-            const el = document.getElementById(id);
-            if (el) el.textContent = text;
-        });
-
+    updateAllNames() {
+        document.getElementById('p1-ready-name').textContent = this.p1Name;
+        document.getElementById('p2-ready-name').textContent = this.p2Name;
         document.getElementById('p1-ready-score').textContent = this.p1SetsWon;
         document.getElementById('p2-ready-score').textContent = this.p2SetsWon;
-        document.getElementById('ready-target-display').textContent = this.setsToWin;
-        document.getElementById('ready2-target-display').textContent = this.setsToWin;
+        document.getElementById('p1-ready-title').textContent = this.p1Name + ': Select 7 Moves';
+        document.getElementById('p2-ready-name-p1').textContent = this.p1Name;
+        document.getElementById('p2-ready-name-p2').textContent = this.p2Name;
+        document.getElementById('p2-ready-p1-score').textContent = this.p1SetsWon;
+        document.getElementById('p2-ready-p2-score').textContent = this.p2SetsWon;
+        document.getElementById('match-p1-name').textContent = this.p1Name;
+        document.getElementById('match-p2-name').textContent = this.p2Name;
+        document.getElementById('battle-p1-name').textContent = this.p1Name;
+        document.getElementById('battle-p2-name').textContent = this.p2Name;
+        document.getElementById('result-p1-name').textContent = this.p1Name;
+        document.getElementById('result-p2-name').textContent = this.p2Name;
+        document.getElementById('final-p1-name').textContent = this.p1Name;
+        document.getElementById('final-p2-name').textContent = this.p2Name;
     },
 
     toSelection(player) {
-        sounds.playClick();
         this.currentPlayer = player;
         this.selectingRound = 0;
-        while (this.selectingRound < this.ROUNDS_PER_SET && this.getCurrentChoices()[this.selectingRound] !== null) {
+        while (this.selectingRound < 7 && this.getCurrentChoices()[this.selectingRound]) {
             this.selectingRound++;
         }
-        if (this.selectingRound >= this.ROUNDS_PER_SET) this.selectingRound = 0;
-        
+        if (this.selectingRound >= 7) this.selectingRound = 0;
         this.renderProgress();
         this.updateSelectionUI();
         this.show(player === 1 ? 'p1-select' : 'p2-select');
@@ -1406,52 +404,29 @@ const game = {
         return this.currentPlayer === 1 ? this.p1Choices : this.p2Choices;
     },
 
-    // Optimized renderProgress - only creates dots once, updates classes
     renderProgress() {
-        const containerId = this.currentPlayer === 1 ? 'p1-progress' : 'p2-progress';
-        const container = document.getElementById(containerId);
+        const container = document.getElementById(this.currentPlayer === 1 ? 'p1-progress' : 'p2-progress');
+        container.innerHTML = '';
         const choices = this.getCurrentChoices();
-        const color = this.currentPlayer === 1 ? this.p1Color : this.p2Color;
         
-        // Create dots once, then just update them
-        if (!container.children.length || container.children.length !== this.ROUNDS_PER_SET) {
-            container.innerHTML = '';
-            for (let i = 0; i < this.ROUNDS_PER_SET; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'progress-dot';
-                dot.style.color = color;
-                dot.id = `${containerId}-dot-${i}`;
-                container.appendChild(dot);
-            }
-        }
-        
-        // Update existing dots (much faster than rebuilding)
-        for (let i = 0; i < this.ROUNDS_PER_SET; i++) {
-            const dot = document.getElementById(`${containerId}-dot-${i}`);
-            if (!dot) continue;
-            
+        for (let i = 0; i < 7; i++) {
+            const dot = document.createElement('div');
             dot.className = 'progress-dot';
-            dot.textContent = '';
-            
-            if (i === this.selectingRound) {
-                dot.classList.add('current');
-            } else if (choices[i]) {
+            if (i === this.selectingRound) dot.classList.add('current');
+            else if (choices[i]) {
                 dot.classList.add('filled');
                 dot.textContent = this.moves[choices[i]];
             }
+            container.appendChild(dot);
         }
     },
 
     updateSelectionUI() {
+        document.getElementById(this.currentPlayer === 1 ? 'p1-round-num' : 'p2-round-num').textContent = this.selectingRound + 1;
         this.renderProgress();
-        const roundNum = document.getElementById(this.currentPlayer === 1 ? 'p1-round-num' : 'p2-round-num');
-        if (roundNum) roundNum.textContent = this.selectingRound + 1;
-        
         const choices = this.getCurrentChoices();
         const current = choices[this.selectingRound];
-
         document.querySelectorAll('.move-btn').forEach(btn => btn.classList.remove('selected'));
-        
         if (current) {
             const map = {rock: 0, paper: 1, scissors: 2};
             const buttons = document.querySelectorAll('.move-btn');
@@ -1470,23 +445,19 @@ const game = {
         const choices = this.getCurrentChoices();
         if (!choices[this.selectingRound]) return;
         
-        if (this.selectingRound < this.ROUNDS_PER_SET - 1) {
+        if (this.selectingRound < 6) {
             this.selectingRound++;
             this.updateSelectionUI();
         } else {
-            // Add small delay before screen transition for better feel
-            setTimeout(() => {
-                if (this.currentPlayer === 1) {
-                    this.show('p2-ready');
-                } else {
-                    this.showMatchReady();
-                }
-            }, 200);
+            if (this.currentPlayer === 1) {
+                this.show('p2-ready');
+            } else {
+                this.showMatchReady();
+            }
         }
     },
 
     prevRound() {
-        sounds.playClick();
         if (this.selectingRound > 0) {
             this.selectingRound--;
             this.updateSelectionUI();
@@ -1496,146 +467,68 @@ const game = {
     showMatchReady() {
         document.getElementById('match-p1-score').textContent = this.p1SetsWon;
         document.getElementById('match-p2-score').textContent = this.p2SetsWon;
-        
-        const p1Needs = this.setsToWin - this.p1SetsWon;
-        const p2Needs = this.setsToWin - this.p2SetsWon;
-        
-        let text = '';
-        if (this.p1SetsWon === 0 && this.p2SetsWon === 0) {
-            text = `FIRST TO ${this.setsToWin} VICTORIES`;
-        } else if (p1Needs === 1 && p2Needs === 1) {
-            text = 'FINAL SET • WINNER TAKES ALL';
-        } else {
-            text = `${this.p1Name} NEEDS ${p1Needs} • ${this.p2Name} NEEDS ${p2Needs}`;
-        }
-        
-        document.getElementById('victory-text').textContent = text;
         this.show('match-ready');
     },
 
     async startBattle() {
-        sounds.playSelect();
-        this.isBattling = true;
         this.show('battle');
         this.currentRound = 0;
         this.p1SetPoints = 0;
         this.p2SetPoints = 0;
         this.roundResults = [];
-        
-        const wrapper1 = document.getElementById('wrapper-p1');
-        const wrapper2 = document.getElementById('wrapper-p2');
-        const f1 = document.getElementById('fighter-p1');
-        const f2 = document.getElementById('fighter-p2');
-        
-        wrapper1.classList.remove('center-winner', 'hidden');
-        wrapper2.classList.remove('center-winner', 'hidden');
-        wrapper1.style.opacity = '1';
-        wrapper2.style.opacity = '1';
-        f1.className = 'fighter p1-glow';
-        f2.className = 'fighter p2-glow';
-        
         document.getElementById('battle-p1-score').textContent = this.p1SetsWon;
         document.getElementById('battle-p2-score').textContent = this.p2SetsWon;
         document.getElementById('set-p1-points').textContent = '0';
         document.getElementById('set-p2-points').textContent = '0';
-        this.updateRoundBar();
+        this.renderRoundPips();
         
-        await this.sleep(500);
-        
-        let earlyExit = false;
-        for (let i = 0; i < this.ROUNDS_PER_SET; i++) {
-            const continueBattle = await this.playRound(i);
-            if (!continueBattle) {
-                earlyExit = true;
-                break;
-            }
+        for (let i = 0; i < 7; i++) {
+            await this.playRound(i);
         }
         
-        // BUG FIX: If all rounds completed without early exit, determine winner/tie
-        if (!earlyExit) {
-            let winner = 'tie';
-            if (this.p1SetPoints > this.p2SetPoints) winner = 'p1';
-            else if (this.p2SetPoints > this.p1SetPoints) winner = 'p2';
-            await this.endSet(winner);
-        }
-        
-        this.isBattling = false;
+        let winner = 'tie';
+        if (this.p1SetPoints > this.p2SetPoints) winner = 'p1';
+        else if (this.p2SetPoints > this.p1SetPoints) winner = 'p2';
+        await this.endSet(winner);
     },
 
-    updateRoundBar() {
-        const bar = document.getElementById('round-bar');
-        bar.innerHTML = '';
-        for (let i = 0; i < this.ROUNDS_PER_SET; i++) {
+    renderRoundPips() {
+        const container = document.getElementById('round-pips');
+        container.innerHTML = '';
+        for (let i = 0; i < 7; i++) {
             const pip = document.createElement('div');
-            pip.className = 'round-pip';
+            pip.className = 'pip';
             if (this.roundResults[i]) {
-                pip.classList.add(this.roundResults[i] === 'p1' ? 'won-p1' : (this.roundResults[i] === 'p2' ? 'won-p2' : 'tie'));
+                pip.classList.add(this.roundResults[i] === 'p1' ? 'p1' : (this.roundResults[i] === 'p2' ? 'p2' : 'tie'));
             }
-            bar.appendChild(pip);
+            container.appendChild(pip);
         }
     },
 
     sleep(ms) { return new Promise(r => setTimeout(r, ms)); },
-    
-    // Battle visual effects - disabled for mobile performance
-    shakeScreen() {
-        // Disabled: causes jank on mobile
-    },
-    
-    flashScreen(color = 'white') {
-        // Disabled: causes jank on mobile
-    },
-    
-    createFighterTrail(fighter, color) {
-        // Disabled: DOM thrashing on mobile
-    },
-    
-    showVSClash() {
-        const vs = document.getElementById('vs-clash');
-        vs.style.color = `linear-gradient(90deg, var(--p1-color), var(--p2-color))`;
-        vs.classList.add('animate');
-        setTimeout(() => vs.classList.remove('animate'), 800);
-    },
 
     async playRound(roundIndex) {
         const f1 = document.getElementById('fighter-p1');
         const f2 = document.getElementById('fighter-p2');
-        const wrapper1 = document.getElementById('wrapper-p1');
-        const wrapper2 = document.getElementById('wrapper-p2');
-        const countdown = document.getElementById('center-countdown');
-        const resultBanner = document.getElementById('result-banner');
+        const countdown = document.getElementById('countdown');
+        const banner = document.getElementById('result-banner');
         
-        resultBanner.classList.remove('show');
-        wrapper1.classList.remove('center-winner', 'hidden');
-        wrapper2.classList.remove('center-winner', 'hidden');
-        wrapper1.style.opacity = '1';
-        wrapper2.style.opacity = '1';
-        f1.className = 'fighter p1-glow cycling';
-        f2.className = 'fighter p2-glow cycling';
-        f1.style.transform = '';
-        f2.style.transform = '';
-        f1.style.opacity = '1';
-        f2.style.opacity = '1';
-        
+        banner.textContent = '';
         f1.textContent = '❔';
         f2.textContent = '❔';
         
-        // Battle timing: 1s per phase, 2s reveal, 2s result, 1s pause
         const phases = ['ROCK', 'PAPER', 'SCISSORS', 'SHOOT!'];
         
         for (let i = 0; i < 4; i++) {
             countdown.textContent = phases[i];
-            sounds.playCountdown(phases[i]);
-            
             if (i < 3) {
                 f1.textContent = this.cycleOrder[(i * 2) % 6];
                 f2.textContent = this.cycleOrder[(i * 2) % 6];
-                await this.sleep(1000); // 1 second per phase
+                await this.sleep(1000);
             } else {
-                // SHOOT! - reveal and hold for 2 seconds
                 f1.textContent = this.moves[this.p1Choices[roundIndex]];
                 f2.textContent = this.moves[this.p2Choices[roundIndex]];
-                await this.sleep(2000); // 2 second reveal
+                await this.sleep(2000);
                 countdown.textContent = '';
             }
         }
@@ -1644,163 +537,66 @@ const game = {
         const p2Move = this.p2Choices[roundIndex];
         let winner = null;
         let resultText = '';
-        let resultColor = '';
         
         if (p1Move === p2Move) {
             winner = 'tie';
             resultText = 'DRAW +0.5';
-            resultColor = '#ffffff';
             this.p1SetPoints += 0.5;
             this.p2SetPoints += 0.5;
-            this.roundResults.push('tie');
-            sounds.playTie();
-            
-        } else if (
-            (p1Move === 'rock' && p2Move === 'scissors') ||
-            (p1Move === 'paper' && p2Move === 'rock') ||
-            (p1Move === 'scissors' && p2Move === 'paper')
-        ) {
+        } else if ((p1Move === 'rock' && p2Move === 'scissors') ||
+                   (p1Move === 'paper' && p2Move === 'rock') ||
+                   (p1Move === 'scissors' && p2Move === 'paper')) {
             winner = 'p1';
-            resultText = `${this.p1Name} WINS`;
-            resultColor = this.p1Color;
+            resultText = this.p1Name + ' WINS';
             this.p1SetPoints += 1;
-            this.roundResults.push('p1');
         } else {
             winner = 'p2';
-            resultText = `${this.p2Name} WINS`;
-            resultColor = this.p2Color;
+            resultText = this.p2Name + ' WINS';
             this.p2SetPoints += 1;
-            this.roundResults.push('p2');
         }
         
-        // Update scores - no animations
+        this.roundResults.push(winner);
         document.getElementById('set-p1-points').textContent = this.p1SetPoints;
         document.getElementById('set-p2-points').textContent = this.p2SetPoints;
-        this.updateRoundBar();
+        this.renderRoundPips();
         
-        // Show result with celebration (2s) + pause (1s) = 3s total
-        resultBanner.textContent = resultText;
-        resultBanner.style.color = resultColor;
-        resultBanner.style.borderColor = resultColor;
-        resultBanner.classList.add('show');
-        sounds.playWinRound();
-        
-        await this.sleep(3000); // 2s celebration + 1s pause
-        
-        resultBanner.classList.remove('show');
-        
-        // Check for early set completion (mathematically impossible to catch up)
-        const remaining = this.ROUNDS_PER_SET - roundIndex - 1;
-        if (this.p1SetPoints > this.p2SetPoints + remaining) {
-            await this.endSet('p1');
-            return false;
-        } else if (this.p2SetPoints > this.p1SetPoints + remaining) {
-            await this.endSet('p2');
-            return false;
-        }
-        
-        return true;
-    },
-
-    triggerMassiveExplosion(color) {
-        // Disabled for performance testing
-    },
-
-    triggerVictoryConfetti(player, color) {
-        // Disabled for performance testing
-    },
-    
-    triggerMegaConfetti() {
-        // Disabled for performance testing
+        banner.textContent = resultText;
+        await this.sleep(3000);
+        banner.textContent = '';
     },
 
     async endSet(winner) {
-        await this.sleep(300);
-        
         document.getElementById('result-p1-points').textContent = this.p1SetPoints;
         document.getElementById('result-p2-points').textContent = this.p2SetPoints;
         
         const winnerText = winner === 'p1' ? this.p1Name : this.p2Name;
-        document.getElementById('set-winner-text').textContent = winner === 'tie' ? 'SET TIED' : `${winnerText} WINS SET`;
-        document.getElementById('set-winner-text').className = winner === 'p1' ? 'h2 p1-glow' : (winner === 'p2' ? 'h2 p2-glow' : 'h2');
+        document.getElementById('set-winner-text').textContent = winner === 'tie' ? 'SET TIED' : winnerText + ' WINS SET';
         
         if (winner === 'p1') this.p1SetsWon++;
         else if (winner === 'p2') this.p2SetsWon++;
-        // If tie, neither gets a point - set is replayed or continues based on your rules
-        // For now, tied sets don't count toward victory condition
         
         if (this.p1SetsWon >= this.setsToWin || this.p2SetsWon >= this.setsToWin) {
             this.endGame(winner === 'tie' ? (this.p1SetPoints > this.p2SetPoints ? 'p1' : 'p2') : winner);
         } else {
-            sounds.playSetWin();
             this.show('set-result');
         }
     },
 
     endGame(winner) {
         const winnerName = winner === 'p1' ? this.p1Name : this.p2Name;
-        const winnerColor = winner === 'p1' ? this.p1Color : this.p2Color;
-        
-        // Update overlay content
-        document.getElementById('victory-text').textContent = winnerName + ' WINS!';
-        document.getElementById('victory-text').style.color = winnerColor;
-        document.getElementById('victory-subtext').textContent = `${this.p1SetsWon} - ${this.p2SetsWon} Victory`;
-        document.getElementById('victory-crown').style.filter = `drop-shadow(0 0 30px ${winnerColor})`;
-        
-        // Play sounds and effects
-        sounds.playGameWin();
-        this.triggerMegaConfetti();
-        this.flashScreen(winnerColor);
-        
-        // Show overlay after brief delay
-        setTimeout(() => {
-            document.getElementById('victory-overlay').classList.add('show');
-        }, 500);
-        
-        // Also update the regular game-over screen as fallback
-        document.getElementById('game-winner-text').textContent = `${winnerName} IS CHAMPION`;
-        document.getElementById('game-winner-text').className = winner === 'p1' ? 'h2 p1-glow' : 'h2 p2-glow';
+        document.getElementById('game-winner-text').textContent = winnerName + ' IS CHAMPION';
         document.getElementById('final-p1-score').textContent = this.p1SetsWon;
         document.getElementById('final-p2-score').textContent = this.p2SetsWon;
-    },
-    
-    playAgainFromOverlay() {
-        document.getElementById('victory-overlay').classList.remove('show');
-        document.getElementById('mega-confetti').innerHTML = '';
-        this.playAgain();
-    },
-    
-    backToMenuFromOverlay() {
-        document.getElementById('victory-overlay').classList.remove('show');
-        document.getElementById('mega-confetti').innerHTML = '';
-        this.backToMenu();
-    },
-    
-    shareResult() {
-        const text = `🏆 I just won a match in RPC Championships! ${this.p1SetsWon}-${this.p2SetsWon} victory!`;
-        if (navigator.share) {
-            navigator.share({
-                title: 'RPC Championships',
-                text: text,
-                url: window.location.href
-            });
-        } else {
-            // Copy to clipboard
-            navigator.clipboard.writeText(text + ' ' + window.location.href).then(() => {
-                alert('Result copied to clipboard!');
-            });
-        }
+        this.show('game-over');
     },
 
     continueGame() {
-        sounds.playClick();
         this.resetSet();
-        this.updateAllDisplayNames();
+        this.updateAllNames();
         this.show('p1-ready');
     },
 
     playAgain() {
-        sounds.playClick();
         this.p1SetsWon = 0;
         this.p2SetsWon = 0;
         this.resetSet();
@@ -1808,41 +604,11 @@ const game = {
     },
 
     backToMenu() {
-        sounds.playClick();
-        this.isBattling = false;
         this.show('setup');
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    game.init();
-    
-    if ('serviceWorker' in navigator) {
-        const swCode = `
-            self.addEventListener('install', e => {
-                e.waitUntil(
-                    caches.open('rpc-championships-v1').then(cache => {
-                        return cache.addAll(['./']);
-                    })
-                );
-                self.skipWaiting();
-            });
-            self.addEventListener('activate', e => {
-                e.waitUntil(self.clients.claim());
-            });
-            self.addEventListener('fetch', e => {
-                e.respondWith(
-                    caches.match(e.request).then(response => {
-                        return response || fetch(e.request);
-                    })
-                );
-            });
-        `;
-        const blob = new Blob([swCode], {type: 'application/javascript'});
-        const swUrl = URL.createObjectURL(blob);
-        navigator.serviceWorker.register(swUrl);
-    }
-});
+document.addEventListener('DOMContentLoaded', () => game.init());
 </script>
 </body>
 </html>
