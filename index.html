@@ -663,6 +663,69 @@ function back() {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+// Web Audio API sound effects
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playSound(type) {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    const now = audioCtx.currentTime;
+    
+    switch(type) {
+        case 'win1': // P1 win - higher pitch victory
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(523.25, now); // C5
+            osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+            osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc.start(now);
+            osc.stop(now + 0.4);
+            break;
+        case 'win2': // P2 win - lower pitch victory
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(392.00, now); // G4
+            osc.frequency.setValueAtTime(493.88, now + 0.1); // B4
+            osc.frequency.setValueAtTime(587.33, now + 0.2); // D5
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc.start(now);
+            osc.stop(now + 0.4);
+            break;
+        case 'tie': // Tie - dissonant/dull sound
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(300, now);
+            osc.frequency.linearRampToValueAtTime(280, now + 0.3);
+            gain.gain.setValueAtTime(0.08, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+            osc.start(now);
+            osc.stop(now + 0.3);
+            break;
+        case 'count': // Countdown beat
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(440, now); // A4
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            osc.start(now);
+            osc.stop(now + 0.15);
+            break;
+        case 'shoot': // Shoot reveal
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(220, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+            osc.start(now);
+            osc.stop(now + 0.3);
+            break;
+    }
+}
+
 async function battle() {
     show('s7');
     document.getElementById('n7a').textContent = p1n;
@@ -701,6 +764,9 @@ async function battle() {
         const phases = ['ROCK','PAPER','SCISSORS','SHOOT!'];
         const phaseEmojis = {ROCK:'🪨', PAPER:'📄', SCISSORS:'✂️', 'SHOOT!':'🎯'};
         
+        // Reset text color at start of round
+        document.getElementById('cnt').style.color = '#fff';
+        
         // Start with fists
         const f1 = document.getElementById('f1');
         const f2 = document.getElementById('f2');
@@ -722,15 +788,18 @@ async function battle() {
                 void f2.offsetWidth;
                 f1.classList.add('fist-animate');
                 f2.classList.add('fist-animate');
+                playSound('count');
                 await sleep(1000); // 1 second per phase
             } else {
                 // SHOOT! - reveal actual moves
                 f1.textContent = MOVES[p1moves[round]];
                 f2.textContent = MOVES[p2moves[round]];
+                playSound('shoot');
                 await sleep(2000); // reveal for 2s
                 
                 // Clear phase row but keep fighters
                 document.getElementById('cnt').textContent = '';
+                document.getElementById('cnt').style.color = '#fff';
                 document.getElementById('phase-left').textContent = '';
                 document.getElementById('phase-right').textContent = '';
             }
@@ -754,10 +823,17 @@ async function battle() {
         document.getElementById('seta').textContent = p1set;
         document.getElementById('setb').textContent = p2set;
         
-        // Show result in top row with win emoji
-        document.getElementById('cnt').textContent = txt;
+        // Show result in top row with win emoji and winner color
+        const cntEl = document.getElementById('cnt');
+        cntEl.textContent = txt;
+        cntEl.style.color = winner === 'p1' ? p1c : (winner === 'p2' ? p2c : '#fff');
         document.getElementById('phase-left').textContent = '🏆';
         document.getElementById('phase-right').textContent = '🏆';
+        
+        // Play sound effect based on result
+        if (winner === 'tie') playSound('tie');
+        else if (winner === 'p1') playSound('win1');
+        else playSound('win2');
         
         // Update pips with colors
         const pips = document.getElementById('pips');
@@ -799,6 +875,11 @@ function endSet() {
     if (win === 'p1') p1s++;
     else if (win === 'p2') p2s++;
     else if (win === 'tie') { p1s += 0.5; p2s += 0.5; }
+    
+    // Play set end sound
+    if (win === 'tie') playSound('tie');
+    else if (win === 'p1') playSound('win1');
+    else playSound('win2');
     
     // Set end screen with colors
     document.getElementById('n8a').textContent = p1n;
