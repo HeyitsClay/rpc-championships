@@ -74,13 +74,13 @@
 <!-- P1 PICK -->
 <div id="s2" class="screen">
     <div class="score">
-        <span id="n1" style="font-weight:bold;">P1</span>
+        <span id="n1" style="font-weight:bold;">RED</span>
         <span id="s2p1">0</span>
         <span>VS</span>
         <span id="s2p2">0</span>
-        <span id="n2" style="font-weight:bold;">P2</span>
+        <span id="n2" style="font-weight:bold;">BLUE</span>
     </div>
-    <h1 id="t2">Pick 7 Moves</h1>
+    <h1 id="t2" style="font-size:22px; margin:15px 0;"><span id="t2-color" style="color:#ff2a6d;">RED</span>'s Selection</h1>
     <button onclick="goPick(1)">PICK MOVES</button>
 </div>
 
@@ -94,6 +94,16 @@
         <button class="move" onclick="pick('scissors')">✂️</button>
     </div>
     <button onclick="back()">BACK</button>
+    
+    <!-- Match score at bottom -->
+    <div style="display:flex; gap:10px; margin-top:auto; margin-bottom:10px;">
+        <div id="p1-select-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center;">
+            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="sel-p1">0</div>
+        </div>
+        <div id="p2-select-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center;">
+            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="sel-p2">0</div>
+        </div>
+    </div>
 </div>
 
 <!-- P2 PICK -->
@@ -119,6 +129,16 @@
         <button class="move" onclick="pick('scissors')">✂️</button>
     </div>
     <button onclick="back()">BACK</button>
+    
+    <!-- Match score at bottom -->
+    <div style="display:flex; gap:10px; margin-top:auto; margin-bottom:10px;">
+        <div id="p1-select-box2" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center;">
+            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="sel2-p1">0</div>
+        </div>
+        <div id="p2-select-box2" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center;">
+            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="sel2-p2">0</div>
+        </div>
+    </div>
 </div>
 
 <!-- READY -->
@@ -164,12 +184,12 @@
     </div>
     
     <!-- Bottom: Match score in team color boxes -->
-    <div style="display:flex; gap:10px; margin-top:auto; margin-bottom:20px;">
-        <div id="p1-score-box" style="flex:1; padding:15px; display:flex; justify-content:center; align-items:center;">
-            <div style="background:#000; color:#fff; padding:10px 20px; font-size:24px; font-weight:bold; min-width:60px; text-align:center;" id="match-p1">0</div>
+    <div style="display:flex; gap:10px; margin-top:auto; padding-bottom:10px;">
+        <div id="p1-score-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center;">
+            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="match-p1">0</div>
         </div>
-        <div id="p2-score-box" style="flex:1; padding:15px; display:flex; justify-content:center; align-items:center;">
-            <div style="background:#000; color:#fff; padding:10px 20px; font-size:24px; font-weight:bold; min-width:60px; text-align:center;" id="match-p2">0</div>
+        <div id="p2-score-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center;">
+            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="match-p2">0</div>
         </div>
     </div>
 </div>
@@ -288,7 +308,8 @@ function newSet() {
     document.getElementById('n1').style.color = p1c;
     document.getElementById('n2').textContent = p2n;
     document.getElementById('n2').style.color = p2c;
-    document.getElementById('t2').textContent = p1n + ': Pick 7 Moves';
+    document.getElementById('t2-color').textContent = p1n;
+    document.getElementById('t2-color').style.color = p1c;
     document.getElementById('s2p1').textContent = p1s;
     document.getElementById('s2p2').textContent = p2s;
 }
@@ -299,6 +320,20 @@ function goPick(p) {
     while (curRound < 7 && (p === 1 ? p1moves : p2moves)[curRound]) curRound++;
     if (curRound >= 7) curRound = 0;
     updatePickScreen();
+    
+    // Set match score boxes for selection screen
+    if (p === 1) {
+        document.getElementById('p1-select-box').style.background = p1c;
+        document.getElementById('p2-select-box').style.background = p2c;
+        document.getElementById('sel-p1').textContent = p1s;
+        document.getElementById('sel-p2').textContent = p2s;
+    } else {
+        document.getElementById('p1-select-box2').style.background = p1c;
+        document.getElementById('p2-select-box2').style.background = p2c;
+        document.getElementById('sel2-p1').textContent = p1s;
+        document.getElementById('sel2-p2').textContent = p2s;
+    }
+    
     show(p === 1 ? 's3' : 's5');
 }
 
