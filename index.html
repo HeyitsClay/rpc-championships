@@ -296,16 +296,12 @@ async function battle() {
             document.getElementById('cnt').textContent = phases[i];
             
             if (i < 3) {
-                // Show ? then the phase emoji (e.g., ? -> Rock for ROCK phase)
-                document.getElementById('f1').textContent = '❔';
-                document.getElementById('f2').textContent = '❔';
-                await sleep(250); // ? for 0.25s
-                
+                // ROCK, PAPER, SCISSORS - just show the emoji
                 document.getElementById('f1').textContent = phaseEmojis[phases[i]];
                 document.getElementById('f2').textContent = phaseEmojis[phases[i]];
-                await sleep(500); // emoji for 0.5s (total 0.75s)
+                await sleep(750); // 0.75s per phase
             } else {
-                // SHOOT! - show ? then reveal actual moves
+                // SHOOT! - flash ? then reveal actual moves
                 document.getElementById('f1').textContent = '❔';
                 document.getElementById('f2').textContent = '❔';
                 await sleep(250); // ? for 0.25s
