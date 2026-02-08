@@ -10,7 +10,7 @@
             background: #000; 
             color: #fff; 
             font-family: system-ui, sans-serif;
-            height: 100vh;
+            height: 100dvh; /* Use dynamic viewport height for mobile */
             overflow: hidden;
         }
         .screen { 
@@ -44,6 +44,11 @@
         .color.sel { border-color: #fff; }
         .big { font-size: 64px; text-align: center; margin: 20px 0; }
         .center { text-align: center; margin: 10px 0; }
+        
+        /* Unified scoreboard - used on all screens */
+        .scoreboard { display:flex; gap:10px; padding:10px; flex-shrink:0; }
+        .scorebox { flex:1; padding:10px; display:flex; justify-content:center; align-items:center; }
+        .scorenum { background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center; }
         
         /* Fist drop animation - 0.25s down, 0.75s up, synchronized */
         @keyframes fist-drop {
@@ -105,12 +110,12 @@
     </div>
     
     <!-- Match score at bottom -->
-    <div style="display:flex; gap:10px; padding:10px; flex-shrink:0;">
-        <div id="p1-pick-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center; background:#ff2a6d;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;">0</div>
+    <div class="scoreboard">
+        <div class="scorebox" id="sb-p1-box" style="background:#ff2a6d;">
+            <div class="scorenum" id="sb-p1">0</div>
         </div>
-        <div id="p2-pick-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center; background:#05d9e8;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;">0</div>
+        <div class="scorebox" id="sb-p2-box" style="background:#05d9e8;">
+            <div class="scorenum" id="sb-p2">0</div>
         </div>
     </div>
 </div>
@@ -153,13 +158,13 @@
         </div>
     </div>
     
-    <!-- Match score at bottom - fixed position -->
-    <div style="display:flex; gap:10px; padding:10px; flex-shrink:0; background:#111;">
-        <div id="p1-select-box" style="flex:1; padding:8px; display:flex; justify-content:center; align-items:center;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:18px; font-weight:bold; min-width:50px; text-align:center;" id="sel-p1">0</div>
+    <!-- Match score at bottom -->
+    <div class="scoreboard">
+        <div class="scorebox" id="sb-p1-box-s3" style="background:#ff2a6d;">
+            <div class="scorenum" id="sb-p1-s3">0</div>
         </div>
-        <div id="p2-select-box" style="flex:1; padding:8px; display:flex; justify-content:center; align-items:center;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:18px; font-weight:bold; min-width:50px; text-align:center;" id="sel-p2">0</div>
+        <div class="scorebox" id="sb-p2-box-s3" style="background:#05d9e8;">
+            <div class="scorenum" id="sb-p2-s3">0</div>
         </div>
     </div>
 </div>
@@ -198,12 +203,12 @@
     </div>
     
     <!-- Match score at bottom -->
-    <div style="display:flex; gap:10px; padding:10px; flex-shrink:0;">
-        <div id="p1-pick2-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center; background:#ff2a6d;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;">0</div>
+    <div class="scoreboard">
+        <div class="scorebox" id="sb-p1-box-s4" style="background:#ff2a6d;">
+            <div class="scorenum" id="sb-p1-s4">0</div>
         </div>
-        <div id="p2-pick2-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center; background:#05d9e8;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;">0</div>
+        <div class="scorebox" id="sb-p2-box-s4" style="background:#05d9e8;">
+            <div class="scorenum" id="sb-p2-s4">0</div>
         </div>
     </div>
 </div>
@@ -246,13 +251,13 @@
         </div>
     </div>
     
-    <!-- Match score at bottom - fixed position -->
-    <div style="display:flex; gap:10px; padding:10px; flex-shrink:0; background:#111;">
-        <div id="p1-select-box2" style="flex:1; padding:8px; display:flex; justify-content:center; align-items:center;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:18px; font-weight:bold; min-width:50px; text-align:center;" id="sel2-p1">0</div>
+    <!-- Match score at bottom -->
+    <div class="scoreboard">
+        <div class="scorebox" id="sb-p1-box-s5" style="background:#ff2a6d;">
+            <div class="scorenum" id="sb-p1-s5">0</div>
         </div>
-        <div id="p2-select-box2" style="flex:1; padding:8px; display:flex; justify-content:center; align-items:center;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:18px; font-weight:bold; min-width:50px; text-align:center;" id="sel2-p2">0</div>
+        <div class="scorebox" id="sb-p2-box-s5" style="background:#05d9e8;">
+            <div class="scorenum" id="sb-p2-s5">0</div>
         </div>
     </div>
 </div>
@@ -291,12 +296,12 @@
     </div>
     
     <!-- Match score at bottom -->
-    <div style="display:flex; gap:10px; padding:10px; flex-shrink:0;">
-        <div id="p1-ready-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center; background:#ff2a6d;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="ready-p1">0</div>
+    <div class="scoreboard">
+        <div class="scorebox" id="sb-p1-box-s6" style="background:#ff2a6d;">
+            <div class="scorenum" id="sb-p1-s6">0</div>
         </div>
-        <div id="p2-ready-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center; background:#05d9e8;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="ready-p2">0</div>
+        <div class="scorebox" id="sb-p2-box-s6" style="background:#05d9e8;">
+            <div class="scorenum" id="sb-p2-s6">0</div>
         </div>
     </div>
 </div>
@@ -342,39 +347,50 @@
         </div>
     </div>
     
-    <!-- Bottom: Match score in team color boxes -->
-    <div style="display:flex; gap:10px; margin-top:auto; padding:10px; flex-shrink:0;">
-        <div id="p1-score-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="match-p1">0</div>
+    <!-- Match score at bottom -->
+    <div class="scoreboard">
+        <div class="scorebox" id="sb-p1-box-s7">
+            <div class="scorenum" id="sb-p1-s7">0</div>
         </div>
-        <div id="p2-score-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="match-p2">0</div>
+        <div class="scorebox" id="sb-p2-box-s7">
+            <div class="scorenum" id="sb-p2-s7">0</div>
         </div>
     </div>
 </div>
 
 <!-- SET END -->
 <div id="s8" class="screen" style="padding:0;">
-    <!-- Top HUD -->
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #333;">
-        <span id="n8a" style="font-weight:bold; color:#ff2a6d;">RED</span>
-        <span>Set Over</span>
-        <span id="n8b" style="font-weight:bold; color:#05d9e8;">BLUE</span>
+    <!-- Top bar matching battle page -->
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative;">
+        <!-- Left: Team 1 name and set score -->
+        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
+            <span id="n8a" style="font-weight:bold; color:#ff2a6d;">RED</span>
+            <span id="set8a" style="font-size:20px; font-weight:bold; color:#ff2a6d;">0</span>
+        </div>
+        
+        <!-- Center: Set result circles -->
+        <div id="pips8" style="display:flex; gap:5px;"></div>
+        
+        <!-- Right: Team 2 name and set score -->
+        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
+            <span id="n8b" style="font-weight:bold; color:#05d9e8;">BLUE</span>
+            <span id="set8b" style="font-size:20px; font-weight:bold; color:#05d9e8;">0</span>
+        </div>
     </div>
     
     <!-- Winner announcement -->
-    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-        <h1 id="win8" style="font-size:32px; margin:20px 0;">Winner</h1>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:20px;">
+        <h1 id="win8" style="font-size:32px; margin:20px 0; text-align:center;">Winner</h1>
         <button onclick="nextSet()" style="max-width:300px;">CONTINUE</button>
     </div>
     
-    <!-- Bottom game scoreboard -->
-    <div style="display:flex; gap:10px; padding:10px; flex-shrink:0;">
-        <div id="p1-end-box" style="flex:1; padding:15px; display:flex; justify-content:center; align-items:center;">
-            <div style="background:#000; color:#fff; padding:10px 20px; font-size:24px; font-weight:bold; min-width:60px; text-align:center;" id="end-p1">0</div>
+    <!-- Match score at bottom -->
+    <div class="scoreboard">
+        <div class="scorebox" id="sb-p1-box-s8">
+            <div class="scorenum" id="sb-p1-s8">0</div>
         </div>
-        <div id="p2-end-box" style="flex:1; padding:15px; display:flex; justify-content:center; align-items:center;">
-            <div style="background:#000; color:#fff; padding:10px 20px; font-size:24px; font-weight:bold; min-width:60px; text-align:center;" id="end-p2">0</div>
+        <div class="scorebox" id="sb-p2-box-s8">
+            <div class="scorenum" id="sb-p2-s8">0</div>
         </div>
     </div>
 </div>
@@ -416,6 +432,22 @@ const CYCLE = ['❔','🪨','❔','✂️','❔','📄'];
 function show(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+}
+
+// Update all scoreboards across all screens to keep them in sync
+function updateAllScoreboards() {
+    // Update all P1 score boxes
+    document.querySelectorAll('[id^="sb-p1-box"]').forEach(box => box.style.background = p1c);
+    document.querySelectorAll('[id^="sb-p1"]').forEach(el => {
+        if (el.id.includes('box')) return; // Skip boxes
+        el.textContent = p1s;
+    });
+    // Update all P2 score boxes
+    document.querySelectorAll('[id^="sb-p2-box"]').forEach(box => box.style.background = p2c);
+    document.querySelectorAll('[id^="sb-p2"]').forEach(el => {
+        if (el.id.includes('box')) return; // Skip boxes
+        el.textContent = p2s;
+    });
 }
 
 function init() {
@@ -481,16 +513,8 @@ function newSet() {
         t4Color.style.color = p2c;
     }
     
-    // Update pick screen score boxes
-    const p1Box = document.querySelector('#p1-pick-box');
-    const p2Box = document.querySelector('#p2-pick-box');
-    if (p1Box) p1Box.style.background = p1c;
-    if (p2Box) p2Box.style.background = p2c;
-    
-    const p1Box2 = document.querySelector('#p1-pick2-box');
-    const p2Box2 = document.querySelector('#p2-pick2-box');
-    if (p1Box2) p1Box2.style.background = p1c;
-    if (p2Box2) p2Box2.style.background = p2c;
+    // Update ALL scoreboards
+    updateAllScoreboards();
 }
 
 function goPick(p) {
@@ -512,10 +536,11 @@ function goPick(p) {
         document.getElementById('n3b').style.color = p2c;
         document.getElementById('s3b').textContent = p2s;
         document.getElementById('s3b').style.color = p2c;
-        document.getElementById('p1-select-box').style.background = p1c;
-        document.getElementById('p2-select-box').style.background = p2c;
-        document.getElementById('sel-p1').textContent = p1s;
-        document.getElementById('sel-p2').textContent = p2s;
+        // Update s3 scoreboard
+        document.getElementById('sb-p1-box-s3').style.background = p1c;
+        document.getElementById('sb-p2-box-s3').style.background = p2c;
+        document.getElementById('sb-p1-s3').textContent = p1s;
+        document.getElementById('sb-p2-s3').textContent = p2s;
         // Set dot border color for P1
         setTimeout(() => {
             document.getElementById('d3').querySelectorAll('.dot').forEach(d => {
@@ -533,10 +558,11 @@ function goPick(p) {
         document.getElementById('n5b').style.color = p2c;
         document.getElementById('s5b').textContent = p2s;
         document.getElementById('s5b').style.color = p2c;
-        document.getElementById('p1-select-box2').style.background = p1c;
-        document.getElementById('p2-select-box2').style.background = p2c;
-        document.getElementById('sel2-p1').textContent = p1s;
-        document.getElementById('sel2-p2').textContent = p2s;
+        // Update s5 scoreboard
+        document.getElementById('sb-p1-box-s5').style.background = p1c;
+        document.getElementById('sb-p2-box-s5').style.background = p2c;
+        document.getElementById('sb-p1-s5').textContent = p1s;
+        document.getElementById('sb-p2-s5').textContent = p2s;
         // Set dot border color for P2
         setTimeout(() => {
             document.getElementById('d5').querySelectorAll('.dot').forEach(d => {
@@ -596,11 +622,11 @@ function pick(m) {
             document.getElementById('n4b').style.color = p2c;
             document.getElementById('s4p2').textContent = p2s;
             document.getElementById('s4p2').style.color = p2c;
-            // Update pick screen score boxes
-            const p1Box2 = document.getElementById('p1-pick2-box');
-            const p2Box2 = document.getElementById('p2-pick2-box');
-            if (p1Box2) p1Box2.style.background = p1c;
-            if (p2Box2) p2Box2.style.background = p2c;
+            // Update s4 scoreboard
+            document.getElementById('sb-p1-box-s4').style.background = p1c;
+            document.getElementById('sb-p2-box-s4').style.background = p2c;
+            document.getElementById('sb-p1-s4').textContent = p1s;
+            document.getElementById('sb-p2-s4').textContent = p2s;
             show('s4');
         } else {
             // Update ready screen - top bar names and scores
@@ -612,11 +638,11 @@ function pick(m) {
             document.getElementById('n6b').style.color = p2c;
             document.getElementById('s6b').textContent = p2s;
             document.getElementById('s6b').style.color = p2c;
-            // Update ready screen score boxes
-            const p1ReadyBox = document.getElementById('p1-ready-box');
-            const p2ReadyBox = document.getElementById('p2-ready-box');
-            if (p1ReadyBox) p1ReadyBox.style.background = p1c;
-            if (p2ReadyBox) p2ReadyBox.style.background = p2c;
+            // Update s6 scoreboard
+            document.getElementById('sb-p1-box-s6').style.background = p1c;
+            document.getElementById('sb-p2-box-s6').style.background = p2c;
+            document.getElementById('sb-p1-s6').textContent = p1s;
+            document.getElementById('sb-p2-s6').textContent = p2s;
             document.getElementById('ready-p1').textContent = p1s;
             document.getElementById('ready-p2').textContent = p2s;
             show('s6');
@@ -648,11 +674,11 @@ async function battle() {
     document.getElementById('p1-border').style.background = p1c;
     document.getElementById('p2-border').style.background = p2c;
     
-    // Set player colors for score boxes
-    document.getElementById('p1-score-box').style.background = p1c;
-    document.getElementById('p2-score-box').style.background = p2c;
-    document.getElementById('match-p1').textContent = p1s;
-    document.getElementById('match-p2').textContent = p2s;
+    // Update s7 scoreboard
+    document.getElementById('sb-p1-box-s7').style.background = p1c;
+    document.getElementById('sb-p2-box-s7').style.background = p2c;
+    document.getElementById('sb-p1-s7').textContent = p1s;
+    document.getElementById('sb-p2-s7').textContent = p2s;
     
     // Set fighter sizes - use clamp for responsive sizing
     document.getElementById('f1').style.fontSize = 'clamp(60px, 20vw, 150px)';
@@ -750,8 +776,8 @@ async function battle() {
         }
         
         // Update match scores
-        document.getElementById('match-p1').textContent = p1s;
-        document.getElementById('match-p2').textContent = p2s;
+        document.getElementById('sb-p1-s7').textContent = p1s;
+        document.getElementById('sb-p2-s7').textContent = p2s;
         
         await sleep(3000);
         
@@ -776,16 +802,38 @@ function endSet() {
     // Set end screen with colors
     document.getElementById('n8a').textContent = p1n;
     document.getElementById('n8a').style.color = p1c;
+    document.getElementById('set8a').textContent = p1set;
+    document.getElementById('set8a').style.color = p1c;
     document.getElementById('n8b').textContent = p2n;
     document.getElementById('n8b').style.color = p2c;
+    document.getElementById('set8b').textContent = p2set;
+    document.getElementById('set8b').style.color = p2c;
+    
+    // Winner announcement
     document.getElementById('win8').textContent = win === 'tie' ? 'SET TIED' : (win === 'p1' ? p1n : p2n) + ' WINS SET';
     document.getElementById('win8').style.color = win === 'p1' ? p1c : (win === 'p2' ? p2c : '#fff');
     
-    // Bottom score boxes
-    document.getElementById('p1-end-box').style.background = p1c;
-    document.getElementById('p2-end-box').style.background = p2c;
-    document.getElementById('end-p1').textContent = p1s;
-    document.getElementById('end-p2').textContent = p2s;
+    // Render set result pips
+    const pips8 = document.getElementById('pips8');
+    pips8.innerHTML = '';
+    for (let i = 0; i < 7; i++) {
+        const p = document.createElement('div');
+        p.style.width = '10px';
+        p.style.height = '10px';
+        p.style.borderRadius = '50%';
+        p.style.border = '1px solid #555';
+        if (results[i] === 'p1') p.style.background = p1c;
+        else if (results[i] === 'p2') p.style.background = p2c;
+        else if (results[i] === 'tie') p.style.background = '#fff';
+        else p.style.background = '#000';
+        pips8.appendChild(p);
+    }
+    
+    // Update s8 scoreboard
+    document.getElementById('sb-p1-box-s8').style.background = p1c;
+    document.getElementById('sb-p2-box-s8').style.background = p2c;
+    document.getElementById('sb-p1-s8').textContent = p1s;
+    document.getElementById('sb-p2-s8').textContent = p2s;
     
     if (p1s >= target || p2s >= target) {
         document.getElementById('win9').textContent = (p1s >= target ? p1n : p2n) + ' WINS!';
