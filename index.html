@@ -55,23 +55,10 @@
             left: 0;
             overflow-y: auto;
             overflow-x: hidden;
-            opacity: 0;
-            transform: translateX(60px) scale(0.98);
-            transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            pointer-events: none;
         }
         
         .screen.active { 
             display: flex; 
-            opacity: 1;
-            transform: translateX(0) scale(1);
-            pointer-events: auto;
-            z-index: 10;
-        }
-        
-        .screen.exit-left {
-            transform: translateX(-60px) scale(0.98);
-            opacity: 0;
         }
         
         /* Screen shake for battle impact */
@@ -1350,7 +1337,6 @@ const game = {
     init() {
         this.updateColorDisplays();
         this.setupBackButton();
-        this.addExitRightStyles();
         this.setupButtonRipples();
     },
     
@@ -1466,39 +1452,16 @@ const game = {
         const currentEl = document.getElementById(this.currentScreen);
         const nextEl = document.getElementById(id);
         
-        // Determine transition direction
-        const screenOrder = ['setup', 'p1-ready', 'p1-select', 'p2-ready', 'p2-select', 'match-ready', 'battle', 'set-result', 'game-over'];
-        const currentIdx = screenOrder.indexOf(this.currentScreen);
-        const nextIdx = screenOrder.indexOf(id);
-        const direction = nextIdx > currentIdx ? 'forward' : 'backward';
-        
-        // Animate out current screen
+        // Simple fast transition
         if (currentEl) {
-            currentEl.classList.add(direction === 'forward' ? 'exit-left' : 'exit-right');
-            setTimeout(() => {
-                currentEl.classList.remove('active', 'exit-left', 'exit-right');
-            }, 250);
+            currentEl.classList.remove('active');
         }
-        
-        // Animate in next screen with minimal delay
-        requestAnimationFrame(() => {
-            nextEl.classList.add('active');
-        });
+        nextEl.classList.add('active');
         
         this.currentScreen = id;
     },
     
-    // Add exit-right class for backward transitions
-    addExitRightStyles() {
-        const style = document.createElement('style');
-        style.textContent = `
-            .screen.exit-right {
-                transform: translateX(60px) scale(0.98);
-                opacity: 0;
-            }
-        `;
-        document.head.appendChild(style);
-    },
+
 
     startGame() {
         sounds.resume();
@@ -1606,10 +1569,8 @@ const game = {
         choices[this.selectingRound] = move;
         this.updateSelectionUI();
         
-        // Fast 150ms delay for visual feedback, then advance
-        setTimeout(() => {
-            this.nextRound();
-        }, 150);
+        // Immediate advance - no delay
+        this.nextRound();
     },
 
     nextRound() {
@@ -1725,28 +1686,17 @@ const game = {
 
     sleep(ms) { return new Promise(r => setTimeout(r, ms)); },
     
-    // Battle visual effects
+    // Battle visual effects - disabled for mobile performance
     shakeScreen() {
-        document.body.classList.add('shake-screen');
-        setTimeout(() => document.body.classList.remove('shake-screen'), 400);
+        // Disabled: causes jank on mobile
     },
     
     flashScreen(color = 'white') {
-        const overlay = document.getElementById('flash-overlay');
-        overlay.style.background = `radial-gradient(circle at center, ${color}, transparent 70%)`;
-        overlay.classList.add('active');
-        setTimeout(() => overlay.classList.remove('active'), 300);
+        // Disabled: causes jank on mobile
     },
     
     createFighterTrail(fighter, color) {
-        const trail = document.createElement('div');
-        trail.className = 'fighter-trail';
-        trail.textContent = fighter.textContent;
-        trail.style.color = color;
-        trail.style.left = fighter.offsetLeft + 'px';
-        trail.style.top = fighter.offsetTop + 'px';
-        fighter.parentElement.appendChild(trail);
-        setTimeout(() => trail.remove(), 500);
+        // Disabled: DOM thrashing on mobile
     },
     
     showVSClash() {
@@ -1779,33 +1729,30 @@ const game = {
         f1.textContent = '❔';
         f2.textContent = '❔';
         
+        // Fast countdown - optimized for mobile
         const phases = ['ROCK', 'PAPER', 'SCISSORS', 'SHOOT!'];
-        const phaseTiming = 450; // Faster rhythm (was 600ms)
+        const phaseTiming = 280; // Much faster countdown
         
         for (let i = 0; i < phases.length; i++) {
             countdown.textContent = phases[i];
             sounds.playCountdown(phases[i]);
             
             if (i < 3) {
-                const cycleIndex = i * 2;
-                f1.textContent = this.cycleOrder[cycleIndex % 6];
-                f2.textContent = this.cycleOrder[cycleIndex % 6];
-                
+                // Cycle through moves quickly
+                f1.textContent = this.cycleOrder[(i * 2) % 6];
+                f2.textContent = this.cycleOrder[(i * 2) % 6];
                 await this.sleep(phaseTiming);
             } else {
-                // SHOOT! - reveal moves immediately
+                // SHOOT! - instant reveal
                 const p1Move = this.p1Choices[roundIndex];
                 const p2Move = this.p2Choices[roundIndex];
                 
-                f1.classList.remove('cycling');
-                f2.classList.remove('cycling');
-                f1.classList.add('reveal');
-                f2.classList.add('reveal');
-                
+                f1.className = 'fighter p1-glow reveal';
+                f2.className = 'fighter p2-glow reveal';
                 f1.textContent = this.moves[p1Move];
                 f2.textContent = this.moves[p2Move];
                 
-                await this.sleep(600); // Shorter reveal pause (was 800ms)
+                await this.sleep(400); // Quick pause to see moves
                 countdown.textContent = '';
             }
         }
@@ -1837,21 +1784,17 @@ const game = {
             this.p1SetPoints += 1;
             this.roundResults.push('p1');
             
-            this.shakeScreen();
-            this.flashScreen(this.p1Color);
             this.vibrate([50, 30, 80]);
             f1.classList.add('bonk-right');
-            this.createFighterTrail(f1, this.p1Color);
-            await this.sleep(200);
+            await this.sleep(150);
             f2.classList.add('vanish');
-            await this.sleep(200);
             
             wrapper2.style.opacity = '0';
             wrapper1.classList.add('center-winner');
             f1.classList.remove('bonk-right');
             f1.classList.add('victory-pose');
             
-            this.triggerMassiveExplosion(this.p1Color);
+            // Simplified effects for mobile performance
             this.triggerVictoryConfetti(1, this.p1Color);
             sounds.playWinRound();
             
@@ -1862,21 +1805,17 @@ const game = {
             this.p2SetPoints += 1;
             this.roundResults.push('p2');
             
-            this.shakeScreen();
-            this.flashScreen(this.p2Color);
             this.vibrate([50, 30, 80]);
             f2.classList.add('bonk-left');
-            this.createFighterTrail(f2, this.p2Color);
-            await this.sleep(200);
+            await this.sleep(150);
             f1.classList.add('vanish');
-            await this.sleep(200);
             
             wrapper1.style.opacity = '0';
             wrapper2.classList.add('center-winner');
             f2.classList.remove('bonk-left');
             f2.classList.add('victory-pose');
             
-            this.triggerMassiveExplosion(this.p2Color);
+            // Simplified effects for mobile performance
             this.triggerVictoryConfetti(2, this.p2Color);
             sounds.playWinRound();
         }
@@ -1900,7 +1839,7 @@ const game = {
         resultBanner.style.borderColor = resultColor;
         resultBanner.classList.add('show');
         
-        await this.sleep(1800); // Faster round transition (was 2500ms)
+        await this.sleep(1200); // Fast round transition
         
         f1.classList.remove('victory-pose');
         f2.classList.remove('victory-pose');
@@ -1930,90 +1869,69 @@ const game = {
         return true;
     },
 
+    // Simplified explosion - fewer particles for mobile performance
     triggerMassiveExplosion(color) {
         const container = document.getElementById('explosion-zone');
         container.innerHTML = '';
         
-        for (let i = 0; i < 60; i++) {
+        for (let i = 0; i < 25; i++) {
             const piece = document.createElement('div');
             piece.className = 'explosion-piece';
             piece.style.background = color;
-            piece.style.boxShadow = `0 0 20px ${color}`;
             
-            const angle = (Math.PI * 2 * i) / 60 + (Math.random() - 0.5) * 1.0;
-            const distance = 30 + Math.random() * 50;
-            const dx = Math.cos(angle) * distance;
-            const dy = Math.sin(angle) * distance;
-            
-            piece.style.setProperty('--dx', `${dx}vmin`);
-            piece.style.setProperty('--dy', `${dy}vmin`);
+            const angle = (Math.PI * 2 * i) / 25;
+            const distance = 30 + Math.random() * 40;
+            piece.style.setProperty('--dx', `${Math.cos(angle) * distance}vmin`);
+            piece.style.setProperty('--dy', `${Math.sin(angle) * distance}vmin`);
             
             container.appendChild(piece);
-            setTimeout(() => piece.classList.add('active'), Math.random() * 200);
+            requestAnimationFrame(() => piece.classList.add('active'));
         }
         
-        setTimeout(() => {
-            container.innerHTML = '';
-        }, 2000);
+        setTimeout(() => container.innerHTML = '', 1500);
     },
 
+    // Reduced confetti for mobile performance
     triggerVictoryConfetti(player, color) {
         const container = document.getElementById(`victory-confetti-p${player}`);
         
-        for (let wave = 0; wave < 5; wave++) {
-            setTimeout(() => {
-                for (let i = 0; i < 20; i++) {
-                    const piece = document.createElement('div');
-                    piece.className = 'confetti-piece';
-                    piece.style.background = color;
-                    piece.style.boxShadow = `0 0 10px ${color}`;
-                    piece.style.width = '3vmin';
-                    piece.style.height = '3vmin';
-                    
-                    const angle = (Math.PI * 2 * i) / 20 + (Math.random() - 0.5);
-                    const distance = 20 + Math.random() * 40;
-                    const dx = Math.cos(angle) * distance;
-                    const dy = Math.sin(angle) * distance;
-                    
-                    piece.style.setProperty('--dx', `${dx}vmin`);
-                    piece.style.setProperty('--dy', `${dy}vmin`);
-                    
-                    container.appendChild(piece);
-                    setTimeout(() => piece.classList.add('active'), i * 20);
-                    setTimeout(() => piece.remove(), 1500);
-                }
-            }, wave * 300);
+        // Single burst instead of 5 waves
+        for (let i = 0; i < 15; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.background = color;
+            piece.style.width = '3vmin';
+            piece.style.height = '3vmin';
+            
+            const angle = (Math.PI * 2 * i) / 15 + (Math.random() - 0.5);
+            const distance = 20 + Math.random() * 30;
+            piece.style.setProperty('--dx', `${Math.cos(angle) * distance}vmin`);
+            piece.style.setProperty('--dy', `${Math.sin(angle) * distance}vmin`);
+            
+            container.appendChild(piece);
+            requestAnimationFrame(() => piece.classList.add('active'));
+            setTimeout(() => piece.remove(), 1200);
         }
     },
     
-    // Mega confetti for game victory
+    // Reduced confetti for game victory - mobile optimized
     triggerMegaConfetti() {
         const container = document.getElementById('mega-confetti');
         container.innerHTML = '';
-        const colors = ['#ff2a6d', '#05d9e8', '#aaff00', '#ffaa00', '#aa00ff', '#ff69b4', 'gold', 'white'];
+        const colors = ['#ff2a6d', '#05d9e8', '#aaff00', '#ffaa00', 'gold', 'white'];
         
-        for (let i = 0; i < 150; i++) {
+        for (let i = 0; i < 50; i++) {
             const piece = document.createElement('div');
             piece.className = 'mega-confetti-piece';
             piece.style.background = colors[Math.floor(Math.random() * colors.length)];
             piece.style.left = Math.random() * 100 + '%';
-            piece.style.animationDuration = (2 + Math.random() * 3) + 's';
-            piece.style.animationDelay = Math.random() * 2 + 's';
-            
-            // Random shapes
-            if (Math.random() > 0.5) {
-                piece.style.borderRadius = '50%';
-            } else {
-                piece.style.transform = `rotate(${Math.random() * 360}deg)`;
-            }
+            piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+            piece.style.animationDelay = Math.random() * 1 + 's';
             
             container.appendChild(piece);
         }
         
-        // Clear after animation
-        setTimeout(() => {
-            container.innerHTML = '';
-        }, 6000);
+        setTimeout(() => container.innerHTML = '', 5000);
     },
 
     async endSet(winner) {
