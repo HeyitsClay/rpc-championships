@@ -72,7 +72,7 @@
 </div>
 
 <!-- P1 PICK -->
-<div id="s2" class="screen">
+<div id="s2" class="screen" style="padding:0;">
     <!-- Top bar matching battle page -->
     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative;">
         <!-- Left: Team 1 name and match score -->
@@ -165,7 +165,7 @@
 </div>
 
 <!-- P2 PICK -->
-<div id="s4" class="screen">
+<div id="s4" class="screen" style="padding:0;">
     <!-- Top bar matching battle page -->
     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative;">
         <!-- Left: Team 1 name and match score -->
@@ -258,7 +258,7 @@
 </div>
 
 <!-- READY -->
-<div id="s6" class="screen">
+<div id="s6" class="screen" style="padding:0;">
     <!-- Top bar matching battle page -->
     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative;">
         <!-- Left: Team 1 name and match score -->
@@ -302,7 +302,7 @@
 </div>
 
 <!-- BATTLE -->
-<div id="s7" class="screen">
+<div id="s7" class="screen" style="padding:0;">
     <!-- Top HUD with scores on sides of circles -->
     <div id="battle-top" style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative;">
         <div id="p1-border" style="position:absolute; bottom:-2px; left:0; width:50%; height:2px; background:#ff2a6d;"></div>
@@ -354,7 +354,7 @@
 </div>
 
 <!-- SET END -->
-<div id="s8" class="screen">
+<div id="s8" class="screen" style="padding:0;">
     <!-- Top HUD -->
     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #333;">
         <span id="n8a" style="font-weight:bold; color:#ff2a6d;">RED</span>
@@ -369,7 +369,7 @@
     </div>
     
     <!-- Bottom game scoreboard -->
-    <div style="display:flex; gap:10px; margin-bottom:20px;">
+    <div style="display:flex; gap:10px; padding:10px; flex-shrink:0;">
         <div id="p1-end-box" style="flex:1; padding:15px; display:flex; justify-content:center; align-items:center;">
             <div style="background:#000; color:#fff; padding:10px 20px; font-size:24px; font-weight:bold; min-width:60px; text-align:center;" id="end-p1">0</div>
         </div>
@@ -465,8 +465,8 @@ function newSet() {
     // Update P1 pick screen (s2) - top bar names, scores and colors
     document.getElementById('t2-color').textContent = p1n;
     document.getElementById('t2-color').style.color = p1c;
-    document.getElementById('n2a').textContent = p1n;
-    document.getElementById('n2a').style.color = p1c;
+    document.getElementById('n1').textContent = p1n;
+    document.getElementById('n1').style.color = p1c;
     document.getElementById('s2p1').textContent = p1s;
     document.getElementById('s2p1').style.color = p1c;
     document.getElementById('n2').textContent = p2n;
