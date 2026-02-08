@@ -357,7 +357,11 @@ async function battle() {
         results.push(winner);
         document.getElementById('seta').textContent = p1set;
         document.getElementById('setb').textContent = p2set;
-        document.getElementById('res').textContent = txt;
+        
+        // Show result in top row with win emoji
+        document.getElementById('cnt').textContent = txt;
+        document.getElementById('phase-left').textContent = '🏆';
+        document.getElementById('phase-right').textContent = '🏆';
         
         // Update pips
         const pips = document.getElementById('pips');
