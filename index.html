@@ -292,11 +292,11 @@ async function battle() {
             if (i < 3) {
                 document.getElementById('f1').textContent = CYCLE[(i*2)%6];
                 document.getElementById('f2').textContent = CYCLE[(i*2)%6];
-                await sleep(1000);
+                await sleep(750); // 0.75s per phase
             } else {
                 document.getElementById('f1').textContent = MOVES[p1moves[round]];
                 document.getElementById('f2').textContent = MOVES[p2moves[round]];
-                await sleep(2000);
+                await sleep(1500); // 1.5s to see result
                 document.getElementById('cnt').textContent = '';
             }
         }
