@@ -319,11 +319,14 @@ async function battle() {
             
             if (i < 3) {
                 // ROCK, PAPER, SCISSORS - synchronized fist drop on 1s beat
+                // Remove, force reflow, then add to restart animation
+                f1.classList.remove('fist-animate');
+                f2.classList.remove('fist-animate');
+                void f1.offsetWidth; // force reflow
+                void f2.offsetWidth;
                 f1.classList.add('fist-animate');
                 f2.classList.add('fist-animate');
                 await sleep(1000); // 1 second per phase
-                f1.classList.remove('fist-animate');
-                f2.classList.remove('fist-animate');
             } else {
                 // SHOOT! - reveal actual moves
                 f1.textContent = MOVES[p1moves[round]];
