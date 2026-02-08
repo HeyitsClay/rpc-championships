@@ -49,18 +49,18 @@
 <body>
 
 <!-- SETUP -->
-<div id="s1" class="screen active">
-    <h1>RPC Championships</h1>
-    <p class="center">First to <b id="target">3</b> wins</p>
-    <div class="row">
-        <button onclick="chg(-1)">-</button>
-        <button onclick="chg(1)">+</button>
+<div id="s1" class="screen active" style="overflow-y: auto; justify-content: flex-start;">
+    <h1 style="margin: 10px 0; font-size: 20px;">RPC Championships</h1>
+    <p class="center" style="margin: 5px 0;">First to <b id="target">3</b> wins</p>
+    <div class="row" style="margin: 5px 0;">
+        <button onclick="chg(-1)" style="width: 50px;">-</button>
+        <button onclick="chg(1)" style="width: 50px;">+</button>
     </div>
-    <p class="center">Player 1</p>
-    <div class="colors" id="c1"></div>
-    <p class="center">Player 2</p>
-    <div class="colors" id="c2"></div>
-    <button onclick="start()" style="margin-top: 20px;">START GAME</button>
+    <p class="center" style="margin: 5px 0;">Player 1</p>
+    <div class="colors" id="c1" style="margin: 5px 0;"></div>
+    <p class="center" style="margin: 5px 0;">Player 2</p>
+    <div class="colors" id="c2" style="margin: 5px 0;"></div>
+    <button onclick="start()" style="margin-top: 15px;">START GAME</button>
 </div>
 
 <!-- P1 PICK -->
@@ -311,8 +311,13 @@ async function battle() {
             document.getElementById('phase-right').textContent = phaseEmojis[phase];
             
             if (i < 3) {
-                // ROCK, PAPER, SCISSORS - just show static ?
-                await sleep(750);
+                // ROCK, PAPER, SCISSORS - cycle through emojis once
+                const cycleTime = 750 / 3; // 3 changes over 0.75s
+                for (let cycle = 0; cycle < 3; cycle++) {
+                    document.getElementById('f1').textContent = cycleMoves[cycle];
+                    document.getElementById('f2').textContent = cycleMoves[cycle];
+                    await sleep(cycleTime);
+                }
             } else {
                 // SHOOT! - animate ? → ?? → ??? → reveal
                 await sleep(250); // ? for 0.25s
