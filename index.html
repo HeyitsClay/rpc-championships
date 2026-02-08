@@ -56,8 +56,8 @@
             overflow-y: auto;
             overflow-x: hidden;
             opacity: 0;
-            transform: translateX(100px) scale(0.95);
-            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translateX(60px) scale(0.98);
+            transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             pointer-events: none;
         }
         
@@ -70,7 +70,7 @@
         }
         
         .screen.exit-left {
-            transform: translateX(-100px) scale(0.95);
+            transform: translateX(-60px) scale(0.98);
             opacity: 0;
         }
         
@@ -1477,13 +1477,13 @@ const game = {
             currentEl.classList.add(direction === 'forward' ? 'exit-left' : 'exit-right');
             setTimeout(() => {
                 currentEl.classList.remove('active', 'exit-left', 'exit-right');
-            }, 400);
+            }, 250);
         }
         
-        // Animate in next screen
-        setTimeout(() => {
+        // Animate in next screen with minimal delay
+        requestAnimationFrame(() => {
             nextEl.classList.add('active');
-        }, 50);
+        });
         
         this.currentScreen = id;
     },
@@ -1493,7 +1493,7 @@ const game = {
         const style = document.createElement('style');
         style.textContent = `
             .screen.exit-right {
-                transform: translateX(100px) scale(0.95);
+                transform: translateX(60px) scale(0.98);
                 opacity: 0;
             }
         `;
@@ -1606,9 +1606,10 @@ const game = {
         choices[this.selectingRound] = move;
         this.updateSelectionUI();
         
+        // Fast 150ms delay for visual feedback, then advance
         setTimeout(() => {
             this.nextRound();
-        }, 400);
+        }, 150);
     },
 
     nextRound() {
@@ -1619,11 +1620,14 @@ const game = {
             this.selectingRound++;
             this.updateSelectionUI();
         } else {
-            if (this.currentPlayer === 1) {
-                this.show('p2-ready');
-            } else {
-                this.showMatchReady();
-            }
+            // Add small delay before screen transition for better feel
+            setTimeout(() => {
+                if (this.currentPlayer === 1) {
+                    this.show('p2-ready');
+                } else {
+                    this.showMatchReady();
+                }
+            }, 200);
         }
     },
 
@@ -1776,6 +1780,7 @@ const game = {
         f2.textContent = '❔';
         
         const phases = ['ROCK', 'PAPER', 'SCISSORS', 'SHOOT!'];
+        const phaseTiming = 450; // Faster rhythm (was 600ms)
         
         for (let i = 0; i < phases.length; i++) {
             countdown.textContent = phases[i];
@@ -1786,8 +1791,9 @@ const game = {
                 f1.textContent = this.cycleOrder[cycleIndex % 6];
                 f2.textContent = this.cycleOrder[cycleIndex % 6];
                 
-                await this.sleep(600);
+                await this.sleep(phaseTiming);
             } else {
+                // SHOOT! - reveal moves immediately
                 const p1Move = this.p1Choices[roundIndex];
                 const p2Move = this.p2Choices[roundIndex];
                 
@@ -1799,7 +1805,7 @@ const game = {
                 f1.textContent = this.moves[p1Move];
                 f2.textContent = this.moves[p2Move];
                 
-                await this.sleep(800);
+                await this.sleep(600); // Shorter reveal pause (was 800ms)
                 countdown.textContent = '';
             }
         }
@@ -1894,7 +1900,7 @@ const game = {
         resultBanner.style.borderColor = resultColor;
         resultBanner.classList.add('show');
         
-        await this.sleep(2500);
+        await this.sleep(1800); // Faster round transition (was 2500ms)
         
         f1.classList.remove('victory-pose');
         f2.classList.remove('victory-pose');
