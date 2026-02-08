@@ -118,8 +118,10 @@
 
 <!-- BATTLE -->
 <div id="s7" class="screen">
-    <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333;">
+    <!-- Top HUD with round pips in center -->
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #333;">
         <span><span id="n7a">P1</span> (<span id="seta">0</span>)</span>
+        <div class="dots" id="pips" style="margin:0;"></div>
         <span><span id="n7b">P2</span> (<span id="setb">0</span>)</span>
     </div>
     
@@ -135,9 +137,6 @@
         <span id="f1" style="font-size:64px;">❔</span>
         <span id="f2" style="font-size:64px;">❔</span>
     </div>
-    
-    <p class="center" id="res" style="font-size:24px; font-weight:bold; min-height:30px; margin-top:10px;"></p>
-    <div class="dots" id="pips" style="margin-top:auto; margin-bottom:20px;"></div>
 </div>
 
 <!-- SET END -->
