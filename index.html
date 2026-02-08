@@ -81,6 +81,16 @@
             flex:1;
             justify-content:center;
             max-width:200px;
+            position:relative;
+            align-items:center;
+        }
+        .round-score-label {
+            position:absolute;
+            top:-8px;
+            font-size:9px;
+            color:#888;
+            text-transform:uppercase;
+            letter-spacing:0.5px;
         }
         .top-bar-dot {
             background:#000; 
@@ -138,7 +148,25 @@
         }
         .bonk-winner-left { animation: bonk-rise-left 1s ease-out forwards; }
         .bonk-winner-right { animation: bonk-rise-right 1s ease-out forwards; }
-        .bonk-loser { animation: fade-out 0.4s ease-out 0.6s forwards; }
+        .bonk-loser { animation: fade-out 0.4s ease-out 0.6s forwards; position: relative; }
+        
+        /* Loser explosion effect */
+        .bonk-loser::after {
+            content: '💥';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 60px;
+            animation: loser-explode 0.4s ease-out 0.6s forwards;
+            pointer-events: none;
+            z-index: 10;
+        }
+        @keyframes loser-explode {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+        }
         .tie-shake { animation: tie-shake 0.5s ease-in-out; }
         .fighter-hidden { opacity: 0; pointer-events: none; }
         .fighter-center-left { 
@@ -186,6 +214,7 @@
             <span id="s2p1" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
         <div class="top-bar-center">
+            <span class="round-score-label">Round Score</span>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
@@ -225,6 +254,7 @@
             <span id="s3a" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
         <div class="top-bar-center">
+            <span class="round-score-label">Round Score</span>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
@@ -269,6 +299,7 @@
             <span id="s4p1" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
         <div class="top-bar-center">
+            <span class="round-score-label">Round Score</span>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
@@ -308,6 +339,7 @@
             <span id="s5a" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
         <div class="top-bar-center">
+            <span class="round-score-label">Round Score</span>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
@@ -352,6 +384,7 @@
             <span id="s6a" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
         <div class="top-bar-center">
+            <span class="round-score-label">Round Score</span>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
             <div class="top-bar-dot"></div>
@@ -391,6 +424,7 @@
             <span id="seta" class="top-bar-score">0</span>
         </div>
         <div class="top-bar-center" id="pips">
+            <span class="round-score-label">Round Score</span>
             <!-- Pips will be inserted here -->
         </div>
         <div class="top-bar-team">
@@ -437,6 +471,7 @@
             <span id="set8a" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
         <div class="top-bar-center" id="pips8">
+            <span class="round-score-label">Round Score</span>
             <!-- Pips will be inserted here -->
         </div>
         <div class="top-bar-team">
@@ -581,18 +616,28 @@ function startConfetti(winnerColor, big = true) {
     }, { once: true });
 }
 
+// Helper to adjust color brightness
+function adjustColor(color, amount) {
+    const hex = color.replace('#', '');
+    const r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) + amount));
+    const g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) + amount));
+    const b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) + amount));
+    return `rgb(${r},${g},${b})`;
+}
+
 // Explosion confetti at specific position (for battle bonk)
-function explosionConfetti(x, y, color) {
+function explosionConfetti(x, y, color, count = 60) {
     const canvas = document.getElementById('confetti-canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     
     const particles = [];
-    const colors = [color, '#fff', '#ffd700', '#ff6b6b'];
+    // Use only winner's color with slight variations
+    const colors = [color, adjustColor(color, 20), adjustColor(color, -20), '#ffffff'];
     
-    for (let i = 0; i < 60; i++) {
-        const angle = (Math.PI * 2 * i) / 60 + Math.random() * 0.5;
+    for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
         const speed = Math.random() * 8 + 4;
         particles.push({
             x: x,
