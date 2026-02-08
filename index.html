@@ -45,13 +45,13 @@
         .big { font-size: 64px; text-align: center; margin: 20px 0; }
         .center { text-align: center; margin: 10px 0; }
         
-        /* Fist bobbing animation */
-        @keyframes fist-bob {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+        /* Fist drop animation - 0.25s down, 0.75s up, synchronized */
+        @keyframes fist-drop {
+            0% { transform: translateY(0); }
+            25% { transform: translateY(20px); }
+            100% { transform: translateY(0); }
         }
-        .fist-left { animation: fist-bob 0.75s ease-in-out 3; }
-        .fist-right { animation: fist-bob 0.75s ease-in-out 3 0.1s; }
+        .fist-animate { animation: fist-drop 1s ease-out; }
     </style>
 </head>
 <body>
@@ -318,12 +318,12 @@ async function battle() {
             document.getElementById('phase-right').textContent = phaseEmojis[phase];
             
             if (i < 3) {
-                // ROCK, PAPER, SCISSORS - fists bob up and down
-                f1.classList.add('fist-left');
-                f2.classList.add('fist-right');
-                await sleep(750); // wait for 3 bobs
-                f1.classList.remove('fist-left');
-                f2.classList.remove('fist-right');
+                // ROCK, PAPER, SCISSORS - synchronized fist drop on 1s beat
+                f1.classList.add('fist-animate');
+                f2.classList.add('fist-animate');
+                await sleep(1000); // 1 second per phase
+                f1.classList.remove('fist-animate');
+                f2.classList.remove('fist-animate');
             } else {
                 // SHOOT! - reveal actual moves
                 f1.textContent = MOVES[p1moves[round]];
