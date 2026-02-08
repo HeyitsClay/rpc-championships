@@ -61,12 +61,6 @@
             background: radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0,0,0,0.8) 100%);
             pointer-events: none;
         }
-        .screen { 
-            display: none; 
-            height: 100%; 
-            padding: 20px;
-            flex-direction: column;
-        }
         .screen.active { display: flex; }
         h1 { 
             text-align: center; 
@@ -217,13 +211,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             margin: 20px 0;
             font-family: 'Orbitron', sans-serif;
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             opacity: 0.6;
+            max-width: 100%;
+            flex-wrap: wrap;
         }
         .step-dot {
             width: 8px;
@@ -352,6 +348,7 @@
             opacity: 0;
             transform: translateX(20px);
             transition: opacity 0.3s ease, transform 0.3s ease;
+            overflow-x: hidden;
         }
         .screen.active { 
             display: flex; 
