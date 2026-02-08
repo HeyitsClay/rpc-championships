@@ -985,8 +985,6 @@ async function battle() {
         pips.appendChild(p);
     }
     
-    let lastWinner = null; // Track winner from previous round
-    
     for (let round = 0; round < 7; round++) {
         const phases = ['ROCK','PAPER','SCISSORS','SHOOT!'];
         const phaseEmojis = {ROCK:'🪨', PAPER:'📄', SCISSORS:'✂️', 'SHOOT!':'🎯'};
@@ -994,39 +992,25 @@ async function battle() {
         // Reset text color at start of round
         document.getElementById('cnt').style.color = '#fff';
         
-        // Start with fists
+        // Start with fists - ALWAYS both fists at start of round
         const f1 = document.getElementById('f1');
         const f2 = document.getElementById('f2');
         
-        // Handle positioning based on last round's winner
-        if (round > 0 && lastWinner && lastWinner !== 'tie') {
-            // Keep loser hidden, winner stays centered
-            if (lastWinner === 'p1') {
-                f1.textContent = '🤜';
-                f2.textContent = '';
-                f2.classList.add('fighter-hidden');
-                f1.classList.remove('fighter-hidden', 'bonk-winner-left', 'bonk-winner-right');
-                f1.classList.add('fighter-center-left');
-            } else {
-                f1.textContent = '';
-                f2.textContent = '🤛';
-                f1.classList.add('fighter-hidden');
-                f2.classList.remove('fighter-hidden', 'bonk-winner-left', 'bonk-winner-right');
-                f2.classList.add('fighter-center-right');
-            }
-            // Brief pause to show the winner in position before starting
-            await sleep(500);
-        } else {
-            // Normal start - both fighters visible
-            f1.textContent = '🤜';
-            f2.textContent = '🤛';
-            f1.classList.remove('fighter-hidden', 'fighter-center-left', 'fighter-center-right');
-            f2.classList.remove('fighter-hidden', 'fighter-center-left', 'fighter-center-right');
-            f1.style.transform = '';
-            f2.style.transform = '';
-            f1.style.opacity = '1';
-            f2.style.opacity = '1';
-        }
+        // Force complete reset by removing all animation classes first
+        f1.classList.remove('fighter-hidden', 'fighter-center-left', 'fighter-center-right', 'bonk-winner-left', 'bonk-winner-right', 'bonk-loser', 'fist-animate', 'tie-shake');
+        f2.classList.remove('fighter-hidden', 'fighter-center-left', 'fighter-center-right', 'bonk-winner-left', 'bonk-winner-right', 'bonk-loser', 'fist-animate', 'tie-shake');
+        
+        // Clear all inline styles that might persist from animations
+        f1.style.cssText = '';
+        f2.style.cssText = '';
+        
+        // Force reflow to clear animation state completely
+        void f1.offsetWidth;
+        void f2.offsetWidth;
+        
+        // Set the fresh state with both fists visible
+        f1.textContent = '🤜';
+        f2.textContent = '🤛';
         
         for (let i = 0; i < 4; i++) {
             const phase = phases[i];
