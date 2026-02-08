@@ -24,7 +24,7 @@
             width: 100%;
             height: 100%;
             z-index: -2;
-            background: linear-gradient(135deg, var(--p1-color, #ff2a6d) 0%, #000 50%, var(--p2-color, #05d9e8) 100%);
+            background: linear-gradient(135deg, var(--p1-color, #ff1a1a) 0%, #000 50%, var(--p2-color, #05d9e8) 100%);
             opacity: 0.4;
             transition: background 0.5s ease;
         }
@@ -134,8 +134,14 @@
             border: 2px solid rgba(255,255,255,0.3);
             border-radius: 4px;
             transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #ff1a1a;
+            cursor: pointer;
         }
-        .color:hover {
+        .color:hover:not(.unavailable) {
             transform: scale(1.1);
             border-color: rgba(255,255,255,0.6);
         }
@@ -143,6 +149,12 @@
             border-color: #fff; 
             box-shadow: 0 0 10px rgba(255,255,255,0.5);
             transform: scale(1.05);
+        }
+        .color.unavailable {
+            background: #111;
+            border-color: #333;
+            cursor: not-allowed;
+            opacity: 0.8;
         }
         .big { font-size: 64px; text-align: center; margin: 20px 0; }
         .center { 
@@ -313,15 +325,21 @@
 <!-- SETUP -->
 <div id="s1" class="screen active" style="overflow-y: auto; justify-content: flex-start; padding-top: 30px;">
     <h1 style="margin: 20px 0; font-size: 32px; font-weight: 900; text-shadow: 0 0 30px rgba(255,255,255,0.3);">RPC Championships</h1>
-    <p class="center" style="margin: 15px 0; font-size: 18px; opacity: 0.8;">First to <b id="target" style="font-family: 'Orbitron', sans-serif; font-size: 24px; color: #fff;">3</b> wins</p>
-    <div class="row" style="margin: 10px 0;">
-        <button onclick="chg(-1)" style="width: 60px; font-size: 24px;">-</button>
-        <button onclick="chg(1)" style="width: 60px; font-size: 24px;">+</button>
-    </div>
+    
     <p class="center" style="margin: 20px 0 10px; font-family: 'Orbitron', sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9;">Player 1</p>
     <div class="colors" id="c1" style="margin: 10px 0;"></div>
+    
     <p class="center" style="margin: 20px 0 10px; font-family: 'Orbitron', sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9;">Player 2</p>
     <div class="colors" id="c2" style="margin: 10px 0;"></div>
+    
+    <div style="margin-top: 30px; padding: 20px; background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
+        <p class="center" style="margin: 0 0 15px; font-size: 18px; opacity: 0.8;">First to <b id="target" style="font-family: 'Orbitron', sans-serif; font-size: 24px; color: #fff;">3</b> wins</p>
+        <div class="row" style="margin: 0;">
+            <button onclick="chg(-1)" style="width: 60px; font-size: 24px;">-</button>
+            <button onclick="chg(1)" style="width: 60px; font-size: 24px;">+</button>
+        </div>
+    </div>
+    
     <button onclick="start()" style="margin-top: 30px; background: linear-gradient(145deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%); border-color: rgba(255,255,255,0.4);">START GAME</button>
 </div>
 
@@ -330,8 +348,8 @@
     <!-- Unified top bar -->
     <div class="top-bar">
         <div class="top-bar-team">
-            <span id="n1" class="top-bar-name" style="color:#ff2a6d;">RED</span>
-            <span id="s2p1" class="top-bar-score" style="color:#ff2a6d;">0</span>
+            <span id="n1" class="top-bar-name" style="color:#ff1a1a;">RED</span>
+            <span id="s2p1" class="top-bar-score" style="color:#ff1a1a;">0</span>
         </div>
         <div class="top-bar-center">
             <div class="top-bar-dot"></div>
@@ -349,13 +367,13 @@
     </div>
     
     <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-        <h1 id="t2" style="font-size:24px; margin:20px 0;"><span id="t2-color" style="color:#ff2a6d;">RED</span>'s Selection</h1>
+        <h1 id="t2" style="font-size:24px; margin:20px 0;"><span id="t2-color" style="color:#ff1a1a;">RED</span>'s Selection</h1>
         <button onclick="goPick(1)" style="max-width:300px;">PICK MOVES</button>
     </div>
     
     <!-- Match score at bottom -->
     <div class="scoreboard">
-        <div class="scorebox" id="sb-p1-box" style="background:#ff2a6d;">
+        <div class="scorebox" id="sb-p1-box" style="background:#ff1a1a;">
             <div class="scorenum" id="sb-p1">0</div>
         </div>
         <div class="scorebox" id="sb-p2-box" style="background:#05d9e8;">
@@ -369,8 +387,8 @@
     <!-- Unified top bar -->
     <div class="top-bar">
         <div class="top-bar-team">
-            <span id="n3a" class="top-bar-name" style="color:#ff2a6d;">RED</span>
-            <span id="s3a" class="top-bar-score" style="color:#ff2a6d;">0</span>
+            <span id="n3a" class="top-bar-name" style="color:#ff1a1a;">RED</span>
+            <span id="s3a" class="top-bar-score" style="color:#ff1a1a;">0</span>
         </div>
         <div class="top-bar-center">
             <div class="top-bar-dot"></div>
@@ -399,7 +417,7 @@
     
     <!-- Match score at bottom -->
     <div class="scoreboard">
-        <div class="scorebox" id="sb-p1-box-s3" style="background:#ff2a6d;">
+        <div class="scorebox" id="sb-p1-box-s3" style="background:#ff1a1a;">
             <div class="scorenum" id="sb-p1-s3">0</div>
         </div>
         <div class="scorebox" id="sb-p2-box-s3" style="background:#05d9e8;">
@@ -413,8 +431,8 @@
     <!-- Unified top bar -->
     <div class="top-bar">
         <div class="top-bar-team">
-            <span id="n4a" class="top-bar-name" style="color:#ff2a6d;">RED</span>
-            <span id="s4p1" class="top-bar-score" style="color:#ff2a6d;">0</span>
+            <span id="n4a" class="top-bar-name" style="color:#ff1a1a;">RED</span>
+            <span id="s4p1" class="top-bar-score" style="color:#ff1a1a;">0</span>
         </div>
         <div class="top-bar-center">
             <div class="top-bar-dot"></div>
@@ -438,7 +456,7 @@
     
     <!-- Match score at bottom -->
     <div class="scoreboard">
-        <div class="scorebox" id="sb-p1-box-s4" style="background:#ff2a6d;">
+        <div class="scorebox" id="sb-p1-box-s4" style="background:#ff1a1a;">
             <div class="scorenum" id="sb-p1-s4">0</div>
         </div>
         <div class="scorebox" id="sb-p2-box-s4" style="background:#05d9e8;">
@@ -452,8 +470,8 @@
     <!-- Unified top bar -->
     <div class="top-bar">
         <div class="top-bar-team">
-            <span id="n5a" class="top-bar-name" style="color:#ff2a6d;">RED</span>
-            <span id="s5a" class="top-bar-score" style="color:#ff2a6d;">0</span>
+            <span id="n5a" class="top-bar-name" style="color:#ff1a1a;">RED</span>
+            <span id="s5a" class="top-bar-score" style="color:#ff1a1a;">0</span>
         </div>
         <div class="top-bar-center">
             <div class="top-bar-dot"></div>
@@ -482,7 +500,7 @@
     
     <!-- Match score at bottom -->
     <div class="scoreboard">
-        <div class="scorebox" id="sb-p1-box-s5" style="background:#ff2a6d;">
+        <div class="scorebox" id="sb-p1-box-s5" style="background:#ff1a1a;">
             <div class="scorenum" id="sb-p1-s5">0</div>
         </div>
         <div class="scorebox" id="sb-p2-box-s5" style="background:#05d9e8;">
@@ -496,8 +514,8 @@
     <!-- Unified top bar -->
     <div class="top-bar">
         <div class="top-bar-team">
-            <span id="n6a" class="top-bar-name" style="color:#ff2a6d;">RED</span>
-            <span id="s6a" class="top-bar-score" style="color:#ff2a6d;">0</span>
+            <span id="n6a" class="top-bar-name" style="color:#ff1a1a;">RED</span>
+            <span id="s6a" class="top-bar-score" style="color:#ff1a1a;">0</span>
         </div>
         <div class="top-bar-center">
             <div class="top-bar-dot"></div>
@@ -521,7 +539,7 @@
     
     <!-- Match score at bottom -->
     <div class="scoreboard">
-        <div class="scorebox" id="sb-p1-box-s6" style="background:#ff2a6d;">
+        <div class="scorebox" id="sb-p1-box-s6" style="background:#ff1a1a;">
             <div class="scorenum" id="sb-p1-s6">0</div>
         </div>
         <div class="scorebox" id="sb-p2-box-s6" style="background:#05d9e8;">
@@ -581,8 +599,8 @@
     <!-- Unified top bar -->
     <div class="top-bar">
         <div class="top-bar-team">
-            <span id="n8a" class="top-bar-name" style="color:#ff2a6d;">RED</span>
-            <span id="set8a" class="top-bar-score" style="color:#ff2a6d;">0</span>
+            <span id="n8a" class="top-bar-name" style="color:#ff1a1a;">RED</span>
+            <span id="set8a" class="top-bar-score" style="color:#ff1a1a;">0</span>
         </div>
         <div class="top-bar-center" id="pips8">
             <span class="round-score-label">Round Score</span>
@@ -616,7 +634,7 @@
     <h1 style="font-size: 42px; font-weight: 900; text-shadow: 0 0 30px rgba(255,255,255,0.4); margin-bottom: 10px;">CHAMPION</h1>
     <h1 id="win9" style="font-size: 36px; margin: 20px 0; text-shadow: 0 0 25px currentColor;">Winner</h1>
     <div class="score" style="background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 20px; font-family: 'Orbitron', sans-serif; font-size: 24px;">
-        <span id="n9a" style="font-weight:bold; color:#ff2a6d; text-shadow: 0 0 15px currentColor;">RED</span>
+        <span id="n9a" style="font-weight:bold; color:#ff1a1a; text-shadow: 0 0 15px currentColor;">RED</span>
         <span id="s9a" style="font-size: 32px; font-weight: 900;">0</span>
         <span style="opacity: 0.5;">-</span>
         <span id="s9b" style="font-size: 32px; font-weight: 900;">0</span>
@@ -631,7 +649,7 @@
 <script>
 // State
 let target = 3;
-let p1c = '#ff2a6d', p2c = '#05d9e8';
+let p1c = '#ff1a1a', p2c = '#05d9e8';
 let p1n = 'RED', p2n = 'BLUE';
 let p1s = 0, p2s = 0;
 let p1set = 0, p2set = 0;
@@ -640,7 +658,7 @@ let curRound = 0, curPlayer = 1;
 let results = [];
 
 const COLS = [
-    ['#ff2a6d','RED'],['#05d9e8','BLUE'],['#aaff00','GREEN'],
+    ['#ff1a1a','RED'],['#05d9e8','BLUE'],['#aaff00','GREEN'],
     ['#ffaa00','ORANGE'],['#aa00ff','PURPLE'],['#ff69b4','PINK']
 ];
 const MOVES = {rock:'🪨',paper:'📄',scissors:'✂️'};
@@ -838,6 +856,17 @@ function updateAllScoreboards() {
 function init() {
     renderColors();
     show('s1');
+    
+    // Request fullscreen on mobile
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        setTimeout(() => {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen();
+            }
+        }, 500);
+    }
 }
 
 function renderColors() {
@@ -846,17 +875,32 @@ function renderColors() {
     c1.innerHTML = '';
     c2.innerHTML = '';
     COLS.forEach(([c,n]) => {
+        // Player 1 color button
         const b1 = document.createElement('button');
         b1.className = 'color' + (c === p1c ? ' sel' : '');
-        b1.style.background = c;
-        b1.onclick = () => { p1c = c; p1n = n; renderColors(); updateBgGradient(); };
+        if (c === p2c) {
+            // Unavailable - show black with red X
+            b1.classList.add('unavailable');
+            b1.innerHTML = '✕';
+            b1.disabled = true;
+        } else {
+            b1.style.background = c;
+            b1.onclick = () => { p1c = c; p1n = n; renderColors(); updateBgGradient(); };
+        }
         c1.appendChild(b1);
         
+        // Player 2 color button
         const b2 = document.createElement('button');
-        b2.className = 'color' + (c === p2c ? ' sel' : '') + (c === p1c ? '' : '');
-        b2.style.background = c;
-        b2.style.opacity = c === p1c ? '0.3' : '1';
-        b2.onclick = () => { if (c !== p1c) { p2c = c; p2n = n; renderColors(); updateBgGradient(); } };
+        b2.className = 'color' + (c === p2c ? ' sel' : '');
+        if (c === p1c) {
+            // Unavailable - show black with red X
+            b2.classList.add('unavailable');
+            b2.innerHTML = '✕';
+            b2.disabled = true;
+        } else {
+            b2.style.background = c;
+            b2.onclick = () => { p2c = c; p2n = n; renderColors(); updateBgGradient(); };
+        }
         c2.appendChild(b2);
     });
     updateBgGradient();
