@@ -557,8 +557,8 @@ function startConfetti(winnerColor, big = true) {
     canvas.height = window.innerHeight;
     
     const particles = [];
-    const colors = [winnerColor, '#fff', '#ffd700', '#ff6b6b', '#4ecdc4'];
-    const count = big ? 150 : 40; // Fewer particles for set win
+    const colors = [winnerColor, adjustColor(winnerColor, 30), adjustColor(winnerColor, -30), '#fff'];
+    const count = big ? 250 : 80; // 250 for match win, 80 for set win
     
     for (let i = 0; i < count; i++) {
         particles.push({
@@ -1138,11 +1138,22 @@ async function battle() {
             
             // Trigger explosion confetti at bonk point (center of screen)
             // Bonk happens at 600ms (60% of 1s animation), confetti triggers at impact
+            // Multiple bursts of confetti from winner for bigger effect
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight * 0.6;
+            
+            // Main burst at bonk impact
             setTimeout(() => {
-                const centerX = window.innerWidth / 2;
-                const centerY = window.innerHeight * 0.6;
-                explosionConfetti(centerX, centerY, winnerColor);
+                explosionConfetti(centerX, centerY, winnerColor, 80);
             }, 600);
+            
+            // Secondary bursts from winner position
+            setTimeout(() => {
+                explosionConfetti(centerX - 50, centerY, winnerColor, 40);
+            }, 700);
+            setTimeout(() => {
+                explosionConfetti(centerX + 50, centerY, winnerColor, 40);
+            }, 800);
             
             await sleep(1000); // Wait for bonk animation to complete (winner now centered)
             
