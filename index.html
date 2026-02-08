@@ -1297,7 +1297,6 @@ const game = {
 
     selectColor(player, color, name) {
         sounds.playSelect();
-        this.vibrate(20);
         const otherColor = player === 1 ? this.p2Color : this.p1Color;
         if (color === otherColor) return;
         
@@ -1338,7 +1337,6 @@ const game = {
 
     adjustSets(delta) {
         sounds.playClick();
-        this.vibrate(15);
         this.setsToWin = Math.max(1, Math.min(5, this.setsToWin + delta));
         document.getElementById('sets-target').textContent = this.setsToWin;
     },
@@ -1363,7 +1361,6 @@ const game = {
     startGame() {
         sounds.resume();
         sounds.playSelect();
-        this.vibrate([30, 50, 30]);
         this.p1SetsWon = 0;
         this.p2SetsWon = 0;
         this.resetSet();
@@ -1406,7 +1403,6 @@ const game = {
 
     toSelection(player) {
         sounds.playClick();
-        this.vibrate(20);
         this.currentPlayer = player;
         this.selectingRound = 0;
         while (this.selectingRound < this.ROUNDS_PER_SET && this.getCurrentChoices()[this.selectingRound] !== null) {
@@ -1423,28 +1419,40 @@ const game = {
         return this.currentPlayer === 1 ? this.p1Choices : this.p2Choices;
     },
 
+    // Optimized renderProgress - only creates dots once, updates classes
     renderProgress() {
-        const container = document.getElementById(this.currentPlayer === 1 ? 'p1-progress' : 'p2-progress');
+        const containerId = this.currentPlayer === 1 ? 'p1-progress' : 'p2-progress';
+        const container = document.getElementById(containerId);
         const choices = this.getCurrentChoices();
-        // Use textContent instead of innerHTML for performance
-        let html = '';
         const color = this.currentPlayer === 1 ? this.p1Color : this.p2Color;
         
-        for (let i = 0; i < this.ROUNDS_PER_SET; i++) {
-            let className = 'progress-dot';
-            let content = '';
-            
-            if (i === this.selectingRound) {
-                className += ' current';
-            } else if (choices[i]) {
-                className += ' filled';
-                content = this.moves[choices[i]];
+        // Create dots once, then just update them
+        if (!container.children.length || container.children.length !== this.ROUNDS_PER_SET) {
+            container.innerHTML = '';
+            for (let i = 0; i < this.ROUNDS_PER_SET; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'progress-dot';
+                dot.style.color = color;
+                dot.id = `${containerId}-dot-${i}`;
+                container.appendChild(dot);
             }
-            
-            html += `<div class="${className}" style="color:${color}">${content}</div>`;
         }
         
-        container.innerHTML = html;
+        // Update existing dots (much faster than rebuilding)
+        for (let i = 0; i < this.ROUNDS_PER_SET; i++) {
+            const dot = document.getElementById(`${containerId}-dot-${i}`);
+            if (!dot) continue;
+            
+            dot.className = 'progress-dot';
+            dot.textContent = '';
+            
+            if (i === this.selectingRound) {
+                dot.classList.add('current');
+            } else if (choices[i]) {
+                dot.classList.add('filled');
+                dot.textContent = this.moves[choices[i]];
+            }
+        }
     },
 
     updateSelectionUI() {
@@ -1465,8 +1473,6 @@ const game = {
     },
 
     selectMove(move) {
-        // sounds.playSelect(); // Disabled for performance
-        this.vibrate(25);
         const choices = this.getCurrentChoices();
         choices[this.selectingRound] = move;
         this.updateSelectionUI();
@@ -1494,7 +1500,6 @@ const game = {
 
     prevRound() {
         sounds.playClick();
-        this.vibrate(15);
         if (this.selectingRound > 0) {
             this.selectingRound--;
             this.updateSelectionUI();
@@ -1523,7 +1528,6 @@ const game = {
 
     async startBattle() {
         sounds.playSelect();
-        this.vibrate([40, 60, 40]);
         this.isBattling = true;
         this.show('battle');
         this.currentRound = 0;
@@ -1629,22 +1633,22 @@ const game = {
         f1.textContent = '❔';
         f2.textContent = '❔';
         
-        // Ultra-fast battle - minimal animation
+        // Battle timing: 1s per phase, 2s reveal, 2s result, 1s pause
         const phases = ['ROCK', 'PAPER', 'SCISSORS', 'SHOOT!'];
         
         for (let i = 0; i < 4; i++) {
             countdown.textContent = phases[i];
-            // sounds.playCountdown(phases[i]); // Disabled
+            sounds.playCountdown(phases[i]);
             
             if (i < 3) {
                 f1.textContent = this.cycleOrder[(i * 2) % 6];
                 f2.textContent = this.cycleOrder[(i * 2) % 6];
-                await this.sleep(180); // Very fast
+                await this.sleep(1000); // 1 second per phase
             } else {
-                // Reveal
+                // SHOOT! - reveal and hold for 2 seconds
                 f1.textContent = this.moves[this.p1Choices[roundIndex]];
                 f2.textContent = this.moves[this.p2Choices[roundIndex]];
-                await this.sleep(200);
+                await this.sleep(2000); // 2 second reveal
                 countdown.textContent = '';
             }
         }
@@ -1662,7 +1666,6 @@ const game = {
             this.p1SetPoints += 0.5;
             this.p2SetPoints += 0.5;
             this.roundResults.push('tie');
-            this.vibrate(30);
             sounds.playTie();
             
         } else if (
@@ -1675,14 +1678,12 @@ const game = {
             resultColor = this.p1Color;
             this.p1SetPoints += 1;
             this.roundResults.push('p1');
-            this.vibrate([50, 30, 80]);
         } else {
             winner = 'p2';
             resultText = `${this.p2Name} WINS`;
             resultColor = this.p2Color;
             this.p2SetPoints += 1;
             this.roundResults.push('p2');
-            this.vibrate([50, 30, 80]);
         }
         
         // Update scores - no animations
@@ -1690,13 +1691,14 @@ const game = {
         document.getElementById('set-p2-points').textContent = this.p2SetPoints;
         this.updateRoundBar();
         
-        // Show result
+        // Show result with celebration (2s) + pause (1s) = 3s total
         resultBanner.textContent = resultText;
         resultBanner.style.color = resultColor;
         resultBanner.style.borderColor = resultColor;
         resultBanner.classList.add('show');
+        sounds.playWinRound();
         
-        await this.sleep(600); // Quick result display
+        await this.sleep(3000); // 2s celebration + 1s pause
         
         resultBanner.classList.remove('show');
         
@@ -1762,7 +1764,6 @@ const game = {
         sounds.playGameWin();
         this.triggerMegaConfetti();
         this.flashScreen(winnerColor);
-        this.vibrate([100, 50, 100, 50, 200]);
         
         // Show overlay after brief delay
         setTimeout(() => {
@@ -1806,7 +1807,6 @@ const game = {
 
     continueGame() {
         sounds.playClick();
-        this.vibrate(30);
         this.resetSet();
         this.updateAllDisplayNames();
         this.show('p1-ready');
@@ -1814,7 +1814,6 @@ const game = {
 
     playAgain() {
         sounds.playClick();
-        this.vibrate([40, 40]);
         this.p1SetsWon = 0;
         this.p2SetsWon = 0;
         this.resetSet();
@@ -1823,7 +1822,6 @@ const game = {
 
     backToMenu() {
         sounds.playClick();
-        this.vibrate(20);
         this.isBattling = false;
         this.show('setup');
     }
