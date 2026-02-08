@@ -167,6 +167,109 @@
             letter-spacing: 0.5px;
         }
         
+        /* Card containers */
+        .card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 15px 20px;
+            backdrop-filter: blur(10px);
+        }
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.7;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .player-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            opacity: 0.8;
+            margin: 25px 0 12px;
+            text-align: center;
+            padding: 8px 16px;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+        }
+        
+        /* Big action button */
+        .btn-action {
+            background: linear-gradient(145deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%) !important;
+            border-color: rgba(255,255,255,0.4) !important;
+            font-size: 20px !important;
+            letter-spacing: 3px !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.1) !important;
+        }
+        .btn-action:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 30px rgba(255,255,255,0.15) !important;
+        }
+        
+        /* Step indicator */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.6;
+        }
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+        }
+        .step-dot.active {
+            background: #fff;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        
+        /* Team selection display */
+        .team-display {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 30px currentColor;
+            margin: 10px 0;
+        }
+        
+        /* Move selection dots styling */
+        .round-indicator {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            letter-spacing: 2px;
+            padding: 12px 24px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        
+        /* Ready screen styling */
+        .ready-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 48px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            text-shadow: 0 0 40px rgba(255,255,255,0.3);
+            margin: 30px 0;
+        }
+        
         /* Unified scoreboard - used on all screens */
         .scoreboard { display:flex; gap:10px; padding:10px; flex-shrink:0; }
         .scorebox { flex:1; padding:10px; display:flex; justify-content:center; align-items:center; }
@@ -326,24 +429,33 @@
 <div id="vignette"></div>
 
 <!-- SETUP -->
-<div id="s1" class="screen active" style="overflow-y: auto; justify-content: flex-start; padding-top: 30px;">
-    <h1 style="margin: 20px 0; font-size: 32px; font-weight: 900; text-shadow: 0 0 30px rgba(255,255,255,0.3);">RPC Championships</h1>
+<div id="s1" class="screen active" style="overflow-y: auto; justify-content: flex-start; padding-top: 20px;">
+    <h1 style="margin: 15px 0; font-size: 28px; font-weight: 900; text-shadow: 0 0 30px rgba(255,255,255,0.3);">RPC Championships</h1>
     
-    <p class="center" style="margin: 20px 0 10px; font-family: 'Orbitron', sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9;">Player 1</p>
-    <div class="colors" id="c1" style="margin: 10px 0;"></div>
-    
-    <p class="center" style="margin: 20px 0 10px; font-family: 'Orbitron', sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9;">Player 2</p>
-    <div class="colors" id="c2" style="margin: 10px 0;"></div>
-    
-    <div style="margin-top: 30px; padding: 20px; background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
-        <p class="center" style="margin: 0 0 15px; font-size: 18px; opacity: 0.8;">First to <b id="target" style="font-family: 'Orbitron', sans-serif; font-size: 24px; color: #fff;">3</b> wins</p>
-        <div class="row" style="margin: 0;">
-            <button onclick="chg(-1)" style="width: 60px; font-size: 24px;">-</button>
-            <button onclick="chg(1)" style="width: 60px; font-size: 24px;">+</button>
-        </div>
+    <!-- Player 1 Card -->
+    <div class="card">
+        <div class="card-title" style="color: var(--p1-color, #ff1a1a); text-shadow: 0 0 10px var(--p1-color, #ff1a1a);">Player 1 Team</div>
+        <div class="colors" id="c1" style="margin: 0;"></div>
     </div>
     
-    <button onclick="start()" style="margin-top: 30px; background: linear-gradient(145deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%); border-color: rgba(255,255,255,0.4);">START GAME</button>
+    <!-- Player 2 Card -->
+    <div class="card">
+        <div class="card-title" style="color: var(--p2-color, #05d9e8); text-shadow: 0 0 10px var(--p2-color, #05d9e8);">Player 2 Team</div>
+        <div class="colors" id="c2" style="margin: 0;"></div>
+    </div>
+    
+    <!-- Points to Win Card -->
+    <div class="card" style="padding: 20px;">
+        <div class="card-title">Match Settings</div>
+        <p class="center" style="margin: 0 0 15px; font-size: 16px; opacity: 0.9;">First to <b id="target" style="font-family: 'Orbitron', sans-serif; font-size: 36px; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.5);">3</b> Points</p>
+        <div class="row" style="margin: 0; gap: 15px;">
+            <button onclick="chg(-1)" style="width: 70px; font-size: 28px; border-radius: 8px;">−</button>
+            <button onclick="chg(1)" style="width: 70px; font-size: 28px; border-radius: 8px;">+</button>
+        </div>
+        <p class="center" style="margin: 12px 0 0; font-size: 12px; opacity: 0.5; font-style: italic;">Draws award 0.5 points to each team</p>
+    </div>
+    
+    <button onclick="start()" class="btn-action" style="margin: 20px;">START GAME</button>
 </div>
 
 <!-- P1 PICK -->
@@ -369,9 +481,24 @@
         </div>
     </div>
     
-    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-        <h1 id="t2" style="font-size:24px; margin:20px 0;"><span id="t2-color" style="color:#ff1a1a;">RED</span>'s Selection</h1>
-        <button onclick="goPick(1)" style="max-width:300px;">PICK MOVES</button>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding: 20px;">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <span class="step-dot active"></span>
+            <span>P1 Select</span>
+            <span>→</span>
+            <span class="step-dot"></span>
+            <span>P2 Select</span>
+            <span>→</span>
+            <span class="step-dot"></span>
+            <span>Battle</span>
+        </div>
+        
+        <div class="card" style="text-align: center; max-width: 340px; width: 100%;">
+            <div class="card-title">Select Moves</div>
+            <div id="t2" class="team-display" style="color: var(--p1-color, #ff1a1a); margin: 20px 0;">RED</div>
+            <button onclick="goPick(1)" class="btn-action" style="margin-top: 10px;">PICK MOVES</button>
+        </div>
     </div>
     
     <!-- Match score at bottom -->
@@ -408,13 +535,30 @@
         </div>
     </div>
     
-    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow-y:auto;">
-        <p class="center" style="margin:10px 0;">Round <span id="r3">1</span>/7</p>
-        <div class="dots" id="d3" style="gap:8px; justify-content:center; flex-wrap:wrap;"></div>
-        <div class="moves" style="margin:20px 0; width:100%; max-width:400px;">
-            <button class="move" onclick="pick('rock')">🪨</button>
-            <button class="move" onclick="pick('paper')">📄</button>
-            <button class="move" onclick="pick('scissors')">✂️</button>
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow-y:auto; padding: 15px;">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <span class="step-dot active"></span>
+            <span>P1 Select</span>
+            <span>→</span>
+            <span class="step-dot"></span>
+            <span>P2 Select</span>
+            <span>→</span>
+            <span class="step-dot"></span>
+            <span>Battle</span>
+        </div>
+        
+        <div class="round-indicator" id="p1-round-indicator" style="color: var(--p1-color, #ff1a1a);">Round 1 / 7</div>
+        
+        <div class="dots" id="d3" style="gap:10px; justify-content:center; flex-wrap:wrap; margin: 10px 0 25px;"></div>
+        
+        <div class="card" style="width: 100%; max-width: 400px; padding: 15px;">
+            <div class="card-title" style="color: var(--p1-color, #ff1a1a); text-shadow: 0 0 10px var(--p1-color, #ff1a1a);">Choose Your Move</div>
+            <div class="moves" style="margin: 10px 0 0; width:100%;">
+                <button class="move" onclick="pick('rock')">🪨</button>
+                <button class="move" onclick="pick('paper')">📄</button>
+                <button class="move" onclick="pick('scissors')">✂️</button>
+            </div>
         </div>
     </div>
     
@@ -452,9 +596,24 @@
         </div>
     </div>
     
-    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-        <h1 id="t4" style="font-size:24px; margin:20px 0;"><span id="t4-color" style="color:#05d9e8;">BLUE</span>'s Selection</h1>
-        <button onclick="goPick(2)" style="max-width:300px;">PICK MOVES</button>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding: 20px;">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <span class="step-dot"></span>
+            <span style="opacity: 0.5;">P1 Select</span>
+            <span>→</span>
+            <span class="step-dot active"></span>
+            <span>P2 Select</span>
+            <span>→</span>
+            <span class="step-dot"></span>
+            <span>Battle</span>
+        </div>
+        
+        <div class="card" style="text-align: center; max-width: 340px; width: 100%;">
+            <div class="card-title">Select Moves</div>
+            <div id="t4" class="team-display" style="color: var(--p2-color, #05d9e8); margin: 20px 0;">BLUE</div>
+            <button onclick="goPick(2)" class="btn-action" style="margin-top: 10px;">PICK MOVES</button>
+        </div>
     </div>
     
     <!-- Match score at bottom -->
@@ -491,13 +650,30 @@
         </div>
     </div>
     
-    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow-y:auto;">
-        <p class="center" style="margin:10px 0;">Round <span id="r5">1</span>/7</p>
-        <div class="dots" id="d5" style="gap:8px; justify-content:center; flex-wrap:wrap;"></div>
-        <div class="moves" style="margin:20px 0; width:100%; max-width:400px;">
-            <button class="move" onclick="pick('rock')">🪨</button>
-            <button class="move" onclick="pick('paper')">📄</button>
-            <button class="move" onclick="pick('scissors')">✂️</button>
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow-y:auto; padding: 15px;">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <span class="step-dot"></span>
+            <span style="opacity: 0.5;">P1 Select</span>
+            <span>→</span>
+            <span class="step-dot active"></span>
+            <span>P2 Select</span>
+            <span>→</span>
+            <span class="step-dot"></span>
+            <span>Battle</span>
+        </div>
+        
+        <div class="round-indicator" id="p2-round-indicator" style="color: var(--p2-color, #05d9e8);">Round 1 / 7</div>
+        
+        <div class="dots" id="d5" style="gap:10px; justify-content:center; flex-wrap:wrap; margin: 10px 0 25px;"></div>
+        
+        <div class="card" style="width: 100%; max-width: 400px; padding: 15px;">
+            <div class="card-title" style="color: var(--p2-color, #05d9e8); text-shadow: 0 0 10px var(--p2-color, #05d9e8);">Choose Your Move</div>
+            <div class="moves" style="margin: 10px 0 0; width:100%;">
+                <button class="move" onclick="pick('rock')">🪨</button>
+                <button class="move" onclick="pick('paper')">📄</button>
+                <button class="move" onclick="pick('scissors')">✂️</button>
+            </div>
         </div>
     </div>
     
@@ -535,9 +711,24 @@
         </div>
     </div>
     
-    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-        <h1 style="font-size:28px; margin:20px 0;">Ready!</h1>
-        <button onclick="battle()" style="max-width:300px;">BATTLE</button>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding: 20px;">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <span class="step-dot"></span>
+            <span style="opacity: 0.5;">P1 Select</span>
+            <span>→</span>
+            <span class="step-dot"></span>
+            <span style="opacity: 0.5;">P2 Select</span>
+            <span>→</span>
+            <span class="step-dot active"></span>
+            <span>Battle</span>
+        </div>
+        
+        <div class="card" style="text-align: center; max-width: 360px; width: 100%; padding: 40px 30px;">
+            <div class="ready-text">READY</div>
+            <p class="center" style="margin: 15px 0 25px; font-size: 14px; opacity: 0.7;">Both teams have selected their moves</p>
+            <button onclick="battle()" class="btn-action" style="background: linear-gradient(145deg, rgba(255,100,100,0.25) 0%, rgba(100,255,255,0.15) 100%) !important; border-color: rgba(255,255,255,0.5) !important;">⚔️ BATTLE ⚔️</button>
+        </div>
     </div>
     
     <!-- Match score at bottom -->
@@ -1013,6 +1204,13 @@ function updatePickScreen() {
     const isP1 = curPlayer === 1;
     const playerColor = isP1 ? p1c : p2c;
     document.getElementById(isP1 ? 'r3' : 'r5').textContent = curRound + 1;
+    // Update the styled round indicator
+    const indicatorId = isP1 ? 'p1-round-indicator' : 'p2-round-indicator';
+    const indicator = document.getElementById(indicatorId);
+    if (indicator) {
+        indicator.textContent = 'Round ' + (curRound + 1) + ' / 7';
+        indicator.style.color = playerColor;
+    }
     const dots = document.getElementById(isP1 ? 'd3' : 'd5');
     const moves = isP1 ? p1moves : p2moves;
     dots.innerHTML = '';
