@@ -120,9 +120,9 @@
 <div id="s7" class="screen">
     <!-- Top HUD with round pips in center -->
     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #333;">
-        <span><span id="n7a">P1</span> (<span id="seta">0</span>)</span>
+        <span style="color: var(--p1-color, #fff);"><span id="n7a">P1</span> (<span id="seta">0</span>)</span>
         <div class="dots" id="pips" style="margin:0;"></div>
-        <span><span id="n7b">P2</span> (<span id="setb">0</span>)</span>
+        <span style="color: var(--p2-color, #fff);"><span id="n7b">P2</span> (<span id="setb">0</span>)</span>
     </div>
     
     <!-- Top row: Phase display with matching emojis -->
@@ -136,6 +136,16 @@
     <div id="fighters-row" style="display:flex; align-items:center; justify-content:center; gap:40px; margin:20px 0; min-height:90px;">
         <span id="f1" style="font-size:64px;">❔</span>
         <span id="f2" style="font-size:64px;">❔</span>
+    </div>
+    
+    <!-- Bottom: Match score in team color boxes -->
+    <div style="display:flex; gap:10px; margin-top:auto; margin-bottom:20px;">
+        <div id="p1-score-box" style="flex:1; padding:15px; display:flex; justify-content:center; align-items:center;">
+            <div style="background:#000; color:#fff; padding:10px 20px; font-size:24px; font-weight:bold; min-width:60px; text-align:center;" id="match-p1">0</div>
+        </div>
+        <div id="p2-score-box" style="flex:1; padding:15px; display:flex; justify-content:center; align-items:center;">
+            <div style="background:#000; color:#fff; padding:10px 20px; font-size:24px; font-weight:bold; min-width:60px; text-align:center;" id="match-p2">0</div>
+        </div>
     </div>
 </div>
 
@@ -298,12 +308,20 @@ async function battle() {
     document.getElementById('seta').textContent = '0';
     document.getElementById('setb').textContent = '0';
     
-    // Initialize empty pips at start
+    // Set player colors
+    document.getElementById('p1-score-box').style.background = p1c;
+    document.getElementById('p2-score-box').style.background = p2c;
+    document.getElementById('match-p1').textContent = p1s;
+    document.getElementById('match-p2').textContent = p2s;
+    
+    // Initialize empty pips at start (black = not played)
     const pips = document.getElementById('pips');
     pips.innerHTML = '';
     for (let i = 0; i < 7; i++) {
         const p = document.createElement('div');
         p.className = 'dot';
+        p.style.background = '#000';
+        p.style.border = '1px solid #555';
         pips.appendChild(p);
     }
     
@@ -369,17 +387,23 @@ async function battle() {
         document.getElementById('phase-left').textContent = '🏆';
         document.getElementById('phase-right').textContent = '🏆';
         
-        // Update pips
+        // Update pips with colors
         const pips = document.getElementById('pips');
         pips.innerHTML = '';
         for (let i = 0; i < 7; i++) {
             const p = document.createElement('div');
             p.className = 'dot';
-            if (results[i] === 'p1') p.style.background = '#fff';
-            else if (results[i] === 'p2') p.style.background = '#666';
-            else if (results[i] === 'tie') p.style.background = '#333';
+            p.style.border = '1px solid #555';
+            if (results[i] === 'p1') p.style.background = p1c;
+            else if (results[i] === 'p2') p.style.background = p2c;
+            else if (results[i] === 'tie') p.style.background = '#fff';
+            else p.style.background = '#000';
             pips.appendChild(p);
         }
+        
+        // Update match scores
+        document.getElementById('match-p1').textContent = p1s;
+        document.getElementById('match-p2').textContent = p2s;
         
         await sleep(3000);
         
