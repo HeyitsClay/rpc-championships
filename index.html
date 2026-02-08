@@ -73,29 +73,22 @@
 
 <!-- P1 PICK -->
 <div id="s2" class="screen">
-    <!-- Top bar like battle screen -->
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative;">
-        <span id="n1" style="font-weight:bold; color:#ff2a6d;">RED</span>
-        <span id="s2p1">0</span>
-        <span>VS</span>
-        <span id="s2p2">0</span>
-        <span id="n2" style="font-weight:bold; color:#05d9e8;">BLUE</span>
+    <!-- Top bar with empty set circles -->
+    <div style="display:flex; justify-content:center; align-items:center; padding:10px; border-bottom:2px solid #333;">
+        <div style="display:flex; gap:5px;">
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+        </div>
     </div>
     
     <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
         <h1 id="t2" style="font-size:24px; margin:20px 0;"><span id="t2-color" style="color:#ff2a6d;">RED</span>'s Selection</h1>
         <button onclick="goPick(1)" style="max-width:300px;">PICK MOVES</button>
-    </div>
-    
-    <!-- Empty set score circles at bottom -->
-    <div style="display:flex; justify-content:center; gap:5px; padding:10px; border-top:1px solid #333;">
-        <div class="dot" style="background:#000; border:1px solid #555;"></div>
-        <div class="dot" style="background:#000; border:1px solid #555;"></div>
-        <div class="dot" style="background:#000; border:1px solid #555;"></div>
-        <div class="dot" style="background:#000; border:1px solid #555;"></div>
-        <div class="dot" style="background:#000; border:1px solid #555;"></div>
-        <div class="dot" style="background:#000; border:1px solid #555;"></div>
-        <div class="dot" style="background:#000; border:1px solid #555;"></div>
     </div>
     
     <!-- Match score at bottom -->
@@ -131,16 +124,34 @@
 </div>
 
 <!-- P2 PICK -->
-<div id="s4" class="screen">
-    <div class="score">
-        <span id="n4a" style="font-weight:bold; color:#ff2a6d;">RED</span>
-        <span id="s4p1">0</span>
-        <span>VS</span>
-        <span id="s4p2">0</span>
-        <span id="n4b" style="font-weight:bold; color:#05d9e8;">BLUE</span>
+<div id="s5" class="screen">
+    <!-- Top bar with empty set circles -->
+    <div style="display:flex; justify-content:center; align-items:center; padding:10px; border-bottom:2px solid #333;">
+        <div style="display:flex; gap:5px;">
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+        </div>
     </div>
-    <h1 id="t4">Hand to Player 2</h1>
-    <button onclick="goPick(2)">PICK MOVES</button>
+    
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+        <h1 id="t5" style="font-size:24px; margin:20px 0;"><span id="t5-color" style="color:#05d9e8;">BLUE</span>'s Selection</h1>
+        <button onclick="goPick(2)" style="max-width:300px;">PICK MOVES</button>
+    </div>
+    
+    <!-- Match score at bottom -->
+    <div style="display:flex; gap:10px; padding:10px;">
+        <div id="p1-pick2-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center; background:#ff2a6d;">
+            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;">0</div>
+        </div>
+        <div id="p2-pick2-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center; background:#05d9e8;">
+            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;">0</div>
+        </div>
+    </div>
 </div>
 
 <!-- P2 SELECT -->
@@ -166,26 +177,56 @@
 
 <!-- READY -->
 <div id="s6" class="screen">
-    <h1>Ready!</h1>
-    <div class="score">
-        <span id="n6a" style="font-weight:bold; color:#ff2a6d;">RED</span>
-        <span id="s6a">0</span>
-        <span>VS</span>
-        <span id="s6b">0</span>
-        <span id="n6b" style="font-weight:bold; color:#05d9e8;">BLUE</span>
+    <!-- Top bar with empty set circles -->
+    <div style="display:flex; justify-content:center; align-items:center; padding:10px; border-bottom:2px solid #333;">
+        <div style="display:flex; gap:5px;">
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+        </div>
     </div>
-    <button onclick="battle()">BATTLE</button>
+    
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+        <h1 style="font-size:28px; margin:20px 0;">Ready!</h1>
+        <button onclick="battle()" style="max-width:300px;">BATTLE</button>
+    </div>
+    
+    <!-- Match score at bottom -->
+    <div style="display:flex; gap:10px; padding:10px;">
+        <div id="p1-ready-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center; background:#ff2a6d;">
+            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="ready-p1">0</div>
+        </div>
+        <div id="p2-ready-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center; background:#05d9e8;">
+            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="ready-p2">0</div>
+        </div>
+    </div>
 </div>
 
 <!-- BATTLE -->
 <div id="s7" class="screen">
-    <!-- Top HUD with colored border -->
+    <!-- Top HUD with scores on sides of circles -->
     <div id="battle-top" style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative;">
         <div id="p1-border" style="position:absolute; bottom:-2px; left:0; width:50%; height:2px; background:#ff2a6d;"></div>
         <div id="p2-border" style="position:absolute; bottom:-2px; right:0; width:50%; height:2px; background:#05d9e8;"></div>
-        <span style="color: var(--p1-color, #fff);"><span id="n7a">RED</span> (<span id="seta">0</span>)</span>
+        
+        <!-- Left: Team 1 name and set score in team color -->
+        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
+            <span id="n7a" style="font-weight:bold;">RED</span>
+            <span id="seta" style="color:#ff2a6d; font-size:20px; font-weight:bold;">0</span>
+        </div>
+        
+        <!-- Center: Round pips -->
         <div class="dots" id="pips" style="margin:0;"></div>
-        <span style="color: var(--p2-color, #fff);"><span id="n7b">BLUE</span> (<span id="setb">0</span>)</span>
+        
+        <!-- Right: Team 2 name and set score in team color -->
+        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
+            <span id="n7b" style="font-weight:bold;">BLUE</span>
+            <span id="setb" style="color:#05d9e8; font-size:20px; font-weight:bold;">0</span>
+        </div>
     </div>
     
     <!-- Top row: Phase display with matching emojis -->
@@ -326,21 +367,27 @@ function newSet() {
     curRound = 0;
     results = [];
     
-    // Update names and colors on pick screen
-    document.getElementById('n1').textContent = p1n;
-    document.getElementById('n1').style.color = p1c;
-    document.getElementById('n2').textContent = p2n;
-    document.getElementById('n2').style.color = p2c;
+    // Update names and colors on P1 pick screen
     document.getElementById('t2-color').textContent = p1n;
     document.getElementById('t2-color').style.color = p1c;
-    document.getElementById('s2p1').textContent = p1s;
-    document.getElementById('s2p2').textContent = p2s;
+    
+    // Update names and colors on P2 pick screen
+    const t5Color = document.getElementById('t5-color');
+    if (t5Color) {
+        t5Color.textContent = p2n;
+        t5Color.style.color = p2c;
+    }
     
     // Update pick screen score boxes
     const p1Box = document.querySelector('#p1-pick-box');
     const p2Box = document.querySelector('#p2-pick-box');
     if (p1Box) p1Box.style.background = p1c;
     if (p2Box) p2Box.style.background = p2c;
+    
+    const p1Box2 = document.querySelector('#p1-pick2-box');
+    const p2Box2 = document.querySelector('#p2-pick2-box');
+    if (p1Box2) p1Box2.style.background = p1c;
+    if (p2Box2) p2Box2.style.background = p2c;
 }
 
 function goPick(p) {
@@ -361,6 +408,7 @@ function goPick(p) {
         document.getElementById('d3').querySelectorAll('.dot').forEach(d => {
             d.style.border = '2px solid ' + playerColor;
         });
+        show('s3');
     } else {
         document.getElementById('p1-select-box2').style.background = p1c;
         document.getElementById('p2-select-box2').style.background = p2c;
@@ -370,9 +418,8 @@ function goPick(p) {
         document.getElementById('d5').querySelectorAll('.dot').forEach(d => {
             d.style.border = '2px solid ' + playerColor;
         });
+        show('s5');
     }
-    
-    show(p === 1 ? 's3' : 's5');
 }
 
 function updatePickScreen() {
@@ -413,21 +460,26 @@ function pick(m) {
         updatePickScreen();
     } else {
         if (curPlayer === 1) {
-            document.getElementById('n4a').textContent = p1n;
-            document.getElementById('n4a').style.color = p1c;
-            document.getElementById('n4b').textContent = p2n;
-            document.getElementById('n4b').style.color = p2c;
-            document.getElementById('t4').textContent = 'Hand to ' + p2n;
-            document.getElementById('s4p1').textContent = p1s;
-            document.getElementById('s4p2').textContent = p2s;
-            show('s4');
+            // Update P2 pick screen
+            const t5Color = document.getElementById('t5-color');
+            if (t5Color) {
+                t5Color.textContent = p2n;
+                t5Color.style.color = p2c;
+            }
+            // Update pick screen score boxes
+            const p1Box2 = document.getElementById('p1-pick2-box');
+            const p2Box2 = document.getElementById('p2-pick2-box');
+            if (p1Box2) p1Box2.style.background = p1c;
+            if (p2Box2) p2Box2.style.background = p2c;
+            show('s5');
         } else {
-            document.getElementById('n6a').textContent = p1n;
-            document.getElementById('n6a').style.color = p1c;
-            document.getElementById('n6b').textContent = p2n;
-            document.getElementById('n6b').style.color = p2c;
-            document.getElementById('s6a').textContent = p1s;
-            document.getElementById('s6b').textContent = p2s;
+            // Update ready screen
+            const p1ReadyBox = document.getElementById('p1-ready-box');
+            const p2ReadyBox = document.getElementById('p2-ready-box');
+            if (p1ReadyBox) p1ReadyBox.style.background = p1c;
+            if (p2ReadyBox) p2ReadyBox.style.background = p2c;
+            document.getElementById('ready-p1').textContent = p1s;
+            document.getElementById('ready-p2').textContent = p2s;
             show('s6');
         }
     }
