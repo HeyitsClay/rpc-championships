@@ -60,9 +60,7 @@
     <div class="colors" id="c1"></div>
     <p class="center">Player 2</p>
     <div class="colors" id="c2"></div>
-    <div style="margin-top: auto;">
-        <button onclick="start()">START GAME</button>
-    </div>
+    <button onclick="start()" style="margin-top: 20px;">START GAME</button>
 </div>
 
 <!-- P1 PICK -->
@@ -313,7 +311,7 @@ async function battle() {
             document.getElementById('phase-right').textContent = phaseEmojis[phase];
             
             if (i < 3) {
-                // ROCK, PAPER, SCISSORS - bottom row stays as ?
+                // ROCK, PAPER, SCISSORS - just show static ?
                 await sleep(750);
             } else {
                 // SHOOT! - animate ? → ?? → ??? → reveal
@@ -330,7 +328,11 @@ async function battle() {
                 document.getElementById('f1').textContent = MOVES[p1moves[round]];
                 document.getElementById('f2').textContent = MOVES[p2moves[round]];
                 await sleep(2000); // reveal actual moves for 2s
+                
+                // Clear phase row but keep fighters
                 document.getElementById('cnt').textContent = '';
+                document.getElementById('phase-left').textContent = '';
+                document.getElementById('phase-right').textContent = '';
             }
         }
         
