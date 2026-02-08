@@ -97,6 +97,56 @@
             100% { transform: translateY(0); }
         }
         .fist-animate { animation: fist-drop 1s ease-out; }
+        
+        /* Screen transitions */
+        .screen { 
+            display: none; 
+            height: 100%; 
+            padding: 20px;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .screen.active { 
+            display: flex; 
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* Pulse animation for current round dot */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 currentColor; }
+            50% { transform: scale(1.15); box-shadow: 0 0 10px 2px currentColor; }
+        }
+        .dot.cur { 
+            border-color: #fff; 
+            animation: pulse 1s ease-in-out infinite;
+        }
+        
+        /* Confetti canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        
+        /* Fullscreen button */
+        #fullscreen-btn {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: auto;
+            padding: 8px 12px;
+            font-size: 12px;
+            z-index: 100;
+            opacity: 0.7;
+        }
+        #fullscreen-btn:hover { opacity: 1; }
     </style>
 </head>
 <body>
@@ -413,8 +463,13 @@
         <span id="n9b" style="font-weight:bold; color:#05d9e8;">BLUE</span>
     </div>
     <button onclick="again()">PLAY AGAIN</button>
+    <button onclick="again(true)">REMATCH (SAME TEAMS)</button>
     <button onclick="menu()">MENU</button>
 </div>
+
+<canvas id="confetti-canvas"></canvas>
+
+<button id="fullscreen-btn" onclick="toggleFullscreen()">⛶ FULLSCREEN</button>
 
 <script>
 // State
@@ -434,6 +489,97 @@ const COLS = [
 const MOVES = {rock:'🪨',paper:'📄',scissors:'✂️'};
 const CYCLE = ['❔','🪨','❔','✂️','❔','📄'];
 
+// Haptic feedback helper
+function haptic(pattern = 10) {
+    if (navigator.vibrate) navigator.vibrate(pattern);
+}
+
+// Fullscreen helper
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(e => console.log('Fullscreen denied'));
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+// Wake lock helper
+let wakeLock = null;
+async function requestWakeLock() {
+    if ('wakeLock' in navigator) {
+        try {
+            wakeLock = await navigator.wakeLock.request('screen');
+        } catch (e) {
+            console.log('Wake lock failed:', e);
+        }
+    }
+}
+
+// Confetti effect
+function startConfetti(winnerColor) {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const particles = [];
+    const colors = [winnerColor, '#fff', '#ffd700', '#ff6b6b', '#4ecdc4'];
+    
+    for (let i = 0; i < 150; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            vx: (Math.random() - 0.5) * 4,
+            vy: Math.random() * 3 + 2,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            size: Math.random() * 8 + 4,
+            rotation: Math.random() * Math.PI * 2,
+            rotationSpeed: (Math.random() - 0.5) * 0.2
+        });
+    }
+    
+    let animationId;
+    let startTime = Date.now();
+    
+    function animate() {
+        const elapsed = Date.now() - startTime;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.rotation += p.rotationSpeed;
+            p.vy += 0.05; // gravity
+            
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+            ctx.restore();
+            
+            if (p.y > canvas.height) {
+                p.y = -10;
+                p.vy = Math.random() * 3 + 2;
+            }
+        });
+        
+        if (elapsed < 5000) { // 5 seconds of confetti
+            animationId = requestAnimationFrame(animate);
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+    
+    animate();
+    
+    // Cleanup on resize
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }, { once: true });
+}
+
 // Init
 function show(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -442,6 +588,7 @@ function show(id) {
 
 // Update all scoreboards across all screens to keep them in sync
 function updateAllScoreboards() {
+    haptic(5); // Light haptic on score update
     // Update all P1 score boxes
     document.querySelectorAll('[id^="sb-p1-box"]').forEach(box => box.style.background = p1c);
     document.querySelectorAll('[id^="sb-p1"]').forEach(el => {
@@ -485,11 +632,13 @@ function renderColors() {
 function chg(d) {
     target = Math.max(1, Math.min(5, target + d));
     document.getElementById('target').textContent = target;
+    haptic(15);
 }
 
 function start() {
     p1s = 0; p2s = 0;
     newSet();
+    requestWakeLock(); // Keep screen awake during game
     show('s2');
 }
 
@@ -611,6 +760,7 @@ function updatePickScreen() {
 }
 
 function pick(m) {
+    haptic(20); // Haptic on move selection
     if (curPlayer === 1) p1moves[curRound] = m;
     else p2moves[curRound] = m;
     
@@ -839,10 +989,10 @@ async function battle() {
         document.getElementById('phase-left').textContent = '🏆';
         document.getElementById('phase-right').textContent = '🏆';
         
-        // Play sound effect based on result
-        if (winner === 'tie') playSound('tie');
-        else if (winner === 'p1') playSound('win1');
-        else playSound('win2');
+        // Play sound effect and haptic based on result
+        if (winner === 'tie') { playSound('tie'); haptic([30, 50, 30]); }
+        else if (winner === 'p1') { playSound('win1'); haptic([50, 30, 80]); }
+        else { playSound('win2'); haptic([50, 30, 80]); }
         
         // Update pips with colors
         const pips = document.getElementById('pips');
@@ -927,14 +1077,17 @@ function endSet() {
     document.getElementById('sb-p2-s8').textContent = p2s;
     
     if (p1s >= target || p2s >= target) {
+        const winnerColor = p1s >= target ? p1c : p2c;
         document.getElementById('win9').textContent = (p1s >= target ? p1n : p2n) + ' WINS!';
-        document.getElementById('win9').style.color = p1s >= target ? p1c : p2c;
+        document.getElementById('win9').style.color = winnerColor;
         document.getElementById('n9a').textContent = p1n;
         document.getElementById('n9a').style.color = p1c;
         document.getElementById('n9b').textContent = p2n;
         document.getElementById('n9b').style.color = p2c;
         document.getElementById('s9a').textContent = p1s;
         document.getElementById('s9b').textContent = p2s;
+        haptic([100, 50, 100, 50, 200]); // Victory haptic
+        startConfetti(winnerColor);
         show('s9');
     } else {
         show('s8');
@@ -946,13 +1099,23 @@ function nextSet() {
     show('s2');
 }
 
-function again() {
+function again(keepTeams = false) {
     p1s = 0; p2s = 0;
     newSet();
+    if (!keepTeams) {
+        // Reset to defaults
+        p1c = '#ff2a6d'; p2c = '#05d9e8';
+        p1n = 'RED'; p2n = 'BLUE';
+    }
     show('s2');
 }
 
 function menu() {
+    // Release wake lock when going back to menu
+    if (wakeLock) {
+        wakeLock.release().catch(() => {});
+        wakeLock = null;
+    }
     show('s1');
 }
 
