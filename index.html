@@ -114,15 +114,33 @@
             transform: translateX(0);
         }
         
-        /* Pulse animation for current round dot */
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 currentColor; }
-            50% { transform: scale(1.15); box-shadow: 0 0 10px 2px currentColor; }
+        /* Battle bonk animations */
+        @keyframes bonk-rise-left {
+            0% { transform: translateX(0) translateY(0) scale(1); }
+            40% { transform: translateX(15vw) translateY(-30px) scale(1.1); }
+            60% { transform: translateX(20vw) translateY(-20px) scale(1.2); }
+            100% { transform: translateX(0) translateY(0) scale(1.3); }
         }
-        .dot.cur { 
-            border-color: #fff; 
-            animation: pulse 1s ease-in-out infinite;
+        @keyframes bonk-rise-right {
+            0% { transform: translateX(0) translateY(0) scale(1); }
+            40% { transform: translateX(-15vw) translateY(-30px) scale(1.1); }
+            60% { transform: translateX(-20vw) translateY(-20px) scale(1.2); }
+            100% { transform: translateX(0) translateY(0) scale(1.3); }
         }
+        @keyframes fade-out {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8) rotate(10deg); }
+            100% { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+        }
+        @keyframes tie-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px) rotate(-5deg); }
+            75% { transform: translateX(10px) rotate(5deg); }
+        }
+        .bonk-winner-left { animation: bonk-rise-left 1s ease-out forwards; }
+        .bonk-winner-right { animation: bonk-rise-right 1s ease-out forwards; }
+        .bonk-loser { animation: fade-out 0.5s ease-out 0.5s forwards; }
+        .tie-shake { animation: tie-shake 0.5s ease-in-out; }
         
         /* Confetti canvas */
         #confetti-canvas {
@@ -557,6 +575,69 @@ function startConfetti(winnerColor, big = true) {
     }, { once: true });
 }
 
+// Explosion confetti at specific position (for battle bonk)
+function explosionConfetti(x, y, color) {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const particles = [];
+    const colors = [color, '#fff', '#ffd700', '#ff6b6b'];
+    
+    for (let i = 0; i < 60; i++) {
+        const angle = (Math.PI * 2 * i) / 60 + Math.random() * 0.5;
+        const speed = Math.random() * 8 + 4;
+        particles.push({
+            x: x,
+            y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            size: Math.random() * 6 + 3,
+            rotation: Math.random() * Math.PI * 2,
+            rotationSpeed: (Math.random() - 0.5) * 0.3,
+            life: 1.0
+        });
+    }
+    
+    let startTime = Date.now();
+    
+    function animate() {
+        const elapsed = Date.now() - startTime;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        let alive = false;
+        particles.forEach(p => {
+            if (p.life <= 0) return;
+            alive = true;
+            
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.3; // gravity
+            p.vx *= 0.95; // friction
+            p.rotation += p.rotationSpeed;
+            p.life -= 0.02;
+            
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation);
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+            ctx.restore();
+        });
+        
+        if (alive && elapsed < 2000) {
+            requestAnimationFrame(animate);
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+    
+    animate();
+}
+
 // Init
 function show(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -851,17 +932,14 @@ function playSound(type) {
             osc.start(now);
             osc.stop(now + 0.3);
             break;
-        case 'click': // Button click - satisfying two-tone pop
-            // Quick high blip followed by pleasant lower tone
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(600, now);
-            osc.frequency.setValueAtTime(880, now + 0.015);
-            osc.frequency.exponentialRampToValueAtTime(440, now + 0.12);
+        case 'click': // Button click - soft beep
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1200, now);
             gain.gain.setValueAtTime(0, now);
-            gain.gain.linearRampToValueAtTime(0.15, now + 0.015);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+            gain.gain.linearRampToValueAtTime(0.08, now + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
             osc.start(now);
-            osc.stop(now + 0.12);
+            osc.stop(now + 0.08);
             break;
     }
 }
@@ -975,6 +1053,47 @@ async function battle() {
         else if (winner === 'p1') { playSound('win1'); haptic([50, 30, 80]); }
         else { playSound('win2'); haptic([50, 30, 80]); }
         
+        // BONK ANIMATION: Winner rises and bonks loser
+        if (winner !== 'tie') {
+            const winnerEl = winner === 'p1' ? f1 : f2;
+            const loserEl = winner === 'p1' ? f2 : f1;
+            const winnerColor = winner === 'p1' ? p1c : p2c;
+            
+            // Remove any existing animation classes
+            f1.classList.remove('bonk-winner-left', 'bonk-winner-right', 'bonk-loser');
+            f2.classList.remove('bonk-winner-left', 'bonk-winner-right', 'bonk-loser');
+            void f1.offsetWidth; // force reflow
+            void f2.offsetWidth;
+            
+            // Add animation classes
+            winnerEl.classList.add(winner === 'p1' ? 'bonk-winner-left' : 'bonk-winner-right');
+            loserEl.classList.add('bonk-loser');
+            
+            // Trigger explosion confetti at bonk point (center of screen)
+            setTimeout(() => {
+                const centerX = window.innerWidth / 2;
+                const centerY = window.innerHeight * 0.6;
+                explosionConfetti(centerX, centerY, winnerColor);
+            }, 500);
+            
+            await sleep(1500); // Wait for bonk animation
+        } else {
+            // Tie animation - both shake
+            f1.classList.add('tie-shake');
+            f2.classList.add('tie-shake');
+            await sleep(1000);
+            f1.classList.remove('tie-shake');
+            f2.classList.remove('tie-shake');
+        }
+        
+        // Reset fighters for next round
+        f1.classList.remove('bonk-winner-left', 'bonk-winner-right', 'bonk-loser');
+        f1.style.transform = '';
+        f1.style.opacity = '1';
+        f2.classList.remove('bonk-winner-left', 'bonk-winner-right', 'bonk-loser');
+        f2.style.transform = '';
+        f2.style.opacity = '1';
+        
         // Update pips with colors
         const pips = document.getElementById('pips');
         pips.innerHTML = '';
@@ -995,7 +1114,7 @@ async function battle() {
         document.getElementById('sb-p1-s7').textContent = p1s;
         document.getElementById('sb-p2-s7').textContent = p2s;
         
-        await sleep(3000);
+        await sleep(1500);
         
         // Early exit check
         const remain = 6 - round;
