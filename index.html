@@ -1207,7 +1207,6 @@ function goPick(p) {
 function updatePickScreen() {
     const isP1 = curPlayer === 1;
     const playerColor = isP1 ? p1c : p2c;
-    document.getElementById(isP1 ? 'r3' : 'r5').textContent = curRound + 1;
     // Update the styled round indicator
     const indicatorId = isP1 ? 'p1-round-indicator' : 'p2-round-indicator';
     const indicator = document.getElementById(indicatorId);
