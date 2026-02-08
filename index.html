@@ -1008,7 +1008,11 @@ async function battle() {
         void f1.offsetWidth;
         void f2.offsetWidth;
         
-        // Set the fresh state with both fists visible
+        // Restore base styles and set fresh state with both fists visible
+        f1.style.fontSize = 'clamp(60px, 20vw, 150px)';
+        f1.style.lineHeight = '1';
+        f2.style.fontSize = 'clamp(60px, 20vw, 150px)';
+        f2.style.lineHeight = '1';
         f1.textContent = '🤜';
         f2.textContent = '🤛';
         
@@ -1091,13 +1095,14 @@ async function battle() {
             loserEl.classList.add('bonk-loser');
             
             // Trigger explosion confetti at bonk point (center of screen)
+            // Bonk happens at 600ms (60% of 1s animation), confetti triggers at impact
             setTimeout(() => {
                 const centerX = window.innerWidth / 2;
                 const centerY = window.innerHeight * 0.6;
                 explosionConfetti(centerX, centerY, winnerColor);
-            }, 500);
+            }, 600);
             
-            await sleep(1500); // Wait for bonk animation
+            await sleep(1000); // Wait for bonk animation to complete (winner now centered)
             
             // Ensure loser stays hidden and winner stays centered
             loserEl.classList.add('fighter-hidden');
