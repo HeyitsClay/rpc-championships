@@ -155,7 +155,7 @@
     <!-- SETUP -->
     <div id="setup" class="screen active">
         <h1>RPC Championships</h1>
-        <p style="text-align:center; margin:10px 0;">Victory: First to <span id="sets-target">2</span> sets</p>
+        <p style="text-align:center; margin:10px 0;">Victory: First to <span id="sets-target">3</span> sets</p>
         <div style="display:flex; gap:10px; justify-content:center; margin:10px 0;">
             <button class="btn" style="width:auto; padding:10px 20px;" onclick="game.adjustSets(-1)">-</button>
             <button class="btn" style="width:auto; padding:10px 20px;" onclick="game.adjustSets(1)">+</button>
@@ -279,7 +279,7 @@
 <script>
 const game = {
     ROUNDS_PER_SET: 7,
-    setsToWin: 2,
+    setsToWin: 3,
     p1SetsWon: 0,
     p2SetsWon: 0,
     p1SetPoints: 0,
@@ -369,23 +369,22 @@ const game = {
     },
 
     updateAllNames() {
-        document.getElementById('p1-ready-name').textContent = this.p1Name;
-        document.getElementById('p2-ready-name').textContent = this.p2Name;
-        document.getElementById('p1-ready-score').textContent = this.p1SetsWon;
-        document.getElementById('p2-ready-score').textContent = this.p2SetsWon;
-        document.getElementById('p1-ready-title').textContent = this.p1Name + ': Select 7 Moves';
-        document.getElementById('p2-ready-name-p1').textContent = this.p1Name;
-        document.getElementById('p2-ready-name-p2').textContent = this.p2Name;
-        document.getElementById('p2-ready-p1-score').textContent = this.p1SetsWon;
-        document.getElementById('p2-ready-p2-score').textContent = this.p2SetsWon;
-        document.getElementById('match-p1-name').textContent = this.p1Name;
-        document.getElementById('match-p2-name').textContent = this.p2Name;
-        document.getElementById('battle-p1-name').textContent = this.p1Name;
-        document.getElementById('battle-p2-name').textContent = this.p2Name;
-        document.getElementById('result-p1-name').textContent = this.p1Name;
-        document.getElementById('result-p2-name').textContent = this.p2Name;
-        document.getElementById('final-p1-name').textContent = this.p1Name;
-        document.getElementById('final-p2-name').textContent = this.p2Name;
+        const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        setText('p1-ready-name', this.p1Name);
+        setText('p2-ready-name', this.p2Name);
+        setText('p1-ready-score', this.p1SetsWon);
+        setText('p2-ready-score', this.p2SetsWon);
+        setText('p1-ready-title', this.p1Name + ': Select 7 Moves');
+        setText('p2-ready-name-p1', this.p1Name);
+        setText('p2-ready-name-p2', this.p2Name);
+        setText('p2-ready-p1-score', this.p1SetsWon);
+        setText('p2-ready-p2-score', this.p2SetsWon);
+        setText('match-p1-name', this.p1Name);
+        setText('match-p2-name', this.p2Name);
+        setText('battle-p1-name', this.p1Name);
+        setText('battle-p2-name', this.p2Name);
+        setText('final-p1-name', this.p1Name);
+        setText('final-p2-name', this.p2Name);
     },
 
     toSelection(player) {
