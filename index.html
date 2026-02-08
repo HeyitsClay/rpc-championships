@@ -103,16 +103,16 @@
 </div>
 
 <!-- P1 SELECT -->
-<div id="s3" class="screen">
-    <!-- Top bar matching battle page -->
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333;">
-        <!-- Left: Team 1 name and 0 score -->
+<div id="s3" class="screen" style="padding-bottom:0;">
+    <!-- Top bar EXACTLY like battle page -->
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative; flex-shrink:0;">
+        <!-- Left: Team 1 name and score -->
         <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
             <span id="n3a" style="font-weight:bold;">RED</span>
             <span style="font-size:20px; font-weight:bold;">0</span>
         </div>
         
-        <!-- Center: Empty round pips -->
+        <!-- Center: Empty dots -->
         <div style="display:flex; gap:5px;">
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
@@ -123,28 +123,30 @@
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
         </div>
         
-        <!-- Right: Team 2 name and 0 score -->
+        <!-- Right: Team 2 name and score -->
         <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
             <span id="n3b" style="font-weight:bold;">BLUE</span>
             <span style="font-size:20px; font-weight:bold;">0</span>
         </div>
     </div>
     
-    <p class="center" style="margin-top:20px;">Round <span id="r3">1</span>/7</p>
-    <div class="dots" id="d3" style="gap:8px; justify-content:center;"></div>
-    <div class="moves" style="margin:20px 0;">
-        <button class="move" onclick="pick('rock')">🪨</button>
-        <button class="move" onclick="pick('paper')">📄</button>
-        <button class="move" onclick="pick('scissors')">✂️</button>
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow-y:auto;">
+        <p class="center" style="margin:10px 0;">Round <span id="r3">1</span>/7</p>
+        <div class="dots" id="d3" style="gap:8px; justify-content:center; flex-wrap:wrap;"></div>
+        <div class="moves" style="margin:20px 0; width:100%; max-width:400px;">
+            <button class="move" onclick="pick('rock')">🪨</button>
+            <button class="move" onclick="pick('paper')">📄</button>
+            <button class="move" onclick="pick('scissors')">✂️</button>
+        </div>
     </div>
     
-    <!-- Match score at bottom -->
-    <div style="display:flex; gap:10px; margin-top:auto; padding:10px;">
-        <div id="p1-select-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="sel-p1">0</div>
+    <!-- Match score at bottom - fixed position -->
+    <div style="display:flex; gap:10px; padding:10px; flex-shrink:0; background:#111;">
+        <div id="p1-select-box" style="flex:1; padding:8px; display:flex; justify-content:center; align-items:center;">
+            <div style="background:#000; color:#fff; padding:8px 16px; font-size:18px; font-weight:bold; min-width:50px; text-align:center;" id="sel-p1">0</div>
         </div>
-        <div id="p2-select-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="sel-p2">0</div>
+        <div id="p2-select-box" style="flex:1; padding:8px; display:flex; justify-content:center; align-items:center;">
+            <div style="background:#000; color:#fff; padding:8px 16px; font-size:18px; font-weight:bold; min-width:50px; text-align:center;" id="sel-p2">0</div>
         </div>
     </div>
 </div>
@@ -181,16 +183,16 @@
 </div>
 
 <!-- P2 SELECT -->
-<div id="s5" class="screen">
-    <!-- Top bar matching battle page -->
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333;">
-        <!-- Left: Team 1 name and 0 score -->
+<div id="s5" class="screen" style="padding-bottom:0;">
+    <!-- Top bar EXACTLY like battle page -->
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative; flex-shrink:0;">
+        <!-- Left: Team 1 name and score -->
         <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
             <span id="n5a" style="font-weight:bold;">RED</span>
             <span style="font-size:20px; font-weight:bold;">0</span>
         </div>
         
-        <!-- Center: Empty round pips -->
+        <!-- Center: Empty dots -->
         <div style="display:flex; gap:5px;">
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
@@ -201,28 +203,30 @@
             <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
         </div>
         
-        <!-- Right: Team 2 name and 0 score -->
+        <!-- Right: Team 2 name and score -->
         <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
             <span id="n5b" style="font-weight:bold;">BLUE</span>
             <span style="font-size:20px; font-weight:bold;">0</span>
         </div>
     </div>
     
-    <p class="center" style="margin-top:20px;">Round <span id="r5">1</span>/7</p>
-    <div class="dots" id="d5" style="gap:8px; justify-content:center;"></div>
-    <div class="moves" style="margin:20px 0;">
-        <button class="move" onclick="pick('rock')">🪨</button>
-        <button class="move" onclick="pick('paper')">📄</button>
-        <button class="move" onclick="pick('scissors')">✂️</button>
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow-y:auto;">
+        <p class="center" style="margin:10px 0;">Round <span id="r5">1</span>/7</p>
+        <div class="dots" id="d5" style="gap:8px; justify-content:center; flex-wrap:wrap;"></div>
+        <div class="moves" style="margin:20px 0; width:100%; max-width:400px;">
+            <button class="move" onclick="pick('rock')">🪨</button>
+            <button class="move" onclick="pick('paper')">📄</button>
+            <button class="move" onclick="pick('scissors')">✂️</button>
+        </div>
     </div>
     
-    <!-- Match score at bottom -->
-    <div style="display:flex; gap:10px; margin-top:auto; padding:10px;">
-        <div id="p1-select-box2" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="sel2-p1">0</div>
+    <!-- Match score at bottom - fixed position -->
+    <div style="display:flex; gap:10px; padding:10px; flex-shrink:0; background:#111;">
+        <div id="p1-select-box2" style="flex:1; padding:8px; display:flex; justify-content:center; align-items:center;">
+            <div style="background:#000; color:#fff; padding:8px 16px; font-size:18px; font-weight:bold; min-width:50px; text-align:center;" id="sel2-p1">0</div>
         </div>
-        <div id="p2-select-box2" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center;">
-            <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="sel2-p2">0</div>
+        <div id="p2-select-box2" style="flex:1; padding:8px; display:flex; justify-content:center; align-items:center;">
+            <div style="background:#000; color:#fff; padding:8px 16px; font-size:18px; font-weight:bold; min-width:50px; text-align:center;" id="sel2-p2">0</div>
         </div>
     </div>
 </div>
