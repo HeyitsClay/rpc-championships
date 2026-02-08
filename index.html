@@ -298,6 +298,15 @@ async function battle() {
     document.getElementById('seta').textContent = '0';
     document.getElementById('setb').textContent = '0';
     
+    // Initialize empty pips at start
+    const pips = document.getElementById('pips');
+    pips.innerHTML = '';
+    for (let i = 0; i < 7; i++) {
+        const p = document.createElement('div');
+        p.className = 'dot';
+        pips.appendChild(p);
+    }
+    
     for (let round = 0; round < 7; round++) {
         const phases = ['ROCK','PAPER','SCISSORS','SHOOT!'];
         const phaseEmojis = {ROCK:'🪨', PAPER:'📄', SCISSORS:'✂️', 'SHOOT!':'🎯'};
