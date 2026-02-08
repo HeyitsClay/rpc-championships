@@ -4,14 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RPC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
             background: #000; 
             color: #fff; 
-            font-family: system-ui, sans-serif;
-            height: 100dvh; /* Use dynamic viewport height for mobile */
+            font-family: 'Rajdhani', sans-serif;
+            height: 100dvh;
             overflow: hidden;
+            position: relative;
+        }
+        
+        /* Dynamic gradient background - P1 left, P2 right */
+        #bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(135deg, var(--p1-color, #ff2a6d) 0%, #000 50%, var(--p2-color, #05d9e8) 100%);
+            opacity: 0.4;
+            transition: background 0.5s ease;
+        }
+        
+        /* Scan line effect */
+        #scan-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15) 0px,
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+        }
+        
+        /* Vignette overlay */
+        #vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0,0,0,0.8) 100%);
+            pointer-events: none;
         }
         .screen { 
             display: none; 
@@ -20,35 +65,109 @@
             flex-direction: column;
         }
         .screen.active { display: flex; }
-        h1 { text-align: center; margin-bottom: 20px; }
+        h1 { 
+            text-align: center; 
+            margin-bottom: 20px; 
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
         button {
-            background: #333;
+            background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
             color: #fff;
-            border: 1px solid #666;
+            border: 1px solid rgba(255,255,255,0.3);
             padding: 15px;
-            font-size: 16px;
+            font-size: 18px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             margin: 5px 0;
             width: 100%;
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
+            transition: all 0.2s ease;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+        button:hover {
+            background: linear-gradient(145deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        button:active {
+            transform: translateY(0);
         }
         .row { display: flex; gap: 10px; justify-content: center; margin: 10px 0; }
         .score { display: flex; justify-content: space-between; padding: 15px; border: 1px solid #444; margin: 10px 0; }
         .moves { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
-        .move { font-size: 48px; padding: 20px; background: #222; border: 1px solid #555; }
-        .move.sel { border-color: #fff; background: #444; }
+        .move { 
+            font-size: 48px; 
+            padding: 20px; 
+            background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+        .move:hover {
+            background: linear-gradient(145deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%);
+            border-color: rgba(255,255,255,0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .move.sel { 
+            border-color: #fff; 
+            background: linear-gradient(145deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
         .dots { display: flex; gap: 5px; justify-content: center; margin: 10px 0; }
         .dot { width: 32px; height: 32px; border: 1px solid #666; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
         .dot.cur { border-color: #fff; }
         .dot.fil { background: #333; }
         .colors { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
-        .color { width: 36px; height: 36px; border: 2px solid #666; }
-        .color.sel { border-color: #fff; }
+        .color { 
+            width: 36px; 
+            height: 36px; 
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .color:hover {
+            transform: scale(1.1);
+            border-color: rgba(255,255,255,0.6);
+        }
+        .color.sel { 
+            border-color: #fff; 
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+            transform: scale(1.05);
+        }
         .big { font-size: 64px; text-align: center; margin: 20px 0; }
-        .center { text-align: center; margin: 10px 0; }
+        .center { 
+            text-align: center; 
+            margin: 10px 0; 
+            font-size: 16px;
+            letter-spacing: 0.5px;
+        }
         
         /* Unified scoreboard - used on all screens */
         .scoreboard { display:flex; gap:10px; padding:10px; flex-shrink:0; }
         .scorebox { flex:1; padding:10px; display:flex; justify-content:center; align-items:center; }
-        .scorenum { background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center; }
+        .scorenum { 
+            background: rgba(0,0,0,0.6); 
+            color:#fff; 
+            padding:8px 16px; 
+            font-size:22px; 
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            min-width:50px; 
+            text-align:center; 
+            border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.2);
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
         
         /* Unified top bar - used on all game screens */
         .top-bar { 
@@ -56,10 +175,12 @@
             justify-content:space-between; 
             align-items:center; 
             padding:10px; 
-            border-bottom:2px solid #333; 
+            border-bottom:1px solid rgba(255,255,255,0.2);
             position:relative;
             flex-shrink:0;
             min-height:60px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%);
+            backdrop-filter: blur(8px);
         }
         .top-bar-team { 
             display:flex; 
@@ -68,12 +189,18 @@
             min-width:70px;
         }
         .top-bar-name { 
-            font-weight:bold; 
-            font-size:14px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size:12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px currentColor;
         }
         .top-bar-score { 
-            font-size:20px; 
-            font-weight:bold;
+            font-family: 'Orbitron', sans-serif;
+            font-size:24px;
+            font-weight: 900;
+            text-shadow: 0 0 15px currentColor;
         }
         .top-bar-center {
             display:flex;
@@ -179,20 +306,23 @@
     </style>
 </head>
 <body>
+<div id="bg-gradient"></div>
+<div id="scan-lines"></div>
+<div id="vignette"></div>
 
 <!-- SETUP -->
-<div id="s1" class="screen active" style="overflow-y: auto; justify-content: flex-start;">
-    <h1 style="margin: 10px 0; font-size: 20px;">RPC Championships</h1>
-    <p class="center" style="margin: 5px 0;">First to <b id="target">3</b> wins</p>
-    <div class="row" style="margin: 5px 0;">
-        <button onclick="chg(-1)" style="width: 50px;">-</button>
-        <button onclick="chg(1)" style="width: 50px;">+</button>
+<div id="s1" class="screen active" style="overflow-y: auto; justify-content: flex-start; padding-top: 30px;">
+    <h1 style="margin: 20px 0; font-size: 32px; font-weight: 900; text-shadow: 0 0 30px rgba(255,255,255,0.3);">RPC Championships</h1>
+    <p class="center" style="margin: 15px 0; font-size: 18px; opacity: 0.8;">First to <b id="target" style="font-family: 'Orbitron', sans-serif; font-size: 24px; color: #fff;">3</b> wins</p>
+    <div class="row" style="margin: 10px 0;">
+        <button onclick="chg(-1)" style="width: 60px; font-size: 24px;">-</button>
+        <button onclick="chg(1)" style="width: 60px; font-size: 24px;">+</button>
     </div>
-    <p class="center" style="margin: 5px 0;">Player 1</p>
-    <div class="colors" id="c1" style="margin: 5px 0;"></div>
-    <p class="center" style="margin: 5px 0;">Player 2</p>
-    <div class="colors" id="c2" style="margin: 5px 0;"></div>
-    <button onclick="start()" style="margin-top: 15px;">START GAME</button>
+    <p class="center" style="margin: 20px 0 10px; font-family: 'Orbitron', sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9;">Player 1</p>
+    <div class="colors" id="c1" style="margin: 10px 0;"></div>
+    <p class="center" style="margin: 20px 0 10px; font-family: 'Orbitron', sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9;">Player 2</p>
+    <div class="colors" id="c2" style="margin: 10px 0;"></div>
+    <button onclick="start()" style="margin-top: 30px; background: linear-gradient(145deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%); border-color: rgba(255,255,255,0.4);">START GAME</button>
 </div>
 
 <!-- P1 PICK -->
@@ -482,17 +612,17 @@
 </div>
 
 <!-- GAME END -->
-<div id="s9" class="screen">
-    <h1>CHAMPION</h1>
-    <h1 id="win9">Winner</h1>
-    <div class="score">
-        <span id="n9a" style="font-weight:bold; color:#ff2a6d;">RED</span>
-        <span id="s9a">0</span>
-        <span>-</span>
-        <span id="s9b">0</span>
-        <span id="n9b" style="font-weight:bold; color:#05d9e8;">BLUE</span>
+<div id="s9" class="screen" style="justify-content:center;">
+    <h1 style="font-size: 42px; font-weight: 900; text-shadow: 0 0 30px rgba(255,255,255,0.4); margin-bottom: 10px;">CHAMPION</h1>
+    <h1 id="win9" style="font-size: 36px; margin: 20px 0; text-shadow: 0 0 25px currentColor;">Winner</h1>
+    <div class="score" style="background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 20px; font-family: 'Orbitron', sans-serif; font-size: 24px;">
+        <span id="n9a" style="font-weight:bold; color:#ff2a6d; text-shadow: 0 0 15px currentColor;">RED</span>
+        <span id="s9a" style="font-size: 32px; font-weight: 900;">0</span>
+        <span style="opacity: 0.5;">-</span>
+        <span id="s9b" style="font-size: 32px; font-weight: 900;">0</span>
+        <span id="n9b" style="font-weight:bold; color:#05d9e8; text-shadow: 0 0 15px currentColor;">BLUE</span>
     </div>
-    <button onclick="again()">PLAY AGAIN</button>
+    <button onclick="again()" style="margin-top: 30px;">PLAY AGAIN</button>
     <button onclick="menu()">MENU</button>
 </div>
 
@@ -719,16 +849,22 @@ function renderColors() {
         const b1 = document.createElement('button');
         b1.className = 'color' + (c === p1c ? ' sel' : '');
         b1.style.background = c;
-        b1.onclick = () => { p1c = c; p1n = n; renderColors(); };
+        b1.onclick = () => { p1c = c; p1n = n; renderColors(); updateBgGradient(); };
         c1.appendChild(b1);
         
         const b2 = document.createElement('button');
         b2.className = 'color' + (c === p2c ? ' sel' : '') + (c === p1c ? '' : '');
         b2.style.background = c;
         b2.style.opacity = c === p1c ? '0.3' : '1';
-        b2.onclick = () => { if (c !== p1c) { p2c = c; p2n = n; renderColors(); } };
+        b2.onclick = () => { if (c !== p1c) { p2c = c; p2n = n; renderColors(); updateBgGradient(); } };
         c2.appendChild(b2);
     });
+    updateBgGradient();
+}
+
+function updateBgGradient() {
+    document.body.style.setProperty('--p1-color', p1c);
+    document.body.style.setProperty('--p2-color', p2c);
 }
 
 function chg(d) {
