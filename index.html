@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#010101">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="RPC Championships">
+    <title>RPC Championships</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUlBDIENoYW1waW9uc2hpcHMiLCJzaG9ydF9uYW1lIjoiUlBDIiwic3RhcnRfdXJsIjoiLi8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMDEwMTAxIiwidGhlbWVfY29sb3IiOiIjMDEwMTAxIiwib3JpZW50YXRpb24iOiJwb3J0cmFpdCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnJTNFJTNDdGV4dCB5PScuOWVtJyBmb250LXNpemU9JzkwJyUzReKbqCUzQy90ZXh0JTNFJTNDL3N2ZyUzRSIsInNpemVzIjoiMTkyeDE5MiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap');
+
+        :root {
+            --p1-color: #ff2a6d;
+            --p2-color: #05d9e8;
+            --bg-dark: #010101;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Rajdhani', 'Orbitron', sans-serif;
+            background-image: 
+                radial-gradient(circle at 0% 50%, var(--p1-color) 0%, transparent 50%),
+                radial-gradient(circle at 100% 50%, var(--p2-color) 0%, transparent 50%);
+            overflow: hidden;
+            position: fixed;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1vh 3vw;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        .screen.active { display: flex; }
+
+        .title-main {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.5rem, 8vmin, 3rem);
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 0.5vh;
+            margin-top: 2vh;
+        }
+
+        .subtitle {
+            font-size: clamp(0.7rem, 3vmin, 1rem);
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            margin-bottom: 2vh;
+            text-align: center;
+        }
+
+        .h2 { 
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.2rem, 6vmin, 2rem); 
+            font-weight: 700; 
+            text-transform: uppercase;
+            color: var(--text-primary);
+            text-align: center;
+        }
+        
+        .body { 
+            font-size: clamp(0.9rem, 3.5vmin, 1.1rem); 
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .caption { 
+            font-size: clamp(0.6rem, 2.5vmin, 0.8rem); 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.2em; 
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .p1-glow { color: var(--p1-color); text-shadow: 0 0 10px rgba(255, 42, 109, 0.5); }
+        .p2-glow { color: var(--p2-color); text-shadow: 0 0 10px rgba(5, 217, 232, 0.5); }
+
+        .glass-panel {
+            background: rgba(20, 20, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            width: 100%;
+        }
+
+        .scoreboard {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5vh 3vw;
+            margin-bottom: 1vh;
+        }
+
+        .team-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3vh;
+            flex: 1;
+        }
+
+        .team-name {
+            font-size: clamp(0.7rem, 3vmin, 1rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .team-score {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 8vmin, 3.5rem);
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .vs-divider {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3vh;
+            padding: 0 2vw;
+        }
+
+        .vs-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.9rem, 4vmin, 1.5rem);
+            font-weight: 900;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 0.1em;
+        }
+
+        .control-section {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 2vh;
+            margin: 1vh 0;
+        }
+
+        .score-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5vmin;
+            padding: 2vh;
+        }
+
+        .score-btn {
+            width: 10vmin;
+            height: 10vmin;
+            max-width: 50px;
+            max-height: 50px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: var(--text-primary);
+            font-size: 3vmin;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .score-display { text-align: center; min-width: 20vmin; }
+
+        .score-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 8vmin;
+            font-weight: 900;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .color-section { display: flex; flex-direction: column; gap: 1.5vh; }
+
+        .color-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5vh;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .color-label {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: clamp(0.8rem, 3.5vmin, 1.1rem);
+        }
+
+        .color-options { display: flex; gap: 1.5vmin; flex-wrap: wrap; justify-content: flex-end; }
+
+        .color-option {
+            width: 6vmin;
+            height: 6vmin;
+            min-width: 30px;
+            min-height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .color-option.selected {
+            border-color: #fff;
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.3), 0 0 10px currentColor;
+            transform: scale(1.1);
+        }
+
+        .color-option.disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 2vh 0;
+            font-size: clamp(1rem, 4.5vmin, 1.2rem);
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            margin-top: auto;
+            margin-bottom: 2vh;
+            font-family: 'Orbitron', sans-serif;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-team-1 {
+            background: var(--p1-color);
+            color: #000;
+            font-weight: 900;
+        }
+
+        .btn-team-2 {
+            background: var(--p2-color);
+            color: #000;
+            font-weight: 900;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.7);
+        }
+
+        .battle-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            width: 100%;
+            padding-top: 1vh;
+            position: relative;
+        }
+
+        .countdown-wrapper {
+            text-align: center;
+            margin-bottom: 1vh;
+            height: 6vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .countdown-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.2rem, 5vmin, 2rem);
+            font-weight: 900;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .fighters-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0 2vw;
+            height: 25vh;
+            margin-top: 1vh;
+            position: relative;
+        }
+
+        .fighter-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1vh;
+            flex: 1;
+            transition: all 0.5s ease;
+        }
+
+        .fighter-wrapper.center-winner {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+        }
+
+        .fighter-wrapper.hidden { opacity: 0; pointer-events: none; flex: 0; }
+
+        .fighter {
+            font-size: 15vmin;
+            line-height: 1;
+            filter: drop-shadow(0 0 20px currentColor);
+            transition: all 0.3s;
+            position: relative;
+            z-index: 10;
+        }
+
+        .fighter.cycling { animation: cycle-bounce 0.5s infinite; }
+
+        @keyframes cycle-bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-2vh) scale(1.1); }
+        }
+
+        .fighter.reveal { animation: reveal-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        @keyframes reveal-pop {
+            0% { transform: scale(0.3); opacity: 0; }
+            60% { transform: scale(1.3); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .fighter.victory-pose {
+            animation: victory-grow 0.6s forwards;
+            z-index: 50;
+        }
+
+        @keyframes victory-grow {
+            0% { transform: scale(1); }
+            50% { transform: scale(2); }
+            100% { transform: scale(1.8); filter: drop-shadow(0 0 50px currentColor); }
+        }
+
+        .fighter.bonk-right { animation: bonk-right-move 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .fighter.bonk-left { animation: bonk-left-move 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .fighter.vanish { animation: vanish-defeat 0.4s ease-out forwards; }
+
+        @keyframes bonk-right-move {
+            0% { transform: translateX(0) scale(1); }
+            50% { transform: translateX(15vw) scale(1.2); }
+            100% { transform: translateX(0) scale(1); }
+        }
+
+        @keyframes bonk-left-move {
+            0% { transform: translateX(0) scale(1); }
+            50% { transform: translateX(-15vw) scale(1.2); }
+            100% { transform: translateX(0) scale(1); }
+        }
+
+        @keyframes vanish-defeat {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.8); opacity: 0.3; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        .confetti-zone, .victory-confetti-zone {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .confetti-piece, .explosion-piece {
+            position: absolute;
+            width: 2.5vmin;
+            height: 2.5vmin;
+            top: 50%;
+            left: 50%;
+            opacity: 0;
+            border-radius: 50%;
+        }
+
+        .confetti-piece.active { animation: confetti-burst 1.2s ease-out forwards; }
+
+        @keyframes confetti-burst {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; }
+        }
+
+        .explosion-zone {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .explosion-piece { width: 4vmin; height: 4vmin; }
+        .explosion-piece.active { animation: explosion-burst 1.5s ease-out forwards; }
+
+        @keyframes explosion-burst {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; }
+        }
+
+        .round-bar-container {
+            width: 100%;
+            padding: 1vh;
+            margin-top: auto;
+        }
+
+        .round-bar {
+            display: flex;
+            gap: 1.5vmin;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .round-pip {
+            width: 4vmin;
+            height: 4vmin;
+            max-width: 20px;
+            max-height: 20px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .round-pip.won-p1 { background: var(--p1-color); border-color: var(--p1-color); transform: scale(1.1); }
+        .round-pip.won-p2 { background: var(--p2-color); border-color: var(--p2-color); transform: scale(1.1); }
+        .round-pip.tie { background: #fff; border-color: #fff; }
+
+        .result-banner {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            background: rgba(0,0,0,0.95);
+            border: 2px solid;
+            padding: 1.5vh 6vw;
+            border-radius: 30px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1rem, 5vmin, 1.5rem);
+            font-weight: 900;
+            z-index: 100;
+            transition: transform 0.4s;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        .result-banner.show { transform: translateX(-50%) scale(1); }
+
+        .selection-progress {
+            display: flex;
+            gap: 1.5vmin;
+            margin: 1.5vh 0;
+            width: 100%;
+            justify-content: center;
+            padding: 0 2vw;
+        }
+
+        .progress-dot {
+            width: 8vmin;
+            height: 8vmin;
+            max-width: 45px;
+            max-height: 45px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.5);
+            border: 2px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4vmin;
+            color: var(--text-primary);
+        }
+
+        .progress-dot.filled {
+            background: rgba(0,0,0,0.9);
+            border-color: currentColor;
+            color: currentColor;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .progress-dot.current {
+            background: transparent;
+            border-color: currentColor;
+            box-shadow: 0 0 10px currentColor, inset 0 0 10px currentColor;
+            animation: pulse-ring 1.5s infinite;
+            color: currentColor;
+        }
+
+        @keyframes pulse-ring {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .moves-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3vmin;
+            width: 100%;
+            max-width: 400px;
+            padding: 1vh 0;
+            margin: 0 auto;
+        }
+
+        .move-btn {
+            aspect-ratio: 1;
+            background: rgba(0,0,0,0.6);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+            font-size: 10vmin;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .move-btn.selected {
+            border-color: currentColor;
+            background: rgba(0,0,0,0.9);
+            box-shadow: 0 0 30px currentColor;
+            transform: scale(1.05);
+        }
+
+        .selection-header { text-align: center; margin-bottom: 1vh; margin-top: 1vh; }
+        .selection-round { font-family: 'Orbitron', sans-serif; font-size: clamp(1.2rem, 5vmin, 2rem); font-weight: 700; }
+
+        /* Center alignment fixes */
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        .glass-panel .body, .glass-panel .caption, .glass-panel .h2 {
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Specific screen adjustments */
+        #setup .control-section {
+            margin-top: 2vh;
+        }
+
+        #p1-ready, #p2-ready, #match-ready {
+            justify-content: flex-start;
+        }
+
+        #p1-ready .h2, #p2-ready .h2 {
+            margin-bottom: 2vh;
+        }
+
+        #set-result .scoreboard, #game-over .scoreboard {
+            margin: 2vh 0;
+        }
+
+        #set-result .h2, #game-over .h2 {
+            text-align: center;
+            width: 100%;
+        }
+
+        #game-over .glass-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="setup" class="screen active">
+        <div class="center-content" style="margin-top: 2vh;">
+            <div class="caption">/// SYSTEM READY ///</div>
+            <div class="title-main">RPC</div>
+            <div class="subtitle">Championships</div>
+        </div>
+
+        <div class="control-section">
+            <div class="glass-panel">
+                <div class="caption" style="padding-top: 1.5vh;">Victory Condition</div>
+                <div class="score-selector">
+                    <button class="score-btn" onclick="game.adjustSets(-1)">−</button>
+                    <div class="score-display">
+                        <div class="score-number" id="sets-target">2</div>
+                    </div>
+                    <button class="score-btn" onclick="game.adjustSets(1)">+</button>
+                </div>
+            </div>
+
+            <div class="glass-panel color-section">
+                <div class="color-row">
+                    <div class="color-label p1-glow" id="p1-display-name">RED</div>
+                    <div class="color-options" id="p1-colors">
+                        <div class="color-option selected" style="background: #ff2a6d;" data-color="#ff2a6d" data-name="RED" onclick="game.selectColor(1, '#ff2a6d', 'RED')"></div>
+                        <div class="color-option" style="background: #05d9e8;" data-color="#05d9e8" data-name="BLUE" onclick="game.selectColor(1, '#05d9e8', 'BLUE')"></div>
+                        <div class="color-option" style="background: #aaff00;" data-color="#aaff00" data-name="GREEN" onclick="game.selectColor(1, '#aaff00', 'GREEN')"></div>
+                        <div class="color-option" style="background: #ffaa00;" data-color="#ffaa00" data-name="ORANGE" onclick="game.selectColor(1, '#ffaa00', 'ORANGE')"></div>
+                        <div class="color-option" style="background: #aa00ff;" data-color="#aa00ff" data-name="PURPLE" onclick="game.selectColor(1, '#aa00ff', 'PURPLE')"></div>
+                        <div class="color-option" style="background: #ff69b4;" data-color="#ff69b4" data-name="PINK" onclick="game.selectColor(1, '#ff69b4', 'PINK')"></div>
+                    </div>
+                </div>
+                
+                <div class="color-row">
+                    <div class="color-label p2-glow" id="p2-display-name">BLUE</div>
+                    <div class="color-options" id="p2-colors">
+                        <div class="color-option disabled" style="background: #ff2a6d;" data-color="#ff2a6d" data-name="RED" onclick="game.selectColor(2, '#ff2a6d', 'RED')"></div>
+                        <div class="color-option selected" style="background: #05d9e8;" data-color="#05d9e8" data-name="BLUE" onclick="game.selectColor(2, '#05d9e8', 'BLUE')"></div>
+                        <div class="color-option" style="background: #aaff00;" data-color="#aaff00" data-name="GREEN" onclick="game.selectColor(2, '#aaff00', 'GREEN')"></div>
+                        <div class="color-option" style="background: #ffaa00;" data-color="#ffaa00" data-name="ORANGE" onclick="game.selectColor(2, '#ffaa00', 'ORANGE')"></div>
+                        <div class="color-option" style="background: #aa00ff;" data-color="#aa00ff" data-name="PURPLE" onclick="game.selectColor(2, '#aa00ff', 'PURPLE')"></div>
+                        <div class="color-option" style="background: #ff69b4;" data-color="#ff69b4" data-name="PINK" onclick="game.selectColor(2, '#ff69b4', 'PINK')"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="body" style="opacity: 0.6; font-size: 0.8rem;">
+                BEST OF 7 • 1PT WIN • 0.5PT DRAW
+            </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="game.startGame()">Initialize System</button>
+    </div>
+
+    <div id="p1-ready" class="screen">
+        <div class="scoreboard glass-panel" style="margin-top: 1vh;">
+            <div class="team-block">
+                <div class="team-name p1-glow" id="p1-ready-name">RED</div>
+                <div class="team-score p1-glow" id="p1-ready-score">0</div>
+            </div>
+            <div class="vs-divider">
+                <div class="vs-text">VS</div>
+                <div class="caption">FIRST TO <span id="ready-target-display">2</span></div>
+            </div>
+            <div class="team-block">
+                <div class="team-name p2-glow" id="p2-ready-name">BLUE</div>
+                <div class="team-score p2-glow" id="p2-ready-score">0</div>
+            </div>
+        </div>
+
+        <div class="center-content" style="flex: 1; justify-content: center; gap: 3vh;">
+            <div class="h2 p1-glow" id="p1-ready-title">RED UNIT</div>
+            <div class="glass-panel" style="padding: 4vh 8vw; text-align: center;">
+                <div style="font-size: 12vmin; margin-bottom: 1vh;">🎮</div>
+                <div class="body" style="font-weight: 700;">SEQUENCE INPUT REQUIRED</div>
+                <div class="caption" style="margin-top: 0.5vh;">Select 7 Moves</div>
+            </div>
+        </div>
+
+        <button class="btn btn-team-1" onclick="game.toSelection(1)">Pick Moves</button>
+    </div>
+
+    <div id="p1-select" class="screen">
+        <div class="selection-header">
+            <div class="caption" style="color: var(--p1-color); margin-bottom: 0.5vh;">/// SEQUENCE PROGRAMMING ///</div>
+            <div class="selection-round p1-glow">ROUND <span id="p1-round-num">1</span>/7</div>
+        </div>
+        
+        <div class="selection-progress" id="p1-progress"></div>
+
+        <div class="moves-grid" style="margin: auto 0;">
+            <button class="move-btn" onclick="game.selectMove('rock')" style="color: #ff6b6b;">🪨</button>
+            <button class="move-btn" onclick="game.selectMove('paper')" style="color: #4ecdc4;">📄</button>
+            <button class="move-btn" onclick="game.selectMove('scissors')" style="color: #ffe66d;">✂️</button>
+        </div>
+
+        <button class="btn btn-secondary" onclick="game.prevRound()" style="margin-bottom: 2vh;">◀ Return</button>
+    </div>
+
+    <div id="p2-ready" class="screen">
+        <div class="scoreboard glass-panel" style="margin-top: 1vh;">
+            <div class="team-block">
+                <div class="team-name p1-glow" id="p2-ready-name-p1">RED</div>
+                <div class="team-score p1-glow" id="p2-ready-p1-score">0</div>
+            </div>
+            <div class="vs-divider">
+                <div class="vs-text">VS</div>
+                <div class="caption">FIRST TO <span id="ready2-target-display">2</span></div>
+            </div>
+            <div class="team-block">
+                <div class="team-name p2-glow" id="p2-ready-name-p2">BLUE</div>
+                <div class="team-score p2-glow" id="p2-ready-p2-score">0</div>
+            </div>
+        </div>
+
+        <div class="center-content" style="flex: 1; justify-content: center; gap: 3vh;">
+            <div class="glass-panel" style="padding: 4vh 8vw;">
+                <div class="caption" style="margin-bottom: 1vh; color: var(--p2-color);">/// DEVICE HANDOFF ///</div>
+                <div style="font-size: 10vmin; margin-bottom: 1vh;">📱</div>
+                <div class="body" id="p2-ready-text" style="color: var(--p2-color); font-weight: 700; font-size: 1.3rem;">BLUE UNIT</div>
+                <div class="caption" style="margin-top: 0.5vh;">AWAITING INPUT</div>
+            </div>
+        </div>
+
+        <button class="btn btn-team-2" onclick="game.toSelection(2)">Lock In Moves</button>
+    </div>
+
+    <div id="p2-select" class="screen">
+        <div class="selection-header">
+            <div class="caption" style="color: var(--p2-color); margin-bottom: 0.5vh;">/// SEQUENCE PROGRAMMING ///</div>
+            <div class="selection-round p2-glow">ROUND <span id="p2-round-num">1</span>/7</div>
+        </div>
+        
+        <div class="selection-progress" id="p2-progress"></div>
+
+        <div class="moves-grid" style="margin: auto 0;">
+            <button class="move-btn" onclick="game.selectMove('rock')" style="color: #ff6b6b;">🪨</button>
+            <button class="move-btn" onclick="game.selectMove('paper')" style="color: #4ecdc4;">📄</button>
+            <button class="move-btn" onclick="game.selectMove('scissors')" style="color: #ffe66d;">✂️</button>
+        </div>
+
+        <button class="btn btn-secondary" onclick="game.prevRound()" style="margin-bottom: 2vh;">◀ Return</button>
+    </div>
+
+    <div id="match-ready" class="screen">
+        <div class="center-content" style="flex: 1; justify-content: center; gap: 3vh; padding: 2vh;">
+            <div class="glass-panel" style="padding: 4vh 6vw; width: 100%; max-width: 400px;">
+                <div class="caption" style="margin-bottom: 1.5vh;">/// COMBAT READY ///</div>
+                
+                <div class="scoreboard" style="margin-bottom: 2vh;">
+                    <div class="team-block">
+                        <div class="team-score p1-glow" id="match-p1-score">0</div>
+                        <div class="team-name p1-glow" id="match-p1-name">RED</div>
+                    </div>
+                    <div class="vs-divider">
+                        <div style="font-size: 6vmin; font-weight: 900; color: rgba(255,255,255,0.2);">VS</div>
+                    </div>
+                    <div class="team-block">
+                        <div class="team-score p2-glow" id="match-p2-score">0</div>
+                        <div class="team-name p2-glow" id="match-p2-name">BLUE</div>
+                    </div>
+                </div>
+
+                <div class="body" style="color: rgba(255,255,255,0.6); margin-bottom: 2vh; font-size: 0.9rem;" id="victory-text">
+                    FIRST TO 2 VICTORIES
+                </div>
+                
+                <button class="btn btn-primary" onclick="game.startBattle()" style="margin: 0;">Initiate Battle</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="battle" class="screen">
+        <div class="scoreboard glass-panel" style="margin-top: 1vh;">
+            <div class="team-block">
+                <div class="team-name p1-glow" id="battle-p1-name">RED</div>
+                <div class="team-score p1-glow" id="battle-p1-score">0</div>
+                <div class="caption">SET PTS: <span id="set-p1-points" class="p1-glow">0</span></div>
+            </div>
+            <div class="vs-divider">
+                <div class="vs-text" style="font-size: 5vmin;">VS</div>
+            </div>
+            <div class="team-block">
+                <div class="team-name p2-glow" id="battle-p2-name">BLUE</div>
+                <div class="team-score p2-glow" id="battle-p2-score">0</div>
+                <div class="caption">SET PTS: <span id="set-p2-points" class="p2-glow">0</span></div>
+            </div>
+        </div>
+
+        <div class="battle-container">
+            <div class="countdown-wrapper">
+                <div class="countdown-text" id="center-countdown"></div>
+            </div>
+            
+            <div class="fighters-container" id="fighters-container">
+                <div class="fighter-wrapper" id="wrapper-p1">
+                    <div class="fighter p1-glow" id="fighter-p1">❔</div>
+                    <div class="confetti-zone" id="confetti-p1"></div>
+                    <div class="victory-confetti-zone" id="victory-confetti-p1"></div>
+                </div>
+
+                <div class="fighter-wrapper" id="wrapper-p2">
+                    <div class="fighter p2-glow" id="fighter-p2">❔</div>
+                    <div class="confetti-zone" id="confetti-p2"></div>
+                    <div class="victory-confetti-zone" id="victory-confetti-p2"></div>
+                </div>
+            </div>
+
+            <div class="result-banner" id="result-banner">Winner!</div>
+        </div>
+
+        <div class="round-bar-container glass-panel">
+            <div class="round-bar" id="round-bar"></div>
+        </div>
+        
+        <div class="explosion-zone" id="explosion-zone"></div>
+    </div>
+
+    <div id="set-result" class="screen">
+        <div class="center-content" style="flex: 1; justify-content: center; gap: 2vh; padding: 2vh;">
+            <div class="glass-panel" style="padding: 4vh 6vw; width: 100%; max-width: 400px; text-align: center;">
+                <div class="caption" style="margin-bottom: 1.5vh;">/// SET COMPLETE ///</div>
+                
+                <div class="scoreboard" style="margin: 2vh 0;">
+                    <div class="team-block">
+                        <div class="team-score p1-glow" id="result-p1-points" style="font-size: 3rem;">0</div>
+                        <div class="team-name p1-glow" id="result-p1-name">RED</div>
+                    </div>
+                    <div class="vs-divider">
+                        <div style="font-size: 1.2rem; color: rgba(255,255,255,0.2);">VS</div>
+                    </div>
+                    <div class="team-block">
+                        <div class="team-score p2-glow" id="result-p2-points" style="font-size: 3rem;">0</div>
+                        <div class="team-name p2-glow" id="result-p2-name">BLUE</div>
+                    </div>
+                </div>
+
+                <div class="h2" style="margin: 2vh 0; font-size: 1.5rem;" id="set-winner-text">RED WINS SET</div>
+                
+                <button class="btn btn-primary" onclick="game.continueGame()" style="margin: 0; margin-top: 1vh;">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-over" class="screen">
+        <div class="center-content" style="flex: 1; justify-content: center; gap: 2vh; padding: 2vh;">
+            <div class="glass-panel" style="padding: 4vh 6vw; width: 100%; max-width: 400px; border-color: gold; text-align: center;">
+                <div style="font-size: 15vmin; margin-bottom: 1vh; filter: drop-shadow(0 0 30px gold);">🏆</div>
+                <div class="caption" style="color: gold; margin-bottom: 1vh;">/// CHAMPION CROWNED ///</div>
+                <div class="h2" style="margin-bottom: 2vh; font-size: 1.5rem;" id="game-winner-text">RED IS CHAMPION</div>
+                
+                <div class="scoreboard" style="margin-bottom: 2vh;">
+                    <div class="team-block">
+                        <div class="team-score p1-glow" id="final-p1-score">2</div>
+                        <div class="team-name p1-glow" id="final-p1-name">RED</div>
+                    </div>
+                    <div class="vs-divider">
+                        <div class="caption" style="color: rgba(255,255,255,0.4);">FINAL</div>
+                    </div>
+                    <div class="team-block">
+                        <div class="team-score p2-glow" id="final-p2-score">1</div>
+                        <div class="team-name p2-glow" id="final-p2-name">BLUE</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 1.5vh;">
+                    <button class="btn btn-primary" onclick="game.playAgain()" style="margin: 0; border-color: gold; color: gold;">New Match</button>
+                    <button class="btn btn-secondary" onclick="game.backToMenu()" style="margin: 0;">Main Menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+const game = {
+    ROUNDS_PER_SET: 7,
+    setsToWin: 2,
+    p1SetsWon: 0,
+    p2SetsWon: 0,
+    p1SetPoints: 0,
+    p2SetPoints: 0,
+    p1Choices: [],
+    p2Choices: [],
+    currentRound: 0,
+    selectingRound: 0,
+    currentPlayer: 1,
+    roundResults: [],
+    
+    p1Name: 'RED',
+    p2Name: 'BLUE',
+    p1Color: '#ff2a6d',
+    p2Color: '#05d9e8',
+    
+    moves: { rock: '🪨', paper: '📄', scissors: '✂️' },
+    cycleOrder: ['❔', '🪨', '❔', '✂️', '❔', '📄'],
+
+    init() {
+        this.updateColorDisplays();
+    },
+
+    updateColorDisplays() {
+        document.querySelectorAll('#p1-colors .color-option').forEach(el => {
+            el.classList.toggle('selected', el.dataset.color === this.p1Color);
+        });
+        
+        document.querySelectorAll('#p2-colors .color-option').forEach(el => {
+            el.classList.toggle('selected', el.dataset.color === this.p2Color);
+            el.classList.toggle('disabled', el.dataset.color === this.p1Color);
+        });
+        
+        document.querySelectorAll('#p1-colors .color-option').forEach(el => {
+            el.classList.toggle('disabled', el.dataset.color === this.p2Color);
+        });
+    },
+
+    selectColor(player, color, name) {
+        const otherColor = player === 1 ? this.p2Color : this.p1Color;
+        if (color === otherColor) return;
+        
+        if (player === 1) {
+            this.p1Color = color;
+            this.p1Name = name;
+            document.documentElement.style.setProperty('--p1-color', color);
+            document.getElementById('p1-display-name').textContent = this.p1Name;
+            
+            document.querySelectorAll('#p1-colors .color-option').forEach(el => {
+                el.classList.toggle('selected', el.dataset.color === color);
+            });
+            
+            document.querySelectorAll('#p2-colors .color-option').forEach(el => {
+                el.classList.toggle('disabled', el.dataset.color === color);
+                if (el.dataset.color !== color && el.dataset.color !== this.p2Color) {
+                    el.classList.remove('disabled');
+                }
+            });
+        } else {
+            this.p2Color = color;
+            this.p2Name = name;
+            document.documentElement.style.setProperty('--p2-color', color);
+            document.getElementById('p2-display-name').textContent = this.p2Name;
+            
+            document.querySelectorAll('#p2-colors .color-option').forEach(el => {
+                el.classList.toggle('selected', el.dataset.color === color);
+            });
+            
+            document.querySelectorAll('#p1-colors .color-option').forEach(el => {
+                el.classList.toggle('disabled', el.dataset.color === color);
+                if (el.dataset.color !== color && el.dataset.color !== this.p1Color) {
+                    el.classList.remove('disabled');
+                }
+            });
+        }
+    },
+
+    adjustSets(delta) {
+        this.setsToWin = Math.max(1, Math.min(5, this.setsToWin + delta));
+        document.getElementById('sets-target').textContent = this.setsToWin;
+    },
+
+    show(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    },
+
+    startGame() {
+        this.p1SetsWon = 0;
+        this.p2SetsWon = 0;
+        this.resetSet();
+        this.updateAllDisplayNames();
+        this.show('p1-ready');
+    },
+
+    resetSet() {
+        this.p1Choices = new Array(this.ROUNDS_PER_SET).fill(null);
+        this.p2Choices = new Array(this.ROUNDS_PER_SET).fill(null);
+        this.p1SetPoints = 0;
+        this.p2SetPoints = 0;
+        this.currentRound = 0;
+        this.selectingRound = 0;
+        this.roundResults = [];
+    },
+
+    updateAllDisplayNames() {
+        const updates = [
+            ['p1-ready-name', this.p1Name], ['p2-ready-name', this.p2Name],
+            ['p1-ready-title', this.p1Name + ' UNIT'], ['p1-select-name', this.p1Name],
+            ['p2-ready-name-p1', this.p1Name], ['p2-ready-name-p2', this.p2Name],
+            ['p2-ready-text', this.p2Name + ' UNIT'], ['p2-select-name', this.p2Name],
+            ['match-p1-name', this.p1Name], ['match-p2-name', this.p2Name],
+            ['battle-p1-name', this.p1Name], ['battle-p2-name', this.p2Name],
+            ['result-p1-name', this.p1Name], ['result-p2-name', this.p2Name],
+            ['final-p1-name', this.p1Name], ['final-p2-name', this.p2Name]
+        ];
+        
+        updates.forEach(([id, text]) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = text;
+        });
+
+        document.getElementById('p1-ready-score').textContent = this.p1SetsWon;
+        document.getElementById('p2-ready-score').textContent = this.p2SetsWon;
+        document.getElementById('ready-target-display').textContent = this.setsToWin;
+        document.getElementById('ready2-target-display').textContent = this.setsToWin;
+    },
+
+    toSelection(player) {
+        this.currentPlayer = player;
+        this.selectingRound = 0;
+        while (this.selectingRound < this.ROUNDS_PER_SET && this.getCurrentChoices()[this.selectingRound] !== null) {
+            this.selectingRound++;
+        }
+        if (this.selectingRound >= this.ROUNDS_PER_SET) this.selectingRound = 0;
+        
+        this.renderProgress();
+        this.updateSelectionUI();
+        this.show(player === 1 ? 'p1-select' : 'p2-select');
+    },
+
+    getCurrentChoices() {
+        return this.currentPlayer === 1 ? this.p1Choices : this.p2Choices;
+    },
+
+    renderProgress() {
+        const container = document.getElementById(this.currentPlayer === 1 ? 'p1-progress' : 'p2-progress');
+        const choices = this.getCurrentChoices();
+        container.innerHTML = '';
+        
+        for (let i = 0; i < this.ROUNDS_PER_SET; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'progress-dot';
+            dot.style.color = this.currentPlayer === 1 ? this.p1Color : this.p2Color;
+            
+            if (i === this.selectingRound) dot.classList.add('current');
+            else if (choices[i]) {
+                dot.classList.add('filled');
+                dot.textContent = this.moves[choices[i]];
+            }
+            container.appendChild(dot);
+        }
+    },
+
+    updateSelectionUI() {
+        this.renderProgress();
+        const roundNum = document.getElementById(this.currentPlayer === 1 ? 'p1-round-num' : 'p2-round-num');
+        if (roundNum) roundNum.textContent = this.selectingRound + 1;
+        
+        const choices = this.getCurrentChoices();
+        const current = choices[this.selectingRound];
+
+        document.querySelectorAll('.move-btn').forEach(btn => btn.classList.remove('selected'));
+        
+        if (current) {
+            const map = {rock: 0, paper: 1, scissors: 2};
+            const buttons = document.querySelectorAll('.move-btn');
+            if (buttons[map[current]]) buttons[map[current]].classList.add('selected');
+        }
+    },
+
+    selectMove(move) {
+        const choices = this.getCurrentChoices();
+        choices[this.selectingRound] = move;
+        this.updateSelectionUI();
+        
+        setTimeout(() => {
+            this.nextRound();
+        }, 400);
+    },
+
+    nextRound() {
+        const choices = this.getCurrentChoices();
+        if (!choices[this.selectingRound]) return;
+        
+        if (this.selectingRound < this.ROUNDS_PER_SET - 1) {
+            this.selectingRound++;
+            this.updateSelectionUI();
+        } else {
+            if (this.currentPlayer === 1) {
+                this.show('p2-ready');
+            } else {
+                this.showMatchReady();
+            }
+        }
+    },
+
+    prevRound() {
+        if (this.selectingRound > 0) {
+            this.selectingRound--;
+            this.updateSelectionUI();
+        }
+    },
+
+    showMatchReady() {
+        document.getElementById('match-p1-score').textContent = this.p1SetsWon;
+        document.getElementById('match-p2-score').textContent = this.p2SetsWon;
+        
+        const p1Needs = this.setsToWin - this.p1SetsWon;
+        const p2Needs = this.setsToWin - this.p2SetsWon;
+        
+        let text = '';
+        if (this.p1SetsWon === 0 && this.p2SetsWon === 0) {
+            text = `FIRST TO ${this.setsToWin} VICTORIES`;
+        } else if (p1Needs === 1 && p2Needs === 1) {
+            text = 'FINAL SET • WINNER TAKES ALL';
+        } else {
+            text = `${this.p1Name} NEEDS ${p1Needs} • ${this.p2Name} NEEDS ${p2Needs}`;
+        }
+        
+        document.getElementById('victory-text').textContent = text;
+        this.show('match-ready');
+    },
+
+    async startBattle() {
+        this.show('battle');
+        this.currentRound = 0;
+        this.p1SetPoints = 0;
+        this.p2SetPoints = 0;
+        this.roundResults = [];
+        
+        const wrapper1 = document.getElementById('wrapper-p1');
+        const wrapper2 = document.getElementById('wrapper-p2');
+        const f1 = document.getElementById('fighter-p1');
+        const f2 = document.getElementById('fighter-p2');
+        
+        wrapper1.classList.remove('center-winner', 'hidden');
+        wrapper2.classList.remove('center-winner', 'hidden');
+        wrapper1.style.opacity = '1';
+        wrapper2.style.opacity = '1';
+        f1.className = 'fighter p1-glow';
+        f2.className = 'fighter p2-glow';
+        
+        document.getElementById('battle-p1-score').textContent = this.p1SetsWon;
+        document.getElementById('battle-p2-score').textContent = this.p2SetsWon;
+        document.getElementById('set-p1-points').textContent = '0';
+        document.getElementById('set-p2-points').textContent = '0';
+        this.updateRoundBar();
+        
+        await this.sleep(500);
+        
+        for (let i = 0; i < this.ROUNDS_PER_SET; i++) {
+            const continueBattle = await this.playRound(i);
+            if (!continueBattle) break;
+        }
+    },
+
+    updateRoundBar() {
+        const bar = document.getElementById('round-bar');
+        bar.innerHTML = '';
+        for (let i = 0; i < this.ROUNDS_PER_SET; i++) {
+            const pip = document.createElement('div');
+            pip.className = 'round-pip';
+            if (this.roundResults[i]) {
+                pip.classList.add(this.roundResults[i] === 'p1' ? 'won-p1' : (this.roundResults[i] === 'p2' ? 'won-p2' : 'tie'));
+            }
+            bar.appendChild(pip);
+        }
+    },
+
+    sleep(ms) { return new Promise(r => setTimeout(r, ms)); },
+
+    async playRound(roundIndex) {
+        const f1 = document.getElementById('fighter-p1');
+        const f2 = document.getElementById('fighter-p2');
+        const wrapper1 = document.getElementById('wrapper-p1');
+        const wrapper2 = document.getElementById('wrapper-p2');
+        const countdown = document.getElementById('center-countdown');
+        const resultBanner = document.getElementById('result-banner');
+        
+        resultBanner.classList.remove('show');
+        wrapper1.classList.remove('center-winner', 'hidden');
+        wrapper2.classList.remove('center-winner', 'hidden');
+        wrapper1.style.opacity = '1';
+        wrapper2.style.opacity = '1';
+        f1.className = 'fighter p1-glow cycling';
+        f2.className = 'fighter p2-glow cycling';
+        f1.style.transform = '';
+        f2.style.transform = '';
+        f1.style.opacity = '1';
+        f2.style.opacity = '1';
+        
+        f1.textContent = '❔';
+        f2.textContent = '❔';
+        
+        const phases = ['ROCK', 'PAPER', 'SCISSORS', 'SHOOT!'];
+        
+        for (let i = 0; i < phases.length; i++) {
+            countdown.textContent = phases[i];
+            
+            if (i < 3) {
+                const cycleIndex = i * 2;
+                f1.textContent = this.cycleOrder[cycleIndex % 6];
+                f2.textContent = this.cycleOrder[cycleIndex % 6];
+                
+                await this.sleep(600);
+            } else {
+                const p1Move = this.p1Choices[roundIndex];
+                const p2Move = this.p2Choices[roundIndex];
+                
+                f1.classList.remove('cycling');
+                f2.classList.remove('cycling');
+                f1.classList.add('reveal');
+                f2.classList.add('reveal');
+                
+                f1.textContent = this.moves[p1Move];
+                f2.textContent = this.moves[p2Move];
+                
+                await this.sleep(800);
+                countdown.textContent = '';
+            }
+        }
+        
+        const p1Move = this.p1Choices[roundIndex];
+        const p2Move = this.p2Choices[roundIndex];
+        let winner = null;
+        let resultText = '';
+        let resultColor = '';
+        
+        if (p1Move === p2Move) {
+            winner = 'tie';
+            resultText = 'DRAW +0.5';
+            resultColor = '#ffffff';
+            this.p1SetPoints += 0.5;
+            this.p2SetPoints += 0.5;
+            this.roundResults.push('tie');
+            
+        } else if (
+            (p1Move === 'rock' && p2Move === 'scissors') ||
+            (p1Move === 'paper' && p2Move === 'rock') ||
+            (p1Move === 'scissors' && p2Move === 'paper')
+        ) {
+            winner = 'p1';
+            resultText = `${this.p1Name} WINS`;
+            resultColor = this.p1Color;
+            this.p1SetPoints += 1;
+            this.roundResults.push('p1');
+            
+            f1.classList.add('bonk-right');
+            await this.sleep(200);
+            f2.classList.add('vanish');
+            await this.sleep(200);
+            
+            wrapper2.style.opacity = '0';
+            wrapper1.classList.add('center-winner');
+            f1.classList.remove('bonk-right');
+            f1.classList.add('victory-pose');
+            
+            this.triggerMassiveExplosion(this.p1Color);
+            this.triggerVictoryConfetti(1, this.p1Color);
+            
+        } else {
+            winner = 'p2';
+            resultText = `${this.p2Name} WINS`;
+            resultColor = this.p2Color;
+            this.p2SetPoints += 1;
+            this.roundResults.push('p2');
+            
+            f2.classList.add('bonk-left');
+            await this.sleep(200);
+            f1.classList.add('vanish');
+            await this.sleep(200);
+            
+            wrapper1.style.opacity = '0';
+            wrapper2.classList.add('center-winner');
+            f2.classList.remove('bonk-left');
+            f2.classList.add('victory-pose');
+            
+            this.triggerMassiveExplosion(this.p2Color);
+            this.triggerVictoryConfetti(2, this.p2Color);
+        }
+        
+        document.getElementById('set-p1-points').textContent = this.p1SetPoints;
+        document.getElementById('set-p2-points').textContent = this.p2SetPoints;
+        this.updateRoundBar();
+        
+        resultBanner.textContent = resultText;
+        resultBanner.style.color = resultColor;
+        resultBanner.style.borderColor = resultColor;
+        resultBanner.classList.add('show');
+        
+        await this.sleep(2500);
+        
+        f1.classList.remove('victory-pose');
+        f2.classList.remove('victory-pose');
+        wrapper1.classList.remove('center-winner');
+        wrapper2.classList.remove('center-winner');
+        wrapper1.style.opacity = '1';
+        wrapper2.style.opacity = '1';
+        f1.style.transform = '';
+        f2.style.transform = '';
+        f1.style.filter = '';
+        f2.style.filter = '';
+        resultBanner.classList.remove('show');
+        
+        document.getElementById('victory-confetti-p1').innerHTML = '';
+        document.getElementById('victory-confetti-p2').innerHTML = '';
+        
+        const remaining = this.ROUNDS_PER_SET - roundIndex - 1;
+        if (this.p1SetPoints > this.p2SetPoints + remaining) {
+            await this.endSet('p1');
+            return false;
+        } else if (this.p2SetPoints > this.p1SetPoints + remaining) {
+            await this.endSet('p2');
+            return false;
+        }
+        
+        return true;
+    },
+
+    triggerMassiveExplosion(color) {
+        const container = document.getElementById('explosion-zone');
+        container.innerHTML = '';
+        
+        for (let i = 0; i < 60; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'explosion-piece';
+            piece.style.background = color;
+            piece.style.boxShadow = `0 0 20px ${color}`;
+            
+            const angle = (Math.PI * 2 * i) / 60 + (Math.random() - 0.5) * 1.0;
+            const distance = 30 + Math.random() * 50;
+            const dx = Math.cos(angle) * distance;
+            const dy = Math.sin(angle) * distance;
+            
+            piece.style.setProperty('--dx', `${dx}vmin`);
+            piece.style.setProperty('--dy', `${dy}vmin`);
+            
+            container.appendChild(piece);
+            setTimeout(() => piece.classList.add('active'), Math.random() * 200);
+        }
+        
+        setTimeout(() => {
+            container.innerHTML = '';
+        }, 2000);
+    },
+
+    triggerVictoryConfetti(player, color) {
+        const container = document.getElementById(`victory-confetti-p${player}`);
+        
+        for (let wave = 0; wave < 5; wave++) {
+            setTimeout(() => {
+                for (let i = 0; i < 20; i++) {
+                    const piece = document.createElement('div');
+                    piece.className = 'confetti-piece';
+                    piece.style.background = color;
+                    piece.style.boxShadow = `0 0 10px ${color}`;
+                    piece.style.width = '3vmin';
+                    piece.style.height = '3vmin';
+                    
+                    const angle = (Math.PI * 2 * i) / 20 + (Math.random() - 0.5);
+                    const distance = 20 + Math.random() * 40;
+                    const dx = Math.cos(angle) * distance;
+                    const dy = Math.sin(angle) * distance;
+                    
+                    piece.style.setProperty('--dx', `${dx}vmin`);
+                    piece.style.setProperty('--dy', `${dy}vmin`);
+                    
+                    container.appendChild(piece);
+                    setTimeout(() => piece.classList.add('active'), i * 20);
+                    setTimeout(() => piece.remove(), 1500);
+                }
+            }, wave * 300);
+        }
+    },
+
+    async endSet(winner) {
+        await this.sleep(300);
+        
+        document.getElementById('result-p1-points').textContent = this.p1SetPoints;
+        document.getElementById('result-p2-points').textContent = this.p2SetPoints;
+        
+        const winnerText = winner === 'p1' ? this.p1Name : this.p2Name;
+        document.getElementById('set-winner-text').textContent = winner === 'tie' ? 'SET TIED' : `${winnerText} WINS SET`;
+        document.getElementById('set-winner-text').className = winner === 'p1' ? 'h2 p1-glow' : (winner === 'p2' ? 'h2 p2-glow' : 'h2');
+        
+        if (winner === 'p1') this.p1SetsWon++;
+        else if (winner === 'p2') this.p2SetsWon++;
+        
+        if (this.p1SetsWon >= this.setsToWin || this.p2SetsWon >= this.setsToWin) {
+            this.endGame(winner);
+        } else {
+            this.show('set-result');
+        }
+    },
+
+    endGame(winner) {
+        const winnerName = winner === 'p1' ? this.p1Name : this.p2Name;
+        document.getElementById('game-winner-text').textContent = `${winnerName} IS CHAMPION`;
+        document.getElementById('game-winner-text').className = winner === 'p1' ? 'h2 p1-glow' : 'h2 p2-glow';
+        document.getElementById('final-p1-score').textContent = this.p1SetsWon;
+        document.getElementById('final-p2-score').textContent = this.p2SetsWon;
+        this.show('game-over');
+    },
+
+    continueGame() {
+        this.resetSet();
+        this.updateAllDisplayNames();
+        this.show('p1-ready');
+    },
+
+    playAgain() {
+        this.p1SetsWon = 0;
+        this.p2SetsWon = 0;
+        this.resetSet();
+        this.show('p1-ready');
+    },
+
+    backToMenu() {
+        this.show('setup');
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    game.init();
+    
+    // Register Service Worker for PWA functionality
+    if ('serviceWorker' in navigator) {
+        const swCode = `
+            self.addEventListener('install', e => {
+                e.waitUntil(
+                    caches.open('rpc-championships-v1').then(cache => {
+                        return cache.addAll(['./']);
+                    })
+                );
+                self.skipWaiting();
+            });
+            self.addEventListener('activate', e => {
+                e.waitUntil(self.clients.claim());
+            });
+            self.addEventListener('fetch', e => {
+                e.respondWith(
+                    caches.match(e.request).then(response => {
+                        return response || fetch(e.request);
+                    })
+                );
+            });
+        `;
+        const blob = new Blob([swCode], {type: 'application/javascript'});
+        const swUrl = URL.createObjectURL(blob);
+        navigator.serviceWorker.register(swUrl);
+    }
+});
+</script>
+</body>
+</html>
