@@ -50,6 +50,46 @@
         .scorebox { flex:1; padding:10px; display:flex; justify-content:center; align-items:center; }
         .scorenum { background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center; }
         
+        /* Unified top bar - used on all game screens */
+        .top-bar { 
+            display:flex; 
+            justify-content:space-between; 
+            align-items:center; 
+            padding:10px; 
+            border-bottom:2px solid #333; 
+            position:relative;
+            flex-shrink:0;
+            min-height:60px;
+        }
+        .top-bar-team { 
+            display:flex; 
+            flex-direction:column; 
+            align-items:center; 
+            min-width:70px;
+        }
+        .top-bar-name { 
+            font-weight:bold; 
+            font-size:14px;
+        }
+        .top-bar-score { 
+            font-size:20px; 
+            font-weight:bold;
+        }
+        .top-bar-center {
+            display:flex;
+            gap:5px;
+            flex:1;
+            justify-content:center;
+            max-width:200px;
+        }
+        .top-bar-dot {
+            background:#000; 
+            border:1px solid #555; 
+            width:10px; 
+            height:10px; 
+            border-radius:50%;
+        }
+        
         /* Fist drop animation - 0.25s down, 0.75s up, synchronized */
         @keyframes fist-drop {
             0% { transform: translateY(0); }
@@ -78,29 +118,24 @@
 
 <!-- P1 PICK -->
 <div id="s2" class="screen" style="padding:0;">
-    <!-- Top bar matching battle page -->
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative;">
-        <!-- Left: Team 1 name and match score -->
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
-            <span id="n1" style="font-weight:bold; color:#ff2a6d;">RED</span>
-            <span id="s2p1" style="font-size:20px; font-weight:bold; color:#ff2a6d;">0</span>
+    <!-- Unified top bar -->
+    <div class="top-bar">
+        <div class="top-bar-team">
+            <span id="n1" class="top-bar-name" style="color:#ff2a6d;">RED</span>
+            <span id="s2p1" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
-        
-        <!-- Center: Empty set circles -->
-        <div style="display:flex; gap:5px;">
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
+        <div class="top-bar-center">
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
         </div>
-        
-        <!-- Right: Team 2 name and match score -->
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
-            <span id="n2" style="font-weight:bold; color:#05d9e8;">BLUE</span>
-            <span id="s2p2" style="font-size:20px; font-weight:bold; color:#05d9e8;">0</span>
+        <div class="top-bar-team">
+            <span id="n2" class="top-bar-name" style="color:#05d9e8;">BLUE</span>
+            <span id="s2p2" class="top-bar-score" style="color:#05d9e8;">0</span>
         </div>
     </div>
     
@@ -122,29 +157,24 @@
 
 <!-- P1 SELECT -->
 <div id="s3" class="screen" style="padding-bottom:0;">
-    <!-- Top bar EXACTLY like battle page -->
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative; flex-shrink:0;">
-        <!-- Left: Team 1 name and match score in team color -->
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
-            <span id="n3a" style="font-weight:bold; color:#ff2a6d;">RED</span>
-            <span id="s3a" style="font-size:20px; font-weight:bold; color:#ff2a6d;">0</span>
+    <!-- Unified top bar -->
+    <div class="top-bar">
+        <div class="top-bar-team">
+            <span id="n3a" class="top-bar-name" style="color:#ff2a6d;">RED</span>
+            <span id="s3a" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
-        
-        <!-- Center: Empty dots -->
-        <div style="display:flex; gap:5px;">
-            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
-            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
-            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
-            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
-            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
-            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
-            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+        <div class="top-bar-center">
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
         </div>
-        
-        <!-- Right: Team 2 name and match score in team color -->
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
-            <span id="n3b" style="font-weight:bold; color:#05d9e8;">BLUE</span>
-            <span id="s3b" style="font-size:20px; font-weight:bold; color:#05d9e8;">0</span>
+        <div class="top-bar-team">
+            <span id="n3b" class="top-bar-name" style="color:#05d9e8;">BLUE</span>
+            <span id="s3b" class="top-bar-score" style="color:#05d9e8;">0</span>
         </div>
     </div>
     
@@ -171,29 +201,24 @@
 
 <!-- P2 PICK -->
 <div id="s4" class="screen" style="padding:0;">
-    <!-- Top bar matching battle page -->
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative;">
-        <!-- Left: Team 1 name and match score -->
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
-            <span id="n4a" style="font-weight:bold; color:#ff2a6d;">RED</span>
-            <span id="s4p1" style="font-size:20px; font-weight:bold; color:#ff2a6d;">0</span>
+    <!-- Unified top bar -->
+    <div class="top-bar">
+        <div class="top-bar-team">
+            <span id="n4a" class="top-bar-name" style="color:#ff2a6d;">RED</span>
+            <span id="s4p1" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
-        
-        <!-- Center: Empty set circles -->
-        <div style="display:flex; gap:5px;">
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
+        <div class="top-bar-center">
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
         </div>
-        
-        <!-- Right: Team 2 name and match score -->
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
-            <span id="n4b" style="font-weight:bold; color:#05d9e8;">BLUE</span>
-            <span id="s4p2" style="font-size:20px; font-weight:bold; color:#05d9e8;">0</span>
+        <div class="top-bar-team">
+            <span id="n4b" class="top-bar-name" style="color:#05d9e8;">BLUE</span>
+            <span id="s4p2" class="top-bar-score" style="color:#05d9e8;">0</span>
         </div>
     </div>
     
@@ -215,29 +240,24 @@
 
 <!-- P2 SELECT -->
 <div id="s5" class="screen" style="padding-bottom:0;">
-    <!-- Top bar EXACTLY like battle page -->
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative; flex-shrink:0;">
-        <!-- Left: Team 1 name and match score in team color -->
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
-            <span id="n5a" style="font-weight:bold; color:#ff2a6d;">RED</span>
-            <span id="s5a" style="font-size:20px; font-weight:bold; color:#ff2a6d;">0</span>
+    <!-- Unified top bar -->
+    <div class="top-bar">
+        <div class="top-bar-team">
+            <span id="n5a" class="top-bar-name" style="color:#ff2a6d;">RED</span>
+            <span id="s5a" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
-        
-        <!-- Center: Empty dots -->
-        <div style="display:flex; gap:5px;">
-            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
-            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
-            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
-            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
-            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
-            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
-            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+        <div class="top-bar-center">
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
         </div>
-        
-        <!-- Right: Team 2 name and match score in team color -->
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
-            <span id="n5b" style="font-weight:bold; color:#05d9e8;">BLUE</span>
-            <span id="s5b" style="font-size:20px; font-weight:bold; color:#05d9e8;">0</span>
+        <div class="top-bar-team">
+            <span id="n5b" class="top-bar-name" style="color:#05d9e8;">BLUE</span>
+            <span id="s5b" class="top-bar-score" style="color:#05d9e8;">0</span>
         </div>
     </div>
     
@@ -264,29 +284,24 @@
 
 <!-- READY -->
 <div id="s6" class="screen" style="padding:0;">
-    <!-- Top bar matching battle page -->
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative;">
-        <!-- Left: Team 1 name and match score -->
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
-            <span id="n6a" style="font-weight:bold; color:#ff2a6d;">RED</span>
-            <span id="s6a" style="font-size:20px; font-weight:bold; color:#ff2a6d;">0</span>
+    <!-- Unified top bar -->
+    <div class="top-bar">
+        <div class="top-bar-team">
+            <span id="n6a" class="top-bar-name" style="color:#ff2a6d;">RED</span>
+            <span id="s6a" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
-        
-        <!-- Center: Empty set circles -->
-        <div style="display:flex; gap:5px;">
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
-            <div style="background:#000; border:1px solid #555; width:10px; height:10px; border-radius:50%;"></div>
+        <div class="top-bar-center">
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
+            <div class="top-bar-dot"></div>
         </div>
-        
-        <!-- Right: Team 2 name and match score -->
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
-            <span id="n6b" style="font-weight:bold; color:#05d9e8;">BLUE</span>
-            <span id="s6b" style="font-size:20px; font-weight:bold; color:#05d9e8;">0</span>
+        <div class="top-bar-team">
+            <span id="n6b" class="top-bar-name" style="color:#05d9e8;">BLUE</span>
+            <span id="s6b" class="top-bar-score" style="color:#05d9e8;">0</span>
         </div>
     </div>
     
@@ -308,24 +323,18 @@
 
 <!-- BATTLE -->
 <div id="s7" class="screen" style="padding:0;">
-    <!-- Top HUD with scores on sides of circles -->
-    <div id="battle-top" style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative;">
-        <div id="p1-border" style="position:absolute; bottom:-2px; left:0; width:50%; height:2px; background:#ff2a6d;"></div>
-        <div id="p2-border" style="position:absolute; bottom:-2px; right:0; width:50%; height:2px; background:#05d9e8;"></div>
-        
-        <!-- Left: Team 1 name and set score in team color -->
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
-            <span id="n7a" style="font-weight:bold;">RED</span>
-            <span id="seta" style="font-size:20px; font-weight:bold;">0</span>
+    <!-- Unified top bar -->
+    <div class="top-bar">
+        <div class="top-bar-team">
+            <span id="n7a" class="top-bar-name">RED</span>
+            <span id="seta" class="top-bar-score">0</span>
         </div>
-        
-        <!-- Center: Round pips -->
-        <div class="dots" id="pips" style="margin:0;"></div>
-        
-        <!-- Right: Team 2 name and set score in team color -->
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
-            <span id="n7b" style="font-weight:bold;">BLUE</span>
-            <span id="setb" style="font-size:20px; font-weight:bold;">0</span>
+        <div class="top-bar-center" id="pips">
+            <!-- Pips will be inserted here -->
+        </div>
+        <div class="top-bar-team">
+            <span id="n7b" class="top-bar-name">BLUE</span>
+            <span id="setb" class="top-bar-score">0</span>
         </div>
     </div>
     
@@ -360,21 +369,18 @@
 
 <!-- SET END -->
 <div id="s8" class="screen" style="padding:0;">
-    <!-- Top bar matching battle page -->
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:2px solid #333; position:relative;">
-        <!-- Left: Team 1 name and set score -->
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
-            <span id="n8a" style="font-weight:bold; color:#ff2a6d;">RED</span>
-            <span id="set8a" style="font-size:20px; font-weight:bold; color:#ff2a6d;">0</span>
+    <!-- Unified top bar -->
+    <div class="top-bar">
+        <div class="top-bar-team">
+            <span id="n8a" class="top-bar-name" style="color:#ff2a6d;">RED</span>
+            <span id="set8a" class="top-bar-score" style="color:#ff2a6d;">0</span>
         </div>
-        
-        <!-- Center: Set result circles -->
-        <div id="pips8" style="display:flex; gap:5px;"></div>
-        
-        <!-- Right: Team 2 name and set score -->
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:60px;">
-            <span id="n8b" style="font-weight:bold; color:#05d9e8;">BLUE</span>
-            <span id="set8b" style="font-size:20px; font-weight:bold; color:#05d9e8;">0</span>
+        <div class="top-bar-center" id="pips8">
+            <!-- Pips will be inserted here -->
+        </div>
+        <div class="top-bar-team">
+            <span id="n8b" class="top-bar-name" style="color:#05d9e8;">BLUE</span>
+            <span id="set8b" class="top-bar-score" style="color:#05d9e8;">0</span>
         </div>
     </div>
     
@@ -643,8 +649,6 @@ function pick(m) {
             document.getElementById('sb-p2-box-s6').style.background = p2c;
             document.getElementById('sb-p1-s6').textContent = p1s;
             document.getElementById('sb-p2-s6').textContent = p2s;
-            document.getElementById('ready-p1').textContent = p1s;
-            document.getElementById('ready-p2').textContent = p2s;
             show('s6');
         }
     }
@@ -669,10 +673,6 @@ async function battle() {
     document.getElementById('seta').style.color = p1c;
     document.getElementById('setb').textContent = '0';
     document.getElementById('setb').style.color = p2c;
-    
-    // Set border colors
-    document.getElementById('p1-border').style.background = p1c;
-    document.getElementById('p2-border').style.background = p2c;
     
     // Update s7 scoreboard
     document.getElementById('sb-p1-box-s7').style.background = p1c;
