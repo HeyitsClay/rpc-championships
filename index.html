@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RPC Championships</title>
     <meta name="theme-color" content="#000000">
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192.svg">
+    <link rel="manifest" href="/rpc-championships/manifest.json">
+    <link rel="apple-touch-icon" href="/rpc-championships/icon-192.svg">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -863,7 +863,7 @@ function init() {
 
 // Register service worker for PWA
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js', { scope: './' })
+    navigator.serviceWorker.register('/rpc-championships/sw.js', { scope: '/rpc-championships/' })
         .then(reg => console.log('SW registered'))
         .catch(err => console.log('SW failed', err));
 }

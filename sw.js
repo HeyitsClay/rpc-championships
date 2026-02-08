@@ -1,10 +1,10 @@
 const CACHE_NAME = 'rpc-v1';
 const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon-192.svg',
-  './icon-512.svg'
+  '/rpc-championships/',
+  '/rpc-championships/index.html',
+  '/rpc-championships/manifest.json',
+  '/rpc-championships/icon-192.svg',
+  '/rpc-championships/icon-512.svg'
 ];
 
 self.addEventListener('install', event => {
@@ -30,7 +30,7 @@ self.addEventListener('fetch', event => {
         return fetch(event.request).catch(() => {
           // If fetch fails, try to return cached index.html for navigation
           if (event.request.mode === 'navigate') {
-            return caches.match('./index.html');
+            return caches.match('/rpc-championships/index.html');
           }
         });
       })
