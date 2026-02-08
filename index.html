@@ -156,7 +156,7 @@
 </div>
 
 <!-- P1 SELECT -->
-<div id="s3" class="screen" style="padding-bottom:0;">
+<div id="s3" class="screen" style="padding:0;">
     <!-- Unified top bar -->
     <div class="top-bar">
         <div class="top-bar-team">
@@ -239,7 +239,7 @@
 </div>
 
 <!-- P2 SELECT -->
-<div id="s5" class="screen" style="padding-bottom:0;">
+<div id="s5" class="screen" style="padding:0;">
     <!-- Unified top bar -->
     <div class="top-bar">
         <div class="top-bar-team">
@@ -798,6 +798,7 @@ function endSet() {
     
     if (win === 'p1') p1s++;
     else if (win === 'p2') p2s++;
+    else if (win === 'tie') { p1s += 0.5; p2s += 0.5; }
     
     // Set end screen with colors
     document.getElementById('n8a').textContent = p1n;
