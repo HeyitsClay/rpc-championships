@@ -104,16 +104,29 @@
 
 <!-- P1 SELECT -->
 <div id="s3" class="screen">
-    <p class="center">Round <span id="r3">1</span>/7</p>
-    <div class="dots" id="d3" style="gap:8px;"></div>
-    <div class="moves">
+    <!-- Top bar -->
+    <div style="display:flex; justify-content:center; align-items:center; padding:10px; border-bottom:2px solid #333;">
+        <div style="display:flex; gap:5px;">
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+        </div>
+    </div>
+    
+    <p class="center" style="margin-top:20px;">Round <span id="r3">1</span>/7</p>
+    <div class="dots" id="d3" style="gap:8px; justify-content:center;"></div>
+    <div class="moves" style="margin:20px 0;">
         <button class="move" onclick="pick('rock')">🪨</button>
         <button class="move" onclick="pick('paper')">📄</button>
         <button class="move" onclick="pick('scissors')">✂️</button>
     </div>
     
     <!-- Match score at bottom -->
-    <div style="display:flex; gap:10px; margin-top:auto; margin-bottom:10px;">
+    <div style="display:flex; gap:10px; margin-top:auto; padding:10px;">
         <div id="p1-select-box" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center;">
             <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="sel-p1">0</div>
         </div>
@@ -124,7 +137,7 @@
 </div>
 
 <!-- P2 PICK -->
-<div id="s5" class="screen">
+<div id="s4" class="screen">
     <!-- Top bar with empty set circles -->
     <div style="display:flex; justify-content:center; align-items:center; padding:10px; border-bottom:2px solid #333;">
         <div style="display:flex; gap:5px;">
@@ -139,7 +152,7 @@
     </div>
     
     <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-        <h1 id="t5" style="font-size:24px; margin:20px 0;"><span id="t5-color" style="color:#05d9e8;">BLUE</span>'s Selection</h1>
+        <h1 id="t4" style="font-size:24px; margin:20px 0;"><span id="t4-color" style="color:#05d9e8;">BLUE</span>'s Selection</h1>
         <button onclick="goPick(2)" style="max-width:300px;">PICK MOVES</button>
     </div>
     
@@ -156,16 +169,29 @@
 
 <!-- P2 SELECT -->
 <div id="s5" class="screen">
-    <p class="center">Round <span id="r5">1</span>/7</p>
-    <div class="dots" id="d5" style="gap:8px;"></div>
-    <div class="moves">
+    <!-- Top bar matching P1 -->
+    <div style="display:flex; justify-content:center; align-items:center; padding:10px; border-bottom:2px solid #333;">
+        <div style="display:flex; gap:5px;">
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+            <div class="dot" style="background:#000; border:1px solid #555; width:10px; height:10px;"></div>
+        </div>
+    </div>
+    
+    <p class="center" style="margin-top:20px;">Round <span id="r5">1</span>/7</p>
+    <div class="dots" id="d5" style="gap:8px; justify-content:center;"></div>
+    <div class="moves" style="margin:20px 0;">
         <button class="move" onclick="pick('rock')">🪨</button>
         <button class="move" onclick="pick('paper')">📄</button>
         <button class="move" onclick="pick('scissors')">✂️</button>
     </div>
     
     <!-- Match score at bottom -->
-    <div style="display:flex; gap:10px; margin-top:auto; margin-bottom:10px;">
+    <div style="display:flex; gap:10px; margin-top:auto; padding:10px;">
         <div id="p1-select-box2" style="flex:1; padding:10px; display:flex; justify-content:center; align-items:center;">
             <div style="background:#000; color:#fff; padding:8px 16px; font-size:20px; font-weight:bold; min-width:50px; text-align:center;" id="sel2-p1">0</div>
         </div>
@@ -372,10 +398,10 @@ function newSet() {
     document.getElementById('t2-color').style.color = p1c;
     
     // Update names and colors on P2 pick screen
-    const t5Color = document.getElementById('t5-color');
-    if (t5Color) {
-        t5Color.textContent = p2n;
-        t5Color.style.color = p2c;
+    const t4Color = document.getElementById('t4-color');
+    if (t4Color) {
+        t4Color.textContent = p2n;
+        t4Color.style.color = p2c;
     }
     
     // Update pick screen score boxes
@@ -405,9 +431,11 @@ function goPick(p) {
         document.getElementById('sel-p1').textContent = p1s;
         document.getElementById('sel-p2').textContent = p2s;
         // Set dot border color for P1
-        document.getElementById('d3').querySelectorAll('.dot').forEach(d => {
-            d.style.border = '2px solid ' + playerColor;
-        });
+        setTimeout(() => {
+            document.getElementById('d3').querySelectorAll('.dot').forEach(d => {
+                d.style.border = '2px solid ' + playerColor;
+            });
+        }, 0);
         show('s3');
     } else {
         document.getElementById('p1-select-box2').style.background = p1c;
@@ -415,9 +443,11 @@ function goPick(p) {
         document.getElementById('sel2-p1').textContent = p1s;
         document.getElementById('sel2-p2').textContent = p2s;
         // Set dot border color for P2
-        document.getElementById('d5').querySelectorAll('.dot').forEach(d => {
-            d.style.border = '2px solid ' + playerColor;
-        });
+        setTimeout(() => {
+            document.getElementById('d5').querySelectorAll('.dot').forEach(d => {
+                d.style.border = '2px solid ' + playerColor;
+            });
+        }, 0);
         show('s5');
     }
 }
@@ -432,13 +462,15 @@ function updatePickScreen() {
     for (let i = 0; i < 7; i++) {
         const d = document.createElement('div');
         d.className = 'dot' + (i === curRound ? ' cur' : '') + (moves[i] ? ' fil' : '');
-        d.style.width = '12vw';
-        d.style.height = '12vw';
-        d.style.maxWidth = '50px';
-        d.style.maxHeight = '50px';
-        d.style.fontSize = '6vw';
+        d.style.width = '40px';
+        d.style.height = '40px';
+        d.style.fontSize = '20px';
+        d.style.display = 'flex';
+        d.style.alignItems = 'center';
+        d.style.justifyContent = 'center';
         d.style.border = '2px solid ' + playerColor;
-        d.style.background = moves[i] ? '#333' : '#000';
+        d.style.background = moves[i] ? '#222' : '#000';
+        d.style.borderRadius = '50%';
         d.textContent = moves[i] ? MOVES[moves[i]] : '';
         dots.appendChild(d);
     }
@@ -471,7 +503,7 @@ function pick(m) {
             const p2Box2 = document.getElementById('p2-pick2-box');
             if (p1Box2) p1Box2.style.background = p1c;
             if (p2Box2) p2Box2.style.background = p2c;
-            show('s5');
+            show('s4');
         } else {
             // Update ready screen
             const p1ReadyBox = document.getElementById('p1-ready-box');
