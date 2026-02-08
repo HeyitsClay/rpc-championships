@@ -1108,6 +1108,7 @@ function chg(d) {
 }
 
 function start() {
+    console.log('Start button clicked');
     p1s = 0; p2s = 0;
     newSet();
     requestWakeLock(); // Keep screen awake during game
@@ -1122,8 +1123,11 @@ function newSet() {
     results = [];
     
     // Update P1 pick screen (s2) - top bar names, scores and colors
-    document.getElementById('t2-color').textContent = p1n;
-    document.getElementById('t2-color').style.color = p1c;
+    const t2El = document.getElementById('t2');
+    if (t2El) {
+        t2El.textContent = p1n;
+        t2El.style.color = p1c;
+    }
     document.getElementById('n1').textContent = p1n;
     document.getElementById('n1').style.color = p1c;
     document.getElementById('s2p1').textContent = p1s;
@@ -1134,10 +1138,10 @@ function newSet() {
     document.getElementById('s2p2').style.color = p2c;
     
     // Update names and colors on P2 pick screen (s4)
-    const t4Color = document.getElementById('t4-color');
-    if (t4Color) {
-        t4Color.textContent = p2n;
-        t4Color.style.color = p2c;
+    const t4El = document.getElementById('t4');
+    if (t4El) {
+        t4El.textContent = p2n;
+        t4El.style.color = p2c;
     }
     
     // Update ALL scoreboards
