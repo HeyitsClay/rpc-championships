@@ -172,15 +172,14 @@
             text-align: center;
         }
 
-        .p1-glow { color: var(--p1-color); text-shadow: 0 0 10px rgba(255, 42, 109, 0.5); }
-        .p2-glow { color: var(--p2-color); text-shadow: 0 0 10px rgba(5, 217, 232, 0.5); }
+        /* Simplified glow for mobile performance */
+        .p1-glow { color: var(--p1-color); }
+        .p2-glow { color: var(--p2-color); }
 
         .glass-panel {
-            background: rgba(20, 20, 30, 0.8);
-            backdrop-filter: blur(10px);
+            background: rgba(20, 20, 30, 0.9);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             width: 100%;
         }
 
@@ -266,13 +265,11 @@
             align-items: center;
             justify-content: center;
             font-family: 'Orbitron', sans-serif;
-            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .score-btn:active { 
-            transform: scale(0.85); 
-            background: rgba(255,255,255,0.25);
-            border-color: rgba(255,255,255,0.5);
+            transform: scale(0.9); 
+            background: rgba(255,255,255,0.2);
         }
 
         .score-display { text-align: center; min-width: 20vmin; }
@@ -315,14 +312,13 @@
             border-radius: 50%;
             cursor: pointer;
             border: 2px solid transparent;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
         }
 
         .color-option:active { transform: scale(0.9); }
 
         .color-option.selected {
             border-color: #fff;
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.3), 0 0 10px currentColor;
+            border-width: 3px;
             transform: scale(1.1);
         }
 
@@ -423,7 +419,8 @@
             align-items: center;
             gap: 1vh;
             flex: 1;
-            transition: all 0.5s ease;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            will-change: transform, opacity;
         }
 
         .fighter-wrapper.center-winner {
@@ -439,13 +436,16 @@
         .fighter {
             font-size: 15vmin;
             line-height: 1;
-            filter: drop-shadow(0 0 20px currentColor);
-            transition: all 0.3s;
+            transition: transform 0.3s, opacity 0.3s;
             position: relative;
             z-index: 10;
+            will-change: transform;
         }
-
-        .fighter.cycling { animation: cycle-bounce 0.5s infinite; }
+        
+        .fighter.cycling { 
+            animation: cycle-bounce 0.5s infinite;
+            will-change: transform;
+        }
 
         @keyframes cycle-bounce {
             0%, 100% { transform: translateY(0) scale(1); }
@@ -468,7 +468,7 @@
         @keyframes victory-grow {
             0% { transform: scale(1); }
             50% { transform: scale(2); }
-            100% { transform: scale(1.8); filter: drop-shadow(0 0 50px currentColor); }
+            100% { transform: scale(1.8); }
         }
 
         .fighter.bonk-right { animation: bonk-right-move 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
@@ -563,8 +563,8 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        .round-pip.won-p1 { background: var(--p1-color); border-color: var(--p1-color); transform: scale(1.1); box-shadow: 0 0 10px var(--p1-color); }
-        .round-pip.won-p2 { background: var(--p2-color); border-color: var(--p2-color); transform: scale(1.1); box-shadow: 0 0 10px var(--p2-color); }
+        .round-pip.won-p1 { background: var(--p1-color); border-color: var(--p1-color); transform: scale(1.1); }
+        .round-pip.won-p2 { background: var(--p2-color); border-color: var(--p2-color); transform: scale(1.1); }
         .round-pip.tie { background: #fff; border-color: #fff; }
 
         .result-banner {
@@ -615,13 +615,11 @@
             background: rgba(0,0,0,0.9);
             border-color: currentColor;
             color: currentColor;
-            box-shadow: 0 0 10px currentColor;
         }
 
         .progress-dot.current {
             background: transparent;
             border-color: currentColor;
-            box-shadow: 0 0 10px currentColor, inset 0 0 10px currentColor;
             color: currentColor;
         }
 
@@ -652,7 +650,7 @@
         .move-btn.selected {
             border-color: currentColor;
             background: rgba(0,0,0,0.9);
-            box-shadow: 0 0 20px currentColor;
+            border-width: 3px;
         }
 
         .selection-header { text-align: center; margin-bottom: 1vh; margin-top: 1vh; }
@@ -686,8 +684,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.95);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -695,7 +692,7 @@
             z-index: 10000;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.3s ease;
         }
         
         .victory-overlay.show {
@@ -706,7 +703,6 @@
         .victory-crown {
             font-size: 20vmin;
             animation: crown-bounce 1s ease-in-out infinite;
-            filter: drop-shadow(0 0 30px gold);
             margin-bottom: 2vh;
         }
         
@@ -721,13 +717,7 @@
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            animation: text-glow 1s ease-in-out infinite alternate;
             margin-bottom: 1vh;
-        }
-        
-        @keyframes text-glow {
-            from { text-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
-            to { text-shadow: 0 0 40px currentColor, 0 0 80px currentColor, 0 0 120px currentColor; }
         }
         
         .victory-subtext {
@@ -752,7 +742,6 @@
             font-weight: 700;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.2s;
             border: 2px solid;
         }
         
@@ -761,10 +750,9 @@
         }
         
         .victory-btn-primary {
-            background: linear-gradient(135deg, gold, orange);
+            background: gold;
             color: #000;
             border-color: gold;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
         }
         
         .victory-btn-secondary {
@@ -814,7 +802,6 @@
             font-size: 30vmin;
             font-weight: 900;
             color: #fff;
-            text-shadow: 0 0 50px rgba(255,255,255,0.8), 0 0 100px currentColor;
             z-index: 9998;
             pointer-events: none;
             opacity: 0;
@@ -1100,7 +1087,7 @@
     <div id="game-over" class="screen">
         <div class="center-content" style="flex: 1; justify-content: center; gap: 2vh; padding: 2vh;">
             <div class="glass-panel" style="padding: 4vh 6vw; width: 100%; max-width: 400px; border-color: gold; text-align: center;">
-                <div style="font-size: 15vmin; margin-bottom: 1vh; filter: drop-shadow(0 0 30px gold);">🏆</div>
+                <div style="font-size: 15vmin; margin-bottom: 1vh;">🏆</div>
                 <div class="caption" style="color: gold; margin-bottom: 1vh;">/// CHAMPION CROWNED ///</div>
                 <div class="h2" style="margin-bottom: 2vh; font-size: 1.5rem;" id="game-winner-text">RED IS CHAMPION</div>
                 
