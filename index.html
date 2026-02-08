@@ -3,611 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RPC Championships</title>
+    <title>RPC</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        html, body {
-            height: 100%;
-            width: 100%;
-            background: #000;
-            color: #fff;
-            font-family: sans-serif;
+        body { 
+            background: #000; 
+            color: #fff; 
+            font-family: system-ui, sans-serif;
+            height: 100vh;
             overflow: hidden;
         }
-
-        .screen {
-            display: none;
-            width: 100%;
-            height: 100%;
-            flex-direction: column;
-            align-items: center;
+        .screen { 
+            display: none; 
+            height: 100%; 
             padding: 20px;
-            position: absolute;
-            top: 0;
-            left: 0;
+            flex-direction: column;
         }
-        
         .screen.active { display: flex; }
-
-        h1 { font-size: 24px; margin: 20px 0; text-align: center; }
-        h2 { font-size: 20px; margin: 15px 0; text-align: center; }
-        
-        .btn {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
+        h1 { text-align: center; margin-bottom: 20px; }
+        button {
             background: #333;
             color: #fff;
-            border: 1px solid #555;
-            margin: 10px 0;
-            cursor: pointer;
-        }
-
-        .scoreboard {
+            border: 1px solid #666;
+            padding: 15px;
+            font-size: 16px;
+            margin: 5px 0;
             width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-            border: 1px solid #333;
-            margin: 10px 0;
         }
-
-        .moves-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            width: 100%;
-            margin: 20px 0;
-        }
-
-        .move-btn {
-            aspect-ratio: 1;
-            font-size: 40px;
-            background: #222;
-            border: 1px solid #444;
-            color: #fff;
-            cursor: pointer;
-        }
-
-        .move-btn.selected { border-color: #fff; background: #444; }
-
-        .progress-row {
-            display: flex;
-            gap: 5px;
-            margin: 10px 0;
-        }
-
-        .progress-dot {
-            width: 30px;
-            height: 30px;
-            border: 1px solid #555;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-
-        .progress-dot.filled { background: #333; }
-        .progress-dot.current { border-color: #fff; background: #222; }
-
-        .countdown-text {
-            font-size: 32px;
-            text-align: center;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-
-        .fighters {
-            display: flex;
-            justify-content: space-between;
-            font-size: 60px;
-            margin: 20px 0;
-            padding: 0 40px;
-        }
-
-        .result-text {
-            font-size: 24px;
-            text-align: center;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-
-        .round-pips {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-            margin: 10px 0;
-        }
-
-        .pip {
-            width: 15px;
-            height: 15px;
-            border: 1px solid #555;
-            border-radius: 50%;
-        }
-
-        .pip.p1 { background: #fff; }
-        .pip.p2 { background: #666; }
-        .pip.tie { background: #333; }
-
-        .color-grid {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin: 10px 0;
-        }
-
-        .color-btn {
-            width: 40px;
-            height: 40px;
-            border: 2px solid #555;
-            cursor: pointer;
-        }
-
-        .color-btn.selected { border-color: #fff; }
-        .color-btn.disabled { opacity: 0.3; }
+        .row { display: flex; gap: 10px; justify-content: center; margin: 10px 0; }
+        .score { display: flex; justify-content: space-between; padding: 15px; border: 1px solid #444; margin: 10px 0; }
+        .moves { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+        .move { font-size: 48px; padding: 20px; background: #222; border: 1px solid #555; }
+        .move.sel { border-color: #fff; background: #444; }
+        .dots { display: flex; gap: 5px; justify-content: center; margin: 10px 0; }
+        .dot { width: 32px; height: 32px; border: 1px solid #666; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .dot.cur { border-color: #fff; }
+        .dot.fil { background: #333; }
+        .colors { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .color { width: 36px; height: 36px; border: 2px solid #666; }
+        .color.sel { border-color: #fff; }
+        .big { font-size: 64px; text-align: center; margin: 20px 0; }
+        .center { text-align: center; margin: 10px 0; }
     </style>
 </head>
 <body>
-    <!-- SETUP -->
-    <div id="setup" class="screen active">
-        <h1>RPC Championships</h1>
-        <p style="text-align:center; margin:10px 0;">Victory: First to <span id="sets-target">3</span> sets</p>
-        <div style="display:flex; gap:10px; justify-content:center; margin:10px 0;">
-            <button class="btn" style="width:auto; padding:10px 20px;" onclick="game.adjustSets(-1)">-</button>
-            <button class="btn" style="width:auto; padding:10px 20px;" onclick="game.adjustSets(1)">+</button>
-        </div>
-        
-        <h2>Player 1</h2>
-        <div class="color-grid" id="p1-colors"></div>
-        
-        <h2>Player 2</h2>
-        <div class="color-grid" id="p2-colors"></div>
-        
-        <button class="btn" onclick="game.startGame()" style="margin-top:auto;">Start Game</button>
-    </div>
 
-    <!-- P1 READY -->
-    <div id="p1-ready" class="screen">
-        <div class="scoreboard">
-            <div><div id="p1-ready-name">P1</div><div id="p1-ready-score">0</div></div>
-            <div>VS</div>
-            <div><div id="p2-ready-name">P2</div><div id="p2-ready-score">0</div></div>
-        </div>
-        <h2 id="p1-ready-title">Player 1: Select 7 Moves</h2>
-        <button class="btn" onclick="game.toSelection(1)">Pick Moves</button>
+<!-- SETUP -->
+<div id="s1" class="screen active">
+    <h1>RPC Championships</h1>
+    <p class="center">First to <b id="target">3</b> wins</p>
+    <div class="row">
+        <button onclick="chg(-1)">-</button>
+        <button onclick="chg(1)">+</button>
     </div>
+    <p class="center">Player 1</p>
+    <div class="colors" id="c1"></div>
+    <p class="center">Player 2</p>
+    <div class="colors" id="c2"></div>
+    <div style="margin-top: auto;">
+        <button onclick="start()">START GAME</button>
+    </div>
+</div>
 
-    <!-- P1 SELECT -->
-    <div id="p1-select" class="screen">
-        <h2>Round <span id="p1-round-num">1</span>/7</h2>
-        <div class="progress-row" id="p1-progress"></div>
-        <div class="moves-grid">
-            <button class="move-btn" onclick="game.selectMove('rock')">🪨</button>
-            <button class="move-btn" onclick="game.selectMove('paper')">📄</button>
-            <button class="move-btn" onclick="game.selectMove('scissors')">✂️</button>
-        </div>
-        <button class="btn" onclick="game.prevRound()">Back</button>
-    </div>
+<!-- P1 PICK -->
+<div id="s2" class="screen">
+    <div class="score"><span id="n1">P1</span><span>0</span><span>VS</span><span>0</span><span id="n2">P2</span></div>
+    <h1 id="t2">Pick 7 Moves</h1>
+    <button onclick="goPick(1)">PICK MOVES</button>
+</div>
 
-    <!-- P2 READY -->
-    <div id="p2-ready" class="screen">
-        <div class="scoreboard">
-            <div><div id="p2-ready-name-p1">P1</div><div id="p2-ready-p1-score">0</div></div>
-            <div>VS</div>
-            <div><div id="p2-ready-name-p2">P2</div><div id="p2-ready-p2-score">0</div></div>
-        </div>
-        <h2>Hand device to Player 2</h2>
-        <button class="btn" onclick="game.toSelection(2)">Pick Moves</button>
+<!-- P1 SELECT -->
+<div id="s3" class="screen">
+    <p class="center">Round <span id="r3">1</span>/7</p>
+    <div class="dots" id="d3"></div>
+    <div class="moves">
+        <button class="move" onclick="pick('rock')">🪨</button>
+        <button class="move" onclick="pick('paper')">📄</button>
+        <button class="move" onclick="pick('scissors')">✂️</button>
     </div>
+    <button onclick="back()">BACK</button>
+</div>
 
-    <!-- P2 SELECT -->
-    <div id="p2-select" class="screen">
-        <h2>Round <span id="p2-round-num">1</span>/7</h2>
-        <div class="progress-row" id="p2-progress"></div>
-        <div class="moves-grid">
-            <button class="move-btn" onclick="game.selectMove('rock')">🪨</button>
-            <button class="move-btn" onclick="game.selectMove('paper')">📄</button>
-            <button class="move-btn" onclick="game.selectMove('scissors')">✂️</button>
-        </div>
-        <button class="btn" onclick="game.prevRound()">Back</button>
-    </div>
+<!-- P2 PICK -->
+<div id="s4" class="screen">
+    <div class="score"><span>P1</span><span id="s4p1">0</span><span>VS</span><span id="s4p2">0</span><span>P2</span></div>
+    <h1>Hand to Player 2</h1>
+    <button onclick="goPick(2)">PICK MOVES</button>
+</div>
 
-    <!-- MATCH READY -->
-    <div id="match-ready" class="screen">
-        <h2>Ready to Battle!</h2>
-        <div class="scoreboard">
-            <div><div id="match-p1-name">P1</div><div id="match-p1-score">0</div></div>
-            <div>VS</div>
-            <div><div id="match-p2-name">P2</div><div id="match-p2-score">0</div></div>
-        </div>
-        <button class="btn" onclick="game.startBattle()">Start Battle</button>
+<!-- P2 SELECT -->
+<div id="s5" class="screen">
+    <p class="center">Round <span id="r5">1</span>/7</p>
+    <div class="dots" id="d5"></div>
+    <div class="moves">
+        <button class="move" onclick="pick('rock')">🪨</button>
+        <button class="move" onclick="pick('paper')">📄</button>
+        <button class="move" onclick="pick('scissors')">✂️</button>
     </div>
+    <button onclick="back()">BACK</button>
+</div>
 
-    <!-- BATTLE -->
-    <div id="battle" class="screen">
-        <div class="scoreboard">
-            <div>
-                <div id="battle-p1-name">P1</div>
-                <div id="battle-p1-score">0</div>
-                <div>Set: <span id="set-p1-points">0</span></div>
-            </div>
-            <div>VS</div>
-            <div>
-                <div id="battle-p2-name">P2</div>
-                <div id="battle-p2-score">0</div>
-                <div>Set: <span id="set-p2-points">0</span></div>
-            </div>
-        </div>
-        <div class="countdown-text" id="countdown"></div>
-        <div class="fighters">
-            <span id="fighter-p1">❔</span>
-            <span id="fighter-p2">❔</span>
-        </div>
-        <div class="result-text" id="result-banner"></div>
-        <div class="round-pips" id="round-pips"></div>
-    </div>
+<!-- READY -->
+<div id="s6" class="screen">
+    <h1>Ready!</h1>
+    <div class="score"><span id="n6a">P1</span><span id="s6a">0</span><span>VS</span><span id="s6b">0</span><span id="n6b">P2</span></div>
+    <button onclick="battle()">BATTLE</button>
+</div>
 
-    <!-- SET RESULT -->
-    <div id="set-result" class="screen">
-        <h2>Set Complete</h2>
-        <div class="scoreboard">
-            <div><div>Set Points</div><div id="result-p1-points">0</div></div>
-            <div>-</div>
-            <div><div>Set Points</div><div id="result-p2-points">0</div></div>
-        </div>
-        <h2 id="set-winner-text">Winner</h2>
-        <button class="btn" onclick="game.continueGame()">Continue</button>
+<!-- BATTLE -->
+<div id="s7" class="screen">
+    <div class="score">
+        <span><span id="n7a">P1</span><br><span id="seta">0</span></span>
+        <span id="cnt">ROCK</span>
+        <span><span id="n7b">P2</span><br><span id="setb">0</span></span>
     </div>
+    <div class="big"><span id="f1">❔</span> <span id="f2">❔</span></div>
+    <p class="center" id="res"></p>
+    <div class="dots" id="pips"></div>
+</div>
 
-    <!-- GAME OVER -->
-    <div id="game-over" class="screen">
-        <h1>CHAMPION!</h1>
-        <h2 id="game-winner-text">Winner</h2>
-        <div class="scoreboard">
-            <div><div id="final-p1-name">P1</div><div id="final-p1-score">0</div></div>
-            <div>-</div>
-            <div><div id="final-p2-name">P2</div><div id="final-p2-score">0</div></div>
-        </div>
-        <button class="btn" onclick="game.playAgain()">Play Again</button>
-        <button class="btn" onclick="game.backToMenu()">Main Menu</button>
-    </div>
+<!-- SET END -->
+<div id="s8" class="screen">
+    <h1>Set Over</h1>
+    <div class="score"><span id="n8a">P1</span><span id="s8a">0</span><span>-</span><span id="s8b">0</span><span id="n8b">P2</span></div>
+    <h1 id="win8">Winner</h1>
+    <button onclick="nextSet()">CONTINUE</button>
+</div>
+
+<!-- GAME END -->
+<div id="s9" class="screen">
+    <h1>CHAMPION</h1>
+    <h1 id="win9">Winner</h1>
+    <div class="score"><span id="n9a">P1</span><span id="s9a">0</span><span>-</span><span id="s9b">0</span><span id="n9b">P2</span></div>
+    <button onclick="again()">PLAY AGAIN</button>
+    <button onclick="menu()">MENU</button>
+</div>
 
 <script>
-const game = {
-    ROUNDS_PER_SET: 7,
-    setsToWin: 3,
-    p1SetsWon: 0,
-    p2SetsWon: 0,
-    p1SetPoints: 0,
-    p2SetPoints: 0,
-    p1Choices: [],
-    p2Choices: [],
-    currentRound: 0,
-    selectingRound: 0,
-    currentPlayer: 1,
-    roundResults: [],
-    p1Name: 'P1',
-    p2Name: 'P2',
-    p1Color: '#ff2a6d',
-    p2Color: '#05d9e8',
-    moves: { rock: '🪨', paper: '📄', scissors: '✂️' },
-    cycleOrder: ['❔', '🪨', '❔', '✂️', '❔', '📄'],
-    colors: [
-        {c:'#ff2a6d',n:'RED'},{c:'#05d9e8',n:'BLUE'},{c:'#aaff00',n:'GREEN'},
-        {c:'#ffaa00',n:'ORANGE'},{c:'#aa00ff',n:'PURPLE'},{c:'#ff69b4',n:'PINK'}
-    ],
+// State
+let target = 3;
+let p1c = '#ff2a6d', p2c = '#05d9e8';
+let p1n = 'P1', p2n = 'P2';
+let p1s = 0, p2s = 0;
+let p1set = 0, p2set = 0;
+let p1moves = [], p2moves = [];
+let curRound = 0, curPlayer = 1;
+let results = [];
 
-    init() {
-        this.renderColorGrids();
-    },
+const COLS = [
+    ['#ff2a6d','RED'],['#05d9e8','BLUE'],['#aaff00','GREEN'],
+    ['#ffaa00','ORANGE'],['#aa00ff','PURPLE'],['#ff69b4','PINK']
+];
+const MOVES = {rock:'🪨',paper:'📄',scissors:'✂️'};
+const CYCLE = ['❔','🪨','❔','✂️','❔','📄'];
 
-    renderColorGrids() {
-        const p1Grid = document.getElementById('p1-colors');
-        const p2Grid = document.getElementById('p2-colors');
-        p1Grid.innerHTML = '';
-        p2Grid.innerHTML = '';
+// Init
+function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function init() {
+    renderColors();
+    show('s1');
+}
+
+function renderColors() {
+    const c1 = document.getElementById('c1');
+    const c2 = document.getElementById('c2');
+    c1.innerHTML = '';
+    c2.innerHTML = '';
+    COLS.forEach(([c,n]) => {
+        const b1 = document.createElement('button');
+        b1.className = 'color' + (c === p1c ? ' sel' : '');
+        b1.style.background = c;
+        b1.onclick = () => { p1c = c; p1n = n; renderColors(); };
+        c1.appendChild(b1);
         
-        this.colors.forEach(col => {
-            const b1 = document.createElement('button');
-            b1.className = 'color-btn' + (col.c === this.p1Color ? ' selected' : '');
-            b1.style.background = col.c;
-            b1.onclick = () => this.selectColor(1, col.c, col.n);
-            p1Grid.appendChild(b1);
-            
-            const b2 = document.createElement('button');
-            b2.className = 'color-btn' + (col.c === this.p2Color ? ' selected' : '') + (col.c === this.p1Color ? ' disabled' : '');
-            b2.style.background = col.c;
-            b2.onclick = () => this.selectColor(2, col.c, col.n);
-            p2Grid.appendChild(b2);
-        });
-    },
+        const b2 = document.createElement('button');
+        b2.className = 'color' + (c === p2c ? ' sel' : '') + (c === p1c ? '' : '');
+        b2.style.background = c;
+        b2.style.opacity = c === p1c ? '0.3' : '1';
+        b2.onclick = () => { if (c !== p1c) { p2c = c; p2n = n; renderColors(); } };
+        c2.appendChild(b2);
+    });
+}
 
-    selectColor(player, color, name) {
-        if (player === 1 && color === this.p2Color) return;
-        if (player === 2 && color === this.p1Color) return;
-        
-        if (player === 1) {
-            this.p1Color = color;
-            this.p1Name = name;
-        } else {
-            this.p2Color = color;
-            this.p2Name = name;
-        }
-        this.renderColorGrids();
-    },
+function chg(d) {
+    target = Math.max(1, Math.min(5, target + d));
+    document.getElementById('target').textContent = target;
+}
 
-    adjustSets(delta) {
-        this.setsToWin = Math.max(1, Math.min(5, this.setsToWin + delta));
-        document.getElementById('sets-target').textContent = this.setsToWin;
-    },
+function start() {
+    p1s = 0; p2s = 0;
+    newSet();
+    show('s2');
+}
 
-    show(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    },
+function newSet() {
+    p1moves = new Array(7).fill(null);
+    p2moves = new Array(7).fill(null);
+    p1set = 0; p2set = 0;
+    curRound = 0;
+    results = [];
+    
+    // Update names on screens
+    document.getElementById('n1').textContent = p1n;
+    document.getElementById('n2').textContent = p2n;
+    document.getElementById('t2').textContent = p1n + ': Pick 7 Moves';
+}
 
-    startGame() {
-        this.p1SetsWon = 0;
-        this.p2SetsWon = 0;
-        this.resetSet();
-        this.updateAllNames();
-        this.show('p1-ready');
-    },
+function goPick(p) {
+    curPlayer = p;
+    curRound = 0;
+    while (curRound < 7 && (p === 1 ? p1moves : p2moves)[curRound]) curRound++;
+    if (curRound >= 7) curRound = 0;
+    updatePickScreen();
+    show(p === 1 ? 's3' : 's5');
+}
 
-    resetSet() {
-        this.p1Choices = new Array(7).fill(null);
-        this.p2Choices = new Array(7).fill(null);
-        this.p1SetPoints = 0;
-        this.p2SetPoints = 0;
-        this.currentRound = 0;
-        this.selectingRound = 0;
-        this.roundResults = [];
-    },
-
-    updateAllNames() {
-        const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-        setText('p1-ready-name', this.p1Name);
-        setText('p2-ready-name', this.p2Name);
-        setText('p1-ready-score', this.p1SetsWon);
-        setText('p2-ready-score', this.p2SetsWon);
-        setText('p1-ready-title', this.p1Name + ': Select 7 Moves');
-        setText('p2-ready-name-p1', this.p1Name);
-        setText('p2-ready-name-p2', this.p2Name);
-        setText('p2-ready-p1-score', this.p1SetsWon);
-        setText('p2-ready-p2-score', this.p2SetsWon);
-        setText('match-p1-name', this.p1Name);
-        setText('match-p2-name', this.p2Name);
-        setText('battle-p1-name', this.p1Name);
-        setText('battle-p2-name', this.p2Name);
-        setText('final-p1-name', this.p1Name);
-        setText('final-p2-name', this.p2Name);
-    },
-
-    toSelection(player) {
-        this.currentPlayer = player;
-        this.selectingRound = 0;
-        while (this.selectingRound < 7 && this.getCurrentChoices()[this.selectingRound]) {
-            this.selectingRound++;
-        }
-        if (this.selectingRound >= 7) this.selectingRound = 0;
-        this.renderProgress();
-        this.updateSelectionUI();
-        this.show(player === 1 ? 'p1-select' : 'p2-select');
-    },
-
-    getCurrentChoices() {
-        return this.currentPlayer === 1 ? this.p1Choices : this.p2Choices;
-    },
-
-    renderProgress() {
-        const container = document.getElementById(this.currentPlayer === 1 ? 'p1-progress' : 'p2-progress');
-        container.innerHTML = '';
-        const choices = this.getCurrentChoices();
-        
-        for (let i = 0; i < 7; i++) {
-            const dot = document.createElement('div');
-            dot.className = 'progress-dot';
-            if (i === this.selectingRound) dot.classList.add('current');
-            else if (choices[i]) {
-                dot.classList.add('filled');
-                dot.textContent = this.moves[choices[i]];
-            }
-            container.appendChild(dot);
-        }
-    },
-
-    updateSelectionUI() {
-        document.getElementById(this.currentPlayer === 1 ? 'p1-round-num' : 'p2-round-num').textContent = this.selectingRound + 1;
-        this.renderProgress();
-        const choices = this.getCurrentChoices();
-        const current = choices[this.selectingRound];
-        document.querySelectorAll('.move-btn').forEach(btn => btn.classList.remove('selected'));
-        if (current) {
-            const map = {rock: 0, paper: 1, scissors: 2};
-            const buttons = document.querySelectorAll('.move-btn');
-            if (buttons[map[current]]) buttons[map[current]].classList.add('selected');
-        }
-    },
-
-    selectMove(move) {
-        const choices = this.getCurrentChoices();
-        choices[this.selectingRound] = move;
-        this.updateSelectionUI();
-        this.nextRound();
-    },
-
-    nextRound() {
-        const choices = this.getCurrentChoices();
-        if (!choices[this.selectingRound]) return;
-        
-        if (this.selectingRound < 6) {
-            this.selectingRound++;
-            this.updateSelectionUI();
-        } else {
-            if (this.currentPlayer === 1) {
-                this.show('p2-ready');
-            } else {
-                this.showMatchReady();
-            }
-        }
-    },
-
-    prevRound() {
-        if (this.selectingRound > 0) {
-            this.selectingRound--;
-            this.updateSelectionUI();
-        }
-    },
-
-    showMatchReady() {
-        document.getElementById('match-p1-score').textContent = this.p1SetsWon;
-        document.getElementById('match-p2-score').textContent = this.p2SetsWon;
-        this.show('match-ready');
-    },
-
-    async startBattle() {
-        this.show('battle');
-        this.currentRound = 0;
-        this.p1SetPoints = 0;
-        this.p2SetPoints = 0;
-        this.roundResults = [];
-        document.getElementById('battle-p1-score').textContent = this.p1SetsWon;
-        document.getElementById('battle-p2-score').textContent = this.p2SetsWon;
-        document.getElementById('set-p1-points').textContent = '0';
-        document.getElementById('set-p2-points').textContent = '0';
-        this.renderRoundPips();
-        
-        for (let i = 0; i < 7; i++) {
-            await this.playRound(i);
-        }
-        
-        let winner = 'tie';
-        if (this.p1SetPoints > this.p2SetPoints) winner = 'p1';
-        else if (this.p2SetPoints > this.p1SetPoints) winner = 'p2';
-        await this.endSet(winner);
-    },
-
-    renderRoundPips() {
-        const container = document.getElementById('round-pips');
-        container.innerHTML = '';
-        for (let i = 0; i < 7; i++) {
-            const pip = document.createElement('div');
-            pip.className = 'pip';
-            if (this.roundResults[i]) {
-                pip.classList.add(this.roundResults[i] === 'p1' ? 'p1' : (this.roundResults[i] === 'p2' ? 'p2' : 'tie'));
-            }
-            container.appendChild(pip);
-        }
-    },
-
-    sleep(ms) { return new Promise(r => setTimeout(r, ms)); },
-
-    async playRound(roundIndex) {
-        const f1 = document.getElementById('fighter-p1');
-        const f2 = document.getElementById('fighter-p2');
-        const countdown = document.getElementById('countdown');
-        const banner = document.getElementById('result-banner');
-        
-        banner.textContent = '';
-        f1.textContent = '❔';
-        f2.textContent = '❔';
-        
-        const phases = ['ROCK', 'PAPER', 'SCISSORS', 'SHOOT!'];
-        
-        for (let i = 0; i < 4; i++) {
-            countdown.textContent = phases[i];
-            if (i < 3) {
-                f1.textContent = this.cycleOrder[(i * 2) % 6];
-                f2.textContent = this.cycleOrder[(i * 2) % 6];
-                await this.sleep(1000);
-            } else {
-                f1.textContent = this.moves[this.p1Choices[roundIndex]];
-                f2.textContent = this.moves[this.p2Choices[roundIndex]];
-                await this.sleep(2000);
-                countdown.textContent = '';
-            }
-        }
-        
-        const p1Move = this.p1Choices[roundIndex];
-        const p2Move = this.p2Choices[roundIndex];
-        let winner = null;
-        let resultText = '';
-        
-        if (p1Move === p2Move) {
-            winner = 'tie';
-            resultText = 'DRAW +0.5';
-            this.p1SetPoints += 0.5;
-            this.p2SetPoints += 0.5;
-        } else if ((p1Move === 'rock' && p2Move === 'scissors') ||
-                   (p1Move === 'paper' && p2Move === 'rock') ||
-                   (p1Move === 'scissors' && p2Move === 'paper')) {
-            winner = 'p1';
-            resultText = this.p1Name + ' WINS';
-            this.p1SetPoints += 1;
-        } else {
-            winner = 'p2';
-            resultText = this.p2Name + ' WINS';
-            this.p2SetPoints += 1;
-        }
-        
-        this.roundResults.push(winner);
-        document.getElementById('set-p1-points').textContent = this.p1SetPoints;
-        document.getElementById('set-p2-points').textContent = this.p2SetPoints;
-        this.renderRoundPips();
-        
-        banner.textContent = resultText;
-        await this.sleep(3000);
-        banner.textContent = '';
-    },
-
-    async endSet(winner) {
-        document.getElementById('result-p1-points').textContent = this.p1SetPoints;
-        document.getElementById('result-p2-points').textContent = this.p2SetPoints;
-        
-        const winnerText = winner === 'p1' ? this.p1Name : this.p2Name;
-        document.getElementById('set-winner-text').textContent = winner === 'tie' ? 'SET TIED' : winnerText + ' WINS SET';
-        
-        if (winner === 'p1') this.p1SetsWon++;
-        else if (winner === 'p2') this.p2SetsWon++;
-        
-        if (this.p1SetsWon >= this.setsToWin || this.p2SetsWon >= this.setsToWin) {
-            this.endGame(winner === 'tie' ? (this.p1SetPoints > this.p2SetPoints ? 'p1' : 'p2') : winner);
-        } else {
-            this.show('set-result');
-        }
-    },
-
-    endGame(winner) {
-        const winnerName = winner === 'p1' ? this.p1Name : this.p2Name;
-        document.getElementById('game-winner-text').textContent = winnerName + ' IS CHAMPION';
-        document.getElementById('final-p1-score').textContent = this.p1SetsWon;
-        document.getElementById('final-p2-score').textContent = this.p2SetsWon;
-        this.show('game-over');
-    },
-
-    continueGame() {
-        this.resetSet();
-        this.updateAllNames();
-        this.show('p1-ready');
-    },
-
-    playAgain() {
-        this.p1SetsWon = 0;
-        this.p2SetsWon = 0;
-        this.resetSet();
-        this.show('p1-ready');
-    },
-
-    backToMenu() {
-        this.show('setup');
+function updatePickScreen() {
+    const isP1 = curPlayer === 1;
+    document.getElementById(isP1 ? 'r3' : 'r5').textContent = curRound + 1;
+    const dots = document.getElementById(isP1 ? 'd3' : 'd5');
+    const moves = isP1 ? p1moves : p2moves;
+    dots.innerHTML = '';
+    for (let i = 0; i < 7; i++) {
+        const d = document.createElement('div');
+        d.className = 'dot' + (i === curRound ? ' cur' : '') + (moves[i] ? ' fil' : '');
+        d.textContent = moves[i] ? MOVES[moves[i]] : '';
+        dots.appendChild(d);
     }
-};
+    // Clear selections
+    document.querySelectorAll('.move').forEach(m => m.classList.remove('sel'));
+    if (moves[curRound]) {
+        const map = {rock:0, paper:1, scissors:2};
+        const btns = document.querySelectorAll(isP1 ? '#s3 .move' : '#s5 .move');
+        if (btns[map[moves[curRound]]]) btns[map[moves[curRound]]].classList.add('sel');
+    }
+}
 
-document.addEventListener('DOMContentLoaded', () => game.init());
+function pick(m) {
+    if (curPlayer === 1) p1moves[curRound] = m;
+    else p2moves[curRound] = m;
+    
+    if (curRound < 6) {
+        curRound++;
+        updatePickScreen();
+    } else {
+        if (curPlayer === 1) {
+            document.getElementById('s4p1').textContent = p1s;
+            document.getElementById('s4p2').textContent = p2s;
+            show('s4');
+        } else {
+            document.getElementById('n6a').textContent = p1n;
+            document.getElementById('n6b').textContent = p2n;
+            document.getElementById('s6a').textContent = p1s;
+            document.getElementById('s6b').textContent = p2s;
+            show('s6');
+        }
+    }
+}
+
+function back() {
+    if (curRound > 0) {
+        curRound--;
+        updatePickScreen();
+    }
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function battle() {
+    show('s7');
+    document.getElementById('n7a').textContent = p1n;
+    document.getElementById('n7b').textContent = p2n;
+    document.getElementById('seta').textContent = '0';
+    document.getElementById('setb').textContent = '0';
+    
+    for (let round = 0; round < 7; round++) {
+        document.getElementById('res').textContent = '';
+        document.getElementById('f1').textContent = '❔';
+        document.getElementById('f2').textContent = '❔';
+        
+        const phases = ['ROCK','PAPER','SCISSORS','SHOOT!'];
+        for (let i = 0; i < 4; i++) {
+            document.getElementById('cnt').textContent = phases[i];
+            if (i < 3) {
+                document.getElementById('f1').textContent = CYCLE[(i*2)%6];
+                document.getElementById('f2').textContent = CYCLE[(i*2)%6];
+                await sleep(1000);
+            } else {
+                document.getElementById('f1').textContent = MOVES[p1moves[round]];
+                document.getElementById('f2').textContent = MOVES[p2moves[round]];
+                await sleep(2000);
+                document.getElementById('cnt').textContent = '';
+            }
+        }
+        
+        const m1 = p1moves[round], m2 = p2moves[round];
+        let winner, txt;
+        
+        if (m1 === m2) {
+            winner = 'tie'; txt = 'DRAW +0.5';
+            p1set += 0.5; p2set += 0.5;
+        } else if ((m1==='rock'&&m2==='scissors')||(m1==='paper'&&m2==='rock')||(m1==='scissors'&&m2==='paper')) {
+            winner = 'p1'; txt = p1n + ' WINS';
+            p1set += 1;
+        } else {
+            winner = 'p2'; txt = p2n + ' WINS';
+            p2set += 1;
+        }
+        
+        results.push(winner);
+        document.getElementById('seta').textContent = p1set;
+        document.getElementById('setb').textContent = p2set;
+        document.getElementById('res').textContent = txt;
+        
+        // Update pips
+        const pips = document.getElementById('pips');
+        pips.innerHTML = '';
+        for (let i = 0; i < 7; i++) {
+            const p = document.createElement('div');
+            p.className = 'dot';
+            if (results[i] === 'p1') p.style.background = '#fff';
+            else if (results[i] === 'p2') p.style.background = '#666';
+            else if (results[i] === 'tie') p.style.background = '#333';
+            pips.appendChild(p);
+        }
+        
+        await sleep(3000);
+        
+        // Early exit check
+        const remain = 6 - round;
+        if (p1set > p2set + remain) break;
+        if (p2set > p1set + remain) break;
+    }
+    
+    endSet();
+}
+
+function endSet() {
+    let win;
+    if (p1set > p2set) win = 'p1';
+    else if (p2set > p1set) win = 'p2';
+    else win = 'tie';
+    
+    if (win === 'p1') p1s++;
+    else if (win === 'p2') p2s++;
+    
+    document.getElementById('n8a').textContent = p1n;
+    document.getElementById('n8b').textContent = p2n;
+    document.getElementById('s8a').textContent = p1set;
+    document.getElementById('s8b').textContent = p2set;
+    document.getElementById('win8').textContent = win === 'tie' ? 'SET TIED' : (win === 'p1' ? p1n : p2n) + ' WINS SET';
+    
+    if (p1s >= target || p2s >= target) {
+        document.getElementById('win9').textContent = (p1s >= target ? p1n : p2n) + ' WINS!';
+        document.getElementById('n9a').textContent = p1n;
+        document.getElementById('n9b').textContent = p2n;
+        document.getElementById('s9a').textContent = p1s;
+        document.getElementById('s9b').textContent = p2s;
+        show('s9');
+    } else {
+        show('s8');
+    }
+}
+
+function nextSet() {
+    newSet();
+    show('s2');
+}
+
+function again() {
+    p1s = 0; p2s = 0;
+    newSet();
+    show('s2');
+}
+
+function menu() {
+    show('s1');
+}
+
+// Start
+init();
 </script>
 </body>
 </html>
