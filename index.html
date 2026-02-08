@@ -118,14 +118,14 @@
         @keyframes bonk-rise-left {
             0% { transform: translateX(0) translateY(0) scale(1); }
             40% { transform: translateX(15vw) translateY(-30px) scale(1.1); }
-            60% { transform: translateX(20vw) translateY(-20px) scale(1.2); }
-            100% { transform: translateX(0) translateY(0) scale(1.3); }
+            60% { transform: translateX(calc(50vw - 50%)) translateY(-20px) scale(1.2); }
+            100% { transform: translateX(calc(50vw - 50%)) translateY(0) scale(1.3); }
         }
         @keyframes bonk-rise-right {
             0% { transform: translateX(0) translateY(0) scale(1); }
             40% { transform: translateX(-15vw) translateY(-30px) scale(1.1); }
-            60% { transform: translateX(-20vw) translateY(-20px) scale(1.2); }
-            100% { transform: translateX(0) translateY(0) scale(1.3); }
+            60% { transform: translateX(calc(-50vw + 50%)) translateY(-20px) scale(1.2); }
+            100% { transform: translateX(calc(-50vw + 50%)) translateY(0) scale(1.3); }
         }
         @keyframes fade-out {
             0% { opacity: 1; transform: scale(1); }
@@ -139,8 +139,15 @@
         }
         .bonk-winner-left { animation: bonk-rise-left 1s ease-out forwards; }
         .bonk-winner-right { animation: bonk-rise-right 1s ease-out forwards; }
-        .bonk-loser { animation: fade-out 0.5s ease-out 0.5s forwards; }
+        .bonk-loser { animation: fade-out 0.5s ease-out 0.5s forwards; opacity: 0; }
         .tie-shake { animation: tie-shake 0.5s ease-in-out; }
+        .fighter-hidden { opacity: 0; pointer-events: none; }
+        .fighter-center-left { 
+            transform: translateX(calc(50vw - 50%)) scale(1.3) !important; 
+        }
+        .fighter-center-right { 
+            transform: translateX(calc(-50vw + 50%)) scale(1.3) !important; 
+        }
         
         /* Confetti canvas */
         #confetti-canvas {
@@ -978,6 +985,8 @@ async function battle() {
         pips.appendChild(p);
     }
     
+    let lastWinner = null; // Track winner from previous round
+    
     for (let round = 0; round < 7; round++) {
         const phases = ['ROCK','PAPER','SCISSORS','SHOOT!'];
         const phaseEmojis = {ROCK:'🪨', PAPER:'📄', SCISSORS:'✂️', 'SHOOT!':'🎯'};
@@ -988,8 +997,36 @@ async function battle() {
         // Start with fists
         const f1 = document.getElementById('f1');
         const f2 = document.getElementById('f2');
-        f1.textContent = '🤜';
-        f2.textContent = '🤛';
+        
+        // Handle positioning based on last round's winner
+        if (round > 0 && lastWinner && lastWinner !== 'tie') {
+            // Keep loser hidden, winner stays centered
+            if (lastWinner === 'p1') {
+                f1.textContent = '🤜';
+                f2.textContent = '';
+                f2.classList.add('fighter-hidden');
+                f1.classList.remove('fighter-hidden', 'bonk-winner-left', 'bonk-winner-right');
+                f1.classList.add('fighter-center-left');
+            } else {
+                f1.textContent = '';
+                f2.textContent = '🤛';
+                f1.classList.add('fighter-hidden');
+                f2.classList.remove('fighter-hidden', 'bonk-winner-left', 'bonk-winner-right');
+                f2.classList.add('fighter-center-right');
+            }
+            // Brief pause to show the winner in position before starting
+            await sleep(500);
+        } else {
+            // Normal start - both fighters visible
+            f1.textContent = '🤜';
+            f2.textContent = '🤛';
+            f1.classList.remove('fighter-hidden', 'fighter-center-left', 'fighter-center-right');
+            f2.classList.remove('fighter-hidden', 'fighter-center-left', 'fighter-center-right');
+            f1.style.transform = '';
+            f2.style.transform = '';
+            f1.style.opacity = '1';
+            f2.style.opacity = '1';
+        }
         
         for (let i = 0; i < 4; i++) {
             const phase = phases[i];
@@ -1010,6 +1047,9 @@ async function battle() {
                 await sleep(1000); // 1 second per phase
             } else {
                 // SHOOT! - reveal actual moves
+                // If there was a previous winner, show both fighters for the reveal
+                f1.classList.remove('fighter-hidden', 'fighter-center-left');
+                f2.classList.remove('fighter-hidden', 'fighter-center-right');
                 f1.textContent = MOVES[p1moves[round]];
                 f2.textContent = MOVES[p2moves[round]];
                 playSound('shoot');
@@ -1086,13 +1126,8 @@ async function battle() {
             f2.classList.remove('tie-shake');
         }
         
-        // Reset fighters for next round
-        f1.classList.remove('bonk-winner-left', 'bonk-winner-right', 'bonk-loser');
-        f1.style.transform = '';
-        f1.style.opacity = '1';
-        f2.classList.remove('bonk-winner-left', 'bonk-winner-right', 'bonk-loser');
-        f2.style.transform = '';
-        f2.style.opacity = '1';
+        // Track winner for next round positioning (loser stays gone)
+        lastWinner = winner;
         
         // Update pips with colors
         const pips = document.getElementById('pips');
